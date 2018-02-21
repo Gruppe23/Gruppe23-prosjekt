@@ -2,15 +2,21 @@
 <html>
   <head>
     <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="src\css\app.css">
     <title>Electron React example</title>
+
   </head>
   <body>
+  <div id="all">
+    <div id="taskbar"></div>
+    <div id="leftbar"></div>
     <div id="root"></div>
-    <script>
-    require("babel-register");
-    require("./src/app.js");
-    </script>
+  </div>
+
+  <script>
+  require("babel-register");
+  require("./src/js/app.js");
+  require("./src/js/forside_Andreas.js")
+  </script>
   </body>
 </html>
-
-<div id="root"></div>
