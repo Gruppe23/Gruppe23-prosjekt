@@ -7,39 +7,70 @@ html, body {
 #all {
   height: 100%;
   width: 100%;
+  position: absolute;
+  display: table;
+}
+
+.full {
+  height: 100%;
+  width: 100%;
   position: relative;
 }
 
 #taskbar {
-  width: 100%;
+  width: -webkit-calc(100% - 4px);
   height: 75px;
   border: 1px solid red;
 }
 #taskbar > DIV{
   height: 100%;
   width: 100%;
-  margin: 2px;
+  margin-bottom: 2px;
 }
 
-#taskbar > DIV > Button {
+#taskbar > Button {
   height: 90%;
   width: 90px;
   margin-right: 2px;
 
 }
+.title{
+  text-align: center;
+  margin-left:auto;
+  margin-right: auto;
+  display: block;
+  padding: 55px 0;
+}
+.login {
+  display: table-cell;
+  vertical-align: top;
+}
 
-#leftbar {
-  width: 75px;
-  height: -webkit-calc(100% - 79px);
+.loginContent {
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px;
+  height: 400px;
   border: 1px solid red;
-  margin-top: 4px;
-  float: left;
+  display: block;
+
+}
+
+.loginContent > * {
+  display: block;
+margin-left: auto;
+margin-right: auto;
+text-align: center;
+width: 40%;
+}
+
+.loginelements{
+padding: 75px 0;
 }
 
 #root {
-  width: calc(100% - 85px);
-  height: -webkit-calc(100% - 79px);
-  margin-left: 4px;
+  width: calc(100% - 4px);
+  height: -webkit-calc(100% - 84px);
   margin-top: 4px;
   border: 1px solid red;
   float: left;
