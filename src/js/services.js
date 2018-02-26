@@ -43,11 +43,21 @@ class getEmployee {
   }
 
   getEmployee(mail) {
-    console.log("fromQuer113y" + mail)
     return new Promise((resolve, reject) => {
-      console.log("fromQuer1y" + mail)
       connection.query('SELECT * FROM employee WHERE first_name=?', [mail], (error, result) => {
-        console.log("fromQuery2" + mail)
+        if(error) {
+          reject(error);
+          return;
+        }
+
+        resolve(result);
+      });
+    });
+  }
+
+  getLogin(mail) {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM employee WHERE email=?', [mail], (error, result) => {
         if(error) {
           reject(error);
           return;

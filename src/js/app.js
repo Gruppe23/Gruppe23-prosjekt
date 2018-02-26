@@ -2,7 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { employee } from './services.js'
 import { Link, HashRouter, Switch, Route } from 'react-router-dom';
-
+var passwordHash = require('password-hash');
+var hashedPassword = passwordHash.generate('bass32');
+console.log(hashedPassword)
 
 class Start extends React.Component {
   render() {
@@ -71,9 +73,15 @@ function login(){
   let mail = document.getElementById("loginMail").value
   let pass = document.getElementById("loginPassword").value
   console.log(mail + ' ' + pass)
-  let callback;
-  employee.getEmployee(mail).then((notes) => {
-  console.log(notes[0].surname);
+  employee.getLogin(mail).then((notes) => {
+  console.log(notes[0].password);
+  if (passwordHash.verify(pass, notes[0].password) == true) {
+    alert("password match")
+
+  } else {
+    alert("password does not match")
+
+  }
 }).catch((error) => {
   console.log('Error getting notes: ' + error);
 });
