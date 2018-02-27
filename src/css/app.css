@@ -68,6 +68,10 @@ width: 40%;
 padding: 75px 0;
 }
 
+.registerelements {
+  padding: 25px 0;
+}
+
 #root {
   width: calc(100% - 4px);
   height: -webkit-calc(100% - 84px);
