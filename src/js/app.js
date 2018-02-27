@@ -10,43 +10,34 @@ let loginState;
 //======================================================================================================
 //==========Rendering==========================================================================
 //======================================================================================================
-
+//ProgramRender er hoved DOM Objektet hvor alle andre DOM objekter blir dynamisk endret ved hjelp av React State.
 class ProgramRender extends React.Component {
-constructor() {
-  super();
-  this.toStart = this.toStart.bind(this);
-  this.frontpage = this.frontpage.bind(this);
-  this.state = {screen: <Verification toStart={this.toStart}
-                                      frontpage={this.frontpage} />}
+  constructor() {
+    super();
+    this.startpage = this.startpage.bind(this); //Vi binder this.startpage, enkelt forklart lar det oss bruke this.startpage i klassen for å
+    this.frontpage = this.frontpage.bind(this);
+    this.state = {screen: <Verification startpage={this.startpage}
+                                        frontpage={this.frontpage} />}
+                  }
 
-}
+    startpage() {
+      this.setState({screen: <Verification startpage={this.startpage}
+                                           frontpage={this.frontpage}/>})
+      }
 
-toStart() {
-  this.setState({screen: <Verification toStart={this.toStart}
-                                       frontpage={this.frontpage}/>})
-}
-
-frontpage() {
-  this.setState({screen: <FrontPage logout={this.toStart}/>})
-}
-  render() {
-    return (
-      <div id="full">
+      frontpage() {
+        this.setState({screen: <FrontPage logout={this.startpage}/>})
+      }
+      render() {
+        return (
+          <div className="full">
           {this.state.screen}
-      </div>
-    );
+          </div>
+        );
 
-  }
+      }
 }
-
-class NewRender extends React.Component {
-  render() {
-    return (
-    <button onClick={this.props.toStart}>NewButton</button>
-  )}
-}
-
-
+//Verification er vinduet hvor vi håndterer login/registrasjon til appen.
 class Verification extends React.Component {
   constructor() {
     super();
@@ -63,7 +54,7 @@ class Verification extends React.Component {
     render() {
       return (
       <div className="login">
-          <span className="title">Røde Kors</span>
+      <img src="./src/pictures/roede-kors.jpg" className="title"></img>
       <div className="loginContent" id="loginContent">
           {/*  Vi har innholdet innad i firkanten vi ser på login i en egen render, fordi vi skal ha registreringsvinduet
             i samme firkanten. Slik at vi kan rendre login tilbake og ikke rendre like mye.*/}
@@ -90,7 +81,7 @@ class Verification extends React.Component {
       this.props.frontpage()
     }
 }
-
+//LoginWindow er DOM objektet som loades inn i Verification som default og når vi evt ferdiggjør registrering/velger å gå tilbake.
 class LoginWindow extends React.Component {
   render() {
     return(
@@ -114,7 +105,7 @@ class LoginWindow extends React.Component {
     }
   }
 }
-
+//RegisterWindow er DOM objektet som loades inn i Verification hvis vi trykker på register knapen.
 class RegisterWindow extends React.Component {
   render() {
     return(
@@ -134,7 +125,7 @@ class RegisterWindow extends React.Component {
     )
   }
 }
-
+//FrontPage er DOM Objektet som loades hvis en bruker lykkes i å logge inn.
 class FrontPage extends React.Component {
   render(){
     return (
@@ -160,11 +151,10 @@ class FrontPage extends React.Component {
   }
 }
 
+//====================================================================================================
+//=======Functions====================================================================================
+//====================================================================================================
 
-//====================================================================================================
-//=======Functions=====================================================================
-//====================================================================================================
-//====================================================================================================
 function login(){
   let mail = document.getElementById("loginMail").value
   let pass = document.getElementById("loginPassword").value
