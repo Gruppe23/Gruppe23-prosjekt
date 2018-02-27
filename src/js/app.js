@@ -83,6 +83,10 @@ class Verification extends React.Component {
 }
 //LoginWindow er DOM objektet som loades inn i Verification som default og når vi evt ferdiggjør registrering/velger å gå tilbake.
 class LoginWindow extends React.Component {
+  constructor(){
+    super();
+  }
+
   render() {
     return(
             <div className="loginelements">
@@ -90,7 +94,7 @@ class LoginWindow extends React.Component {
                 <input type="text" id="loginMail"></input><p></p>
                 <span>Password<p></p></span>
                 <input type="password" id="loginPassword"></input><p></p>
-                <button onClick={this.loginCheck} >Login</button>
+                <button ref="login">Login</button>
                 <p></p>
                 <button onClick={this.props.loadFrontPage}>Load Frontpage</button>
                 <p></p>
@@ -98,13 +102,39 @@ class LoginWindow extends React.Component {
             </div>
     )
   }
-  loginCheck() {
-    let verifyLogin = login()
-    if (verifyLogin == true){
 
-    }
+  componentDidMount() {
+    this.refs.login.onclick = () => {
+      let mail = document.getElementById("loginMail").value
+      let pass = document.getElementById("loginPassword").value
+      console.log(mail + ' ' + pass)
+      employee.getLogin(mail).then((notes) => {
+        console.log(notes[0].password);
+        if (passwordHash.verify(pass, notes[0].password) == true) {
+          alert("password match")
+          this.props.loadFrontPage()
+
+        } else {
+          alert("password does not match")
+        }
+    }).catch((error) => {
+      console.log('Error getting notes: ' + error);
+    });
+
   }
+  };
 }
+// }
+//   // loginCheck() {
+//   //   let verifyLogin = login()
+//   //   console.log(verifyLogin)
+//   //   this.props.frontpage()
+//   //   if (verifyLogin == true){
+//   //    console.log(verifyLogin)
+//   //    this.props.loadFrontPage
+//   //  }
+//  }
+// }
 //RegisterWindow er DOM objektet som loades inn i Verification hvis vi trykker på register knapen.
 class RegisterWindow extends React.Component {
   render() {
@@ -127,6 +157,11 @@ class RegisterWindow extends React.Component {
 }
 //FrontPage er DOM Objektet som loades hvis en bruker lykkes i å logge inn.
 class FrontPage extends React.Component {
+  constructor(){
+    super();
+
+  }
+
   render(){
     return (
       <div className="full">
