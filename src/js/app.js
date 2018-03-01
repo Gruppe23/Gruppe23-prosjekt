@@ -6,6 +6,7 @@ var passwordHash = require('password-hash');
 var hashedPassword = passwordHash.generate('bass32');
 console.log(hashedPassword)
 let loginState;
+console.log(window.innerWidth + "Width + Height" + window.innerHeight)
 
 //======================================================================================================
 //==========Rendering==========================================================================
@@ -28,13 +29,13 @@ class ProgramRender extends React.Component {
       frontpage() {
         this.setState({screen: <FrontPage logout={this.startpage}/>})
       }
+
       render() {
         return (
           <div className="full">
-          {this.state.screen}
+              {this.state.screen}
           </div>
         );
-
       }
 }
 //Verification er vinduet hvor vi håndterer login/registrasjon til appen.
@@ -120,21 +121,9 @@ class LoginWindow extends React.Component {
     }).catch((error) => {
       console.log('Error getting notes: ' + error);
     });
-
   }
   };
 }
-// }
-//   // loginCheck() {
-//   //   let verifyLogin = login()
-//   //   console.log(verifyLogin)
-//   //   this.props.frontpage()
-//   //   if (verifyLogin == true){
-//   //    console.log(verifyLogin)
-//   //    this.props.loadFrontPage
-//   //  }
-//  }
-// }
 //RegisterWindow er DOM objektet som loades inn i Verification hvis vi trykker på register knapen.
 class RegisterWindow extends React.Component {
   render() {
@@ -159,14 +148,16 @@ class RegisterWindow extends React.Component {
 class FrontPage extends React.Component {
   constructor(){
     super();
-
+    this.minProfil = this.minProfil.bind(this)
+    this.frontPageReturn = this.frontPageReturn.bind(this)
+    this.state = {page: <FrontPageInfo />}
   }
 
   render(){
     return (
       <div className="full">
         <div id="taskbar">
-          <button ref="forsidebutton">
+          <button onClick={this.frontPageReturn}>
           Forside
           </button>
           <button ref="kalenderbutton">
@@ -175,17 +166,44 @@ class FrontPage extends React.Component {
           <button ref="brukeroversikt">
           Brukeroversikt
           </button>
+          <button onClick={this.minProfil}> profilside </button>
           <button id="logoutBTN" onClick={this.props.logout}>Logout</button>
         </div>
         <div id="root">
-          <span className="overskrift">Velkommen til Forsiden!</span>
-          <button> Gå tilbake til testside </button>
+          {this.state.page}
         </div>
       </div>
     )
   }
+
+  minProfil(){
+    this.setState({page: <ProfilSide frontPageReturn={this.frontPageReturn}/>})
+  }
+
+  frontPageReturn(){
+    this.setState({page: <FrontPageInfo />})
+  }
 }
 
+class ProfilSide extends React.Component {
+  render(){
+    return (
+  <div>
+    <span>Nils sin Profil</span>
+    <button onClick={this.props.frontPageReturn}>Frontpage</button>
+  </div>
+  )
+  }
+}
+
+
+class FrontPageInfo extends React.Component {
+  render(){
+    return(
+      <span> Velkommen til Røde Kors! </span>
+    )
+  }
+}
 //====================================================================================================
 //=======Functions====================================================================================
 //====================================================================================================
