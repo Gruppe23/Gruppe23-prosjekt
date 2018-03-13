@@ -4,19 +4,33 @@ import { employee } from './services.js'
 import { Link, HashRouter, Switch, Route } from 'react-router-dom';
 var passwordHash = require('password-hash');
 var hashedPassword = passwordHash.generate('bass32');
+if (typeof localStorage === "undefined" || localStorage === null) {
+  var LocalStorage = require('node-localstorage').LocalStorage;
+  localStorage = new LocalStorage('./scratch');
+}
 console.log(hashedPassword)
 let loginState;
 console.log(window.innerWidth + "Width + Height" + window.innerHeight)
+
 
 //======================================================================================================
 //==========Rendering==========================================================================
 //======================================================================================================
 //ProgramRender er hoved DOM Objektet hvor alle andre DOM objekter blir dynamisk endret ved hjelp av React State.
+
+let LoginWindowRef;
+let ProgramRenderRef;
+let VerificationRef;
+let FrontPageRef;
+let ProfilSideRef;
+let RegisterWindowRef;
+
 class ProgramRender extends React.Component {
   constructor() {
     super();
+    ProgramRenderRef = this;
     this.startpage = this.startpage.bind(this); //Vi binder this.startpage, enkelt forklart lar det oss bruke this.startpage i klassen for å
-    this.frontpage = this.frontpage.bind(this);
+    this.loadFrontPage = this.loadFrontPage.bind(this);
     this.state = {screen: <Verification startpage={this.startpage}
                                         frontpage={this.frontpage} />}
                   }
@@ -26,31 +40,31 @@ class ProgramRender extends React.Component {
                                            frontpage={this.frontpage}/>})
       }
 
-      frontpage() {
+      loadFrontPage() {
         this.setState({screen: <FrontPage logout={this.startpage}/>})
       }
 
       render() {
         return (
-          <div className="full">
+          <div id="full">
               {this.state.screen}
           </div>
         );
       }
+      componentDidMount(){
+        ProgramRenderRef = this;
+      }
 }
 //Verification er vinduet hvor vi håndterer login/registrasjon til appen.
+//AKA LOGIN/REGISTGER WINDOW
 class Verification extends React.Component {
   constructor() {
     super();
+    VerificationRef = this;
     this.loginWindow= this.loginWindow.bind(this)
     this.registerWindow = this.registerWindow.bind(this)
-    this.loadFrontPage = this.loadFrontPage.bind(this)
-    this.state = { verification: <LoginWindow
-                    loginWindow={this.loginWindow}
-                    registerWindow={this.registerWindow}
-                    loadFrontPage={this.loadFrontPage}/>
-                  }
-    }
+    this.state = { verification: <LoginWindow />}
+  }
 
     render() {
       return (
@@ -66,20 +80,18 @@ class Verification extends React.Component {
     }
 
     loginWindow(){
-      this.setState({verification: <LoginWindow
-                    registerWindow={this.registerWindow}
-                    loadFrontPage={this.loadFrontPage}/>})
+      //Endrer staten, alstå området "this.state.verification" renderen over til loginskjema.
+      this.setState({verification: <LoginWindow/>})
     }
 
     registerWindow() {
-      this.setState({verification: <RegisterWindow
-                    loginWindow={this.loginWindow}
-                    loadFrontPage={this.loadFrontPage}/>
-                  })
+      //Endrer staten, alstå området "this.state.verification" renderen over til registreringsjema.
+      this.setState({verification: <RegisterWindow/>})
     }
 
-    loadFrontPage() {
-      this.props.frontpage()
+
+    componentDidMount(){
+      VerificationRef = this;
     }
 }
 //LoginWindow er DOM objektet som loades inn i Verification som default og når vi evt ferdiggjør registrering/velger å gå tilbake.
@@ -97,11 +109,11 @@ class LoginWindow extends React.Component {
                 <input type="password" id="loginPassword"></input><p></p>
                 <button ref="login">Login</button>
                 <p></p>
-                <button onClick={this.props.loadFrontPage}>Load Frontpage</button>
+                <button onClick={ProgramRenderRef.loadFrontPage}>Load Frontpage</button>
                 <p></p>
-                <button onClick={this.props.registerWindow}> Til Registrering</button>
+                <button onClick={VerificationRef.registerWindow}> Til Registrering</button>
             </div>
-    )
+    );
   }
 
   componentDidMount() {
@@ -113,8 +125,9 @@ class LoginWindow extends React.Component {
         console.log(notes[0].password);
         if (passwordHash.verify(pass, notes[0].password) == true) {
           alert("password match")
-          this.props.loadFrontPage()
-
+          ProgramRenderRef.loadFrontPage()
+          localStorage.removeItem('signedInUser')
+          localStorage.setItem('signedInUser', JSON.stringify(notes[0]))
         } else {
           alert("password does not match")
         }
@@ -122,8 +135,10 @@ class LoginWindow extends React.Component {
       console.log('Error getting notes: ' + error);
     });
   }
+  LoginWindowRef = this
   };
 }
+
 //RegisterWindow er DOM objektet som loades inn i Verification hvis vi trykker på register knapen.
 class RegisterWindow extends React.Component {
   render() {
@@ -134,54 +149,91 @@ class RegisterWindow extends React.Component {
                 <span>Mail: </span> <input type="text" id="registerMail"></input><p></p>
                 <span>Passord: </span> <input type="password" id="registerPassword"></input><p></p>
                 <span>Passord Controll: </span> <input type="password" id="registerControllPassword"></input><p></p>
-                <button>Registrer</button>
-                <p></p>
-                <button onClick={this.props.loginWindow}>Tilbake til login</button>
-                <p></p>
-                <button onClick={this.props.loadFrontPage}>Load Frontpage</button>
+                <button onClick={Verification.loginWindow}>Tilbake til login</button>  <button>Registrer</button>
                 <p></p>
             </div>
     )
+  }
+
+  componentDidMount(){
+    RegisterWindowRef = this;
   }
 }
 //FrontPage er DOM Objektet som loades hvis en bruker lykkes i å logge inn.
 class FrontPage extends React.Component {
   constructor(){
     super();
+    FrontPageRef = this;
+    this.FrontPage = this.FrontPage.bind(this)
     this.minProfil = this.minProfil.bind(this)
-    this.frontPageReturn = this.frontPageReturn.bind(this)
+    this.minKalender = this.minKalender.bind(this)
     this.state = {page: <FrontPageInfo />}
   }
 
   render(){
+    let item = localStorage.getItem('signedInUser')
+    let userInfo = JSON.parse(item)
+    console.log(userInfo)
+    let admin;
+    if(userInfo.user_type == 2){
+       admin = <button id='logoutBTN' onClick={this.adminPage}>Admin Page </button>;
+    } else {
+      admin = <span> Velkommen til Røde Kors appen!</span>;
+    }
+
     return (
       <div className="full">
         <div id="taskbar">
-          <button onClick={this.frontPageReturn}>
+          <button onClick={this.FrontPage}>
           Forside
           </button>
-          <button ref="kalenderbutton">
+          <button onClick={this.minKalender}>
           kalender
           </button>
-          <button ref="brukeroversikt">
+          <button onClick={this.brukeroversikt}>
           Brukeroversikt
           </button>
           <button onClick={this.minProfil}> profilside </button>
-          <button id="logoutBTN" onClick={this.props.logout}>Logout</button>
+          {admin}
+          <button id="logoutBTN" onClick={ProgramRenderRef.startpage}>Logout</button>
         </div>
         <div id="root">
           {this.state.page}
         </div>
       </div>
     )
+
   }
 
   minProfil(){
-    this.setState({page: <ProfilSide frontPageReturn={this.frontPageReturn}/>})
+    this.setState({page: <ProfilSide />})
   }
 
-  frontPageReturn(){
-    this.setState({page: <FrontPageInfo />})
+  minKalender(){
+    this.setState({page: <Kalender />})
+  }
+
+  FrontPage(){
+    FrontPageRef.setState({page: <FrontPageInfo />})
+  }
+
+  adminPage(){
+    FrontPageRef.setState({page: <AdminPage />})
+  }
+  brukeroversikt(){
+    FrontPageRef.setState({page: <Brukeroversikt />})
+  }
+
+  componentDidMount(){
+    FrontPageRef = this;
+  }
+}
+
+class Brukeroversikt extends React.Component {
+  render(){
+    return(
+<div> Brukeroversikt </div>
+    )
   }
 }
 
@@ -204,30 +256,41 @@ class FrontPageInfo extends React.Component {
     )
   }
 }
+
+class Kalender extends React.Component {
+  render() {
+    return(
+      <span> Kalender </span>
+    )
+  }
+}
+
+class AdminPage extends React.Component {
+  render(){
+
+    return(
+      <div id="AdminPage_Box">
+        <div id="AdminPage_LeftBox">
+          <input type="text" id="AdminPage_UserSearch" />
+          <div id="AdminPage_LeftBox_Results">
+            ABC
+            cbc
+            ccd
+            asd
+            drag
+          </div>
+        </div>
+
+        <div id="AdminPage_RightBox">
+          {this.state.userinfo}
+        </div>
+      </div>
+    )
+  }
+}
 //====================================================================================================
 //=======Functions====================================================================================
 //====================================================================================================
-
-function login(){
-  let mail = document.getElementById("loginMail").value
-  let pass = document.getElementById("loginPassword").value
-  console.log(mail + ' ' + pass)
-  employee.getLogin(mail).then((notes) => {
-  console.log(notes[0].password);
-  if (passwordHash.verify(pass, notes[0].password) == true) {
-      alert("password match")
-      return true
-
-  } else {
-      alert("password does not match")
-      return false
-
-  }
-}).catch((error) => {
-    console.log('Error getting notes: ' + error);
-});
-  // for (let x in object){ console.log(object[x])}
-}
 
 function forside(){
     ReactDOM.render((
