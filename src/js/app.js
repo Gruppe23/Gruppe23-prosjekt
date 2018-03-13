@@ -266,23 +266,18 @@ class Kalender extends React.Component {
 }
 
 class AdminPage extends React.Component {
+  constructor() {
+    super()
+      this.state = {userinfo: <div></div>}
+  }
+
   render(){
 
     return(
-      <div id="AdminPage_Box">
-        <div id="AdminPage_LeftBox">
-          <input type="text" id="AdminPage_UserSearch" />
-          <div id="AdminPage_LeftBox_Results">
-            ABC
-            cbc
-            ccd
-            asd
-            drag
-          </div>
+      <div className="row">
+        <div className="col-md-2 grey">
         </div>
-
-        <div id="AdminPage_RightBox">
-          {this.state.userinfo}
+        <div className="col-md-7 grey">
         </div>
       </div>
     )

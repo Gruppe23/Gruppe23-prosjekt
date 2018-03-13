@@ -152,6 +152,11 @@ background-color: #E57979;
   float: right;
 }
 
+.grey {
+  background-color: grey;
+  border: 1px solid black;
+  height: 100px;
+}
 .overskrift {
   text-align: center;
   font-size: 15px;
