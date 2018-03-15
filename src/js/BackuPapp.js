@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import AdminPageUserCreate from "./AdminPage/AdminPage.js"
-import { employee } from "./services"
 import { Link, HashRouter, Switch, Route } from 'react-router-dom';
 var passwordHash = require('password-hash');
 var hashedPassword = passwordHash.generate('bass32');
@@ -315,11 +314,6 @@ class AdminPage extends React.Component {
 //====================================================================================================
 //=======Functions====================================================================================
 //====================================================================================================
-function login() {
-  reactDOM.render ((
-    <Verification />
-  ), document.getElementById("all"));
-}
 
 function forside(){
     ReactDOM.render((

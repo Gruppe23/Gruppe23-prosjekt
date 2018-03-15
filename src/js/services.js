@@ -5,9 +5,10 @@ let connection;
 function connect() {
   connection = mysql.createConnection({
     host: 'mysql.stud.iie.ntnu.no',
-    user: 'andreafv',
-    password: '8H4z4Btw',
-    database: 'andreafv'
+    user: 'g_oops_23',
+    password: 'sIrRhlP1'
+,
+    database: 'g_oops_23'
   });
 
   // Connect to MySQL-server
@@ -62,7 +63,9 @@ class getEmployee {
           reject(error);
           return;
         }
-
+        localStorage.removeItem('signedInUser')
+        localStorage.setItem('signedInUser', JSON.stringify(result[0]))
+        console.log(result)
         resolve(result);
       });
     });
