@@ -227,3 +227,13 @@ html, body, .app {
   margin: auto;
   background: white;
 }
+
+.kalender {
+  height: calc(95% - 50px);
+  border: 1px solid black;
+}
+
+.forsideContent{
+  height: 95%;
+  margin-top: 35px;
+}

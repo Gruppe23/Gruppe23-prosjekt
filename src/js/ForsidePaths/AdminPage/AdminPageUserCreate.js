@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route } from 'react-router-dom';
 
-export default class AdminPageUserCreate extends React.Component {
+ class AdminPageUserCreate extends React.Component {
   render() {
     return (
     <div className="popup">
@@ -41,3 +41,5 @@ export default class AdminPageUserCreate extends React.Component {
     )
   }
 }
+
+export { AdminPageUserCreate }
