@@ -1,9 +1,14 @@
+// @ Flow
+
 var passwordHash = require('password-hash');
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route } from 'react-router-dom';
 import { employee } from "./services"
 import { forside2 } from "./forside.js"
+import { ProgramRender, programRender } from "./app.js"
+import createHashHistory from 'history/createHashHistory';
+const history = createHashHistory();
 
 class LoginWindow extends React.Component {
   constructor(){
@@ -39,7 +44,7 @@ class LoginWindow extends React.Component {
           alert("password match")
           localStorage.removeItem('signedInUser')
           localStorage.setItem('signedInUser', JSON.stringify(notes[0]))
-          forside2()
+          programRender.forceUpdate();
         } else {
           alert("password does not match")
         }
@@ -47,7 +52,8 @@ class LoginWindow extends React.Component {
       console.log('Error getting notes: ' + error);
     });
   }
-
+console.log("LoginWindow Did mount")
   };
 }
+
 export { LoginWindow }

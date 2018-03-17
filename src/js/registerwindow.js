@@ -1,9 +1,11 @@
+//@flow
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route } from 'react-router-dom';
 import { employee } from "./services"
 
-class RegisterWindow extends React.Component {
+class RegisterWindow extends React.Component<{}> {
   render() {
     return(
             <div className="registerelements">

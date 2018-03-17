@@ -237,3 +237,9 @@ html, body, .app {
   height: 95%;
   margin-top: 35px;
 }
+
+#AcceptUsersBox {
+  height: 150px;
+  width: 150px;
+  border: 1px solid black;
+}

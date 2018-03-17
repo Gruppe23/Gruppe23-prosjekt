@@ -1,9 +1,11 @@
+// @flow
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { employee } from "./services"
 var passwordHash = require('password-hash');
-var hashedPassword = passwordHash.generate('bass32');
+var hashedPassword: string = passwordHash.generate('bass32');
 if (typeof localStorage === "undefined" || localStorage === null) {
   var LocalStorage = require('node-localstorage').LocalStorage;
   localStorage = new LocalStorage('./scratch');
@@ -16,23 +18,25 @@ import { LoginWindow } from "./loginwindow.js"
 import { RegisterWindow } from "./registerwindow.js"
 import createHashHistory from 'history/createHashHistory';
 const history = createHashHistory();
-
 //======================================================================================================
 //==========Rendering==========================================================================
 //======================================================================================================
 //ProgramRender er hoved DOM Objektet hvor alle andre DOM objekter blir dynamisk endret ved hjelp av React State.
 
 
-class ProgramRender extends React.Component {
+class ProgramRender extends React.Component<{}> {
   constructor() {
     super(); //Vi binder this.startpage, enkelt forklart lar det oss bruke this.startpage i klassen for å
-    this.navigate = this.navigate.bind(this)
-}
-navigate(path){
-    history.push(path);
 }
       render() {
+
+        let signedInUser = employee.getSignedInUser();
+        if(signedInUser) {
         return (
+          <Forside2 />
+        )
+      }else{
+        return(
           <div id="full">
           <div className="loginContent" id="loginContent">
           <HashRouter>
@@ -45,14 +49,15 @@ navigate(path){
           </HashRouter>
           </div>
           </div>
-        );
+        )
+      }
       }
       componentDidMount(){
-
         history.push("/page1")
+        programRender = this
       }
 }
-
+let programRender: Object;
 function forside(){
     ReactDOM.render((
         <ProgramRender />
@@ -60,3 +65,4 @@ function forside(){
 }
 
 forside()
+export { ProgramRender, programRender, history }
