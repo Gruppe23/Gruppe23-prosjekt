@@ -11,8 +11,6 @@ if (typeof localStorage === "undefined" || localStorage === null) {
   localStorage = new LocalStorage('./scratch');
 }
 console.log(hashedPassword)
-let loginState;
-console.log(window.innerWidth + "Width + Height" + window.innerHeight)
 import { Forside2, forside2 } from "./forside.js"
 import { LoginWindow } from "./loginwindow.js"
 import { RegisterWindow } from "./registerwindow.js"
@@ -57,7 +55,7 @@ class ProgramRender extends React.Component<{}> {
         programRender = this
       }
 }
-let programRender: Object;
+let programRender: ReactDom;
 function forside(){
     ReactDOM.render((
         <ProgramRender />

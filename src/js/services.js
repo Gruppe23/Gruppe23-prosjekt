@@ -16,6 +16,7 @@ class User {
   user_id: number;
   user_type: number;
   zipcode: number;
+  certificate_name
 }
 
 // Setup database server reconnection when server timeouts connection:
@@ -61,8 +62,7 @@ class getEmployee {
   }
 
   getSignedInUser(): Promise<User[]> {
-    let item: User[] = localStorage.getItem('signedInUser'); // Get User-object from browser
-    if(!item) return null
+    let item = localStorage.getItem('signedInUser'); // Get User-object from browser
     return JSON.parse(item);
   }
 
@@ -73,8 +73,20 @@ class getEmployee {
           reject(error);
           return;
         }
-
         resolve(result);
+      });
+    });
+  }
+
+  getNewUsers(): Promise<any> {
+    let nada = 0
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT first_name, surname FROM employee where status = ? ORDER BY surname', [nada], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result)
       });
     });
   }
@@ -97,6 +109,31 @@ class getEmployee {
     localStorage.removeItem('signedInUser')
     programRender.forceUpdate()
     history.push("/page1")
+  }
+  //Hente ut alle certifikater som ikke har blitt godkjent
+  getUnconfirmedCertificates(): Promise<User[]> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT employee.first_name, employee.surname, employee.user_id, certificate.certificate_name FROM ((employee INNER JOIN employee_certificate ON employee.user_id = employee_certificate.employee_id) INNER JOIN certificate ON certificate.certificate_id = employee_certificate.certificate_id) WHERE employee_certificate.confirmed = 0 ORDER BY surname', (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      })
+    })
+  }
+
+  signUp(first_name, surname, email, adress, zipcode, password): Promise<void>{
+    return new Promise((resolve, reject) => {
+      connection.query('INSERT INTO employee (first_name, surname, email, adress, zipcode, password) VALUES (?, ?, ?, ?, ?, ?)', [first_name, surname, email, adress, zipcode, password], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+          resolve();
+      });
+    });
+
   }
 }
 
@@ -130,4 +167,4 @@ class getEmployee {
 // }
 let employee = new getEmployee();
 
-export { employee };
+export { employee, User };

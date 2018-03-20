@@ -33,7 +33,6 @@ class Forside2 extends React.Component<{}> {
       admin = <span> Velkommen til Røde Kors appen!</span>;
     }
     return(
-        <div className="full">
           <HashRouter>
             <div className="full">
               <nav className="navbar navbar-inverse navbar-fixed-top">
@@ -62,7 +61,7 @@ class Forside2 extends React.Component<{}> {
               </div>
             </div>
           </HashRouter>
-        </div>
+
    )
   }
   componentDidMount(){
