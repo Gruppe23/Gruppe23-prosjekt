@@ -24,12 +24,13 @@ const history = createHashHistory();
 
 class ProgramRender extends React.Component<{}> {
   constructor() {
-    super(); //Vi binder this.startpage, enkelt forklart lar det oss bruke this.startpage i klassen for å
+    super();
 }
       render() {
-
         let signedInUser = employee.getSignedInUser();
         if(signedInUser) {
+          //Vi returnerer enten forsiden, eller login/registrering basert på om en bruker er logget inn.
+          // Ved innlogging/utlogging forceupdater vi ProgramREnder til å skjekke JSON filen om vi er logget inn.
         return (
           <Forside2 />
         )
