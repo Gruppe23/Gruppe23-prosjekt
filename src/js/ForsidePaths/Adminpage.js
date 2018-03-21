@@ -11,13 +11,25 @@ import ReactTooltip from 'react-tooltip'
 let reglist;
 let licenselist;
 
-class AdminPage extends React.Component<{}> {
+type State = {
+  userinfo: React.Component[],
+  showPopup: Boolean,
+
+}
+class AdminPage extends React.Component<State> {
+  refs: {
+    RegSearch: HTMLInputElement,
+    LicSearch: HTMLInputElement,
+    LicenseList: HTMLElement,
+    UsersList: HTMLElement
+  }
   constructor() {
     super()
     this.state = {userinfo: <div></div>,
                   showPopup: false,
                   RegisterList:"",
-                  LicenseList: ""}
+                  LicenseList: "",
+                  userInfo: ""}
 
   }
 
@@ -32,7 +44,6 @@ class AdminPage extends React.Component<{}> {
     return(
       <div className="container-fluid AdminPage_Container">
         {this.state.showPopup ?
-          {/*Oppretter popup state slik at den kan vises i hoved konteineren*/}
           <AdminPageUserCreate
           text="Close Me"
           closePopup={this.togglePopup.bind(this)}
@@ -50,7 +61,7 @@ class AdminPage extends React.Component<{}> {
         }
           <div id="AcceptUsersBox">
           <input type="text" className="regSearch" ref="RegSearch" onKeyUp={this.SearchRegFilter.bind(this)} placeholder="Search for names.." />
-            <ul className="myUL">
+            <ul ref="UsersList" className="myUL">
               {this.state.RegisterList}
             </ul>
           </div>
@@ -59,8 +70,14 @@ class AdminPage extends React.Component<{}> {
               }
               <div id="AcceptLicenseBox">
               <input type="text" className="licSearch" ref="LicSearch" onKeyUp={this.SearchLicFilter.bind(this)} placeholder="Search for names or licenses"/>
-              <ul className="myUL">
+              <ul ref="LicenseList" className="myUL">
                   {this.state.LicenseList}
+              </ul>
+              </div>
+
+              <div id="UserInformation">
+              <ul className="myUL">
+                  {this.state.userInfo}
               </ul>
               </div>
       </div>
@@ -73,10 +90,10 @@ class AdminPage extends React.Component<{}> {
       //Når AdminPage lastes inn vil alle brukere som ikke har blitt godkjent hentes fra database og presenteres.
       reglist = post
       console.log(reglist)
-      this.setState({ {/* vi lager alle elementene i "nye registrerte" området*/}
-        RegisterList: reglist.map((post) =>
-                          {/*Vi oppretter alle linjene i selecten, funksjonen map er basicly en For løkke, den tar for seg hvert element i reglist og oppretter react-elementene under.
-                            Anbefales å se console.log av reglist for å se bedre hva som menes.""*/}
+      this.setState({ // vi lager alle elementene i "nye registrerte" området
+        RegisterList: reglist.map((post: User) =>
+                          /*Vi oppretter alle linjene i selecten, funksjonen map er basicly en For løkke, den tar for seg hvert element i reglist og oppretter react-elementene under.
+                            Anbefales å se console.log av reglist for å se bedre hva som menes.""*/
                           <li id={"Reg" + post.user_id} className="" key={post.first_name}>
                           <a data-tip data-event="click" data-event-off="mouseleave" data-for={"Reg" + post.user_id}>{post.surname}, {post.first_name}</a>
                           {/* ReactTooltip er et modul som lar oss lett lage popup messages på elementer av vårt valg. Ved å bruke data-for i et element kan vi velge å binde en popup til det elementet
@@ -88,7 +105,7 @@ class AdminPage extends React.Component<{}> {
       })
     });
 
-    employee.getUnconfirmedCertificates().then((post) => {
+    employee.getUnconfirmedCertificates().then((post: User[]) => {
               licenselist = post
               console.log(licenselist)
               this.setState({
@@ -105,44 +122,66 @@ class AdminPage extends React.Component<{}> {
     })
   }
 
-  expandLine(event): void {
+  expandLine(event: Event): void {
     console.log(event)
 
   }
 
-  contractLine(event): void {
+  contractLine(event: Event): void {
     event.target.style.height = "32px"
   }
 
   SearchRegFilter(): void {
-      //Filterfunksjon i select av de ny-registrerte brukerene.
-       this.setState({
-         RegisterList: reglist.map((post) => {
-                  let fullname: string = post.first_name + " " + post.surname
-                  let surnamefirst: string = post.surname + " " + post.first_name
-                  {/* Vi gir brukeren flere måter å kunne søke opp navn på, fornavn -> etternavn, etternavn -> fornavn. bare etternavn, bare navn.
-                */  }
-                 if(surnamefirst.toUpperCase().indexOf(this.refs.RegSearch.value.toUpperCase()) > -1 || fullname.toUpperCase().indexOf(this.refs.RegSearch.value.toUpperCase()) > -1){
-                   return     <li className="" key={post.first_name}>
-                              <a>{post.surname}, {post.first_name}</a>
-                              </li>
-                  }})
-       })
+    let list = this.refs.UsersList.getElementsByTagName("li")
+    console.log(list)
+        var input, filter, ul, li, a, i;
+        input = this.refs.RegSearch
+        filter = input.value.toUpperCase();
+        ul = this.refs.UsersList
+        li = ul.getElementsByTagName('li');
+        for (i = 0; i < li.length; i++) {
+           a = li[i].getElementsByTagName("a")[0];
+           if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+             li[i].style.display = "block";
+           } else {
+             li[i].style.display = "none";
+   }
+}
   }
 
-  SearchLicFilter(): <void>{ // Funksjonen blir kjørt hver gang noen skriver noe i input og sorterer ut elementene som ikke har bokstavene i fornavnet, etternavnet eller i sertifikatnavnet.
-    this.setState({
-      LicenseList: licenselist.map((post) => {
-              let fullname: string = post.first_name + " " + post.surname
-              let surnamefirst: string = post.surname + " " + post.first_name
-              if(fullname.toUpperCase().indexOf(this.refs.LicSearch.value.toUpperCase()) > -1 || surnamefirst.toUpperCase().indexOf(this.refs.LicSearch.value.toUpperCase()) > -1 || post.certificate_name.toUpperCase().indexOf(this.refs.LicSearch.value.toUpperCase()) > -1){
-                //Hvis bokstavene matcher, returner elementet til state.
-                return     <li className="" key={post.first_name}>
-                           <a><div className="row"><div className="col-sm-6">{post.surname}, {post.first_name}</div><div className="col-sm-6"> - {post.certificate_name}</div></div></a>
-                           </li>
-               }})
-    })
-  }
+  // SearchLicFilter(): void {// Funksjonen blir kjørt hver gang noen skriver noe i input og sorterer ut elementene som ikke har bokstavene i fornavnet, etternavnet eller i sertifikatnavnet.
+    // this.setState({
+      // LicenseList: licenselist.map((post: User) => {
+              // let fullname: string = post.first_name + " " + post.surname
+              // let surnamefirst: string = post.surname + " " + post.first_name
+              // if(fullname.toUpperCase().indexOf(this.refs.LicSearch.value.toUpperCase()) > -1 || surnamefirst.toUpperCase().indexOf(this.refs.LicSearch.value.toUpperCase()) > -1 || post.certificate_name.toUpperCase().indexOf(this.refs.LicSearch.value.toUpperCase()) > -1){
+              //  Hvis bokstavene matcher, returner elementet til state.
+                // return     <li className="" key={post.first_name}>
+                           // <a><div className="row"><div className="col-sm-6">{post.surname}, {post.first_name}</div><div className="col-sm-6"> - {post.certificate_name}</div></div></a>
+                           // </li>
+               // }})
+    // })
+  // }
+
+   SearchLicFilter(): void {// Funksjonen blir kjørt hver gang noen skriver noe i input og sorterer ut elementene som ikke har bokstavene i fornavnet, etternavnet eller i sertifikatnavnet.
+     let list = this.refs.LicenseList.getElementsByTagName("li")
+     console.log(list)
+         var input, filter, ul, li, a, i;
+         input = this.refs.LicSearch
+         filter = input.value.toUpperCase();
+         ul = this.refs.LicenseList
+         li = ul.getElementsByTagName('li');
+         for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+              li[i].style.display = "";
+              li[i].style.position = ""
+            } else {
+              li[i].style.display = "none";
+              li[i].style.position = "";
+            }
+          }
+        }
 }
 
 

@@ -6,7 +6,7 @@ import createHashHistory from 'history/createHashHistory';
 const history = createHashHistory();
 
 class User {
-  address: string;
+  adress: string;
   email: string;
   first_name: string;
   password: string;
@@ -16,7 +16,33 @@ class User {
   user_id: number;
   user_type: number;
   zipcode: number;
-  certificate_name
+  certificate_name: string;
+}
+
+class Signup {
+  first_name: string;
+  surname: string;
+  email: string;
+  adress: string;
+  zipcode: number;
+  password: string;
+}
+
+class Newuser {
+  first_name: string;
+  surname: string;
+  email: string;
+  adress: string;
+  zipcode: number;
+  password: string;
+}
+class getuserCertificates {
+  first_name: string;
+  surname: string;
+  user_id: number;
+  certificate_name: string;
+  certificate_id: number;
+  employee_id: number;
 }
 
 // Setup database server reconnection when server timeouts connection:
@@ -48,9 +74,9 @@ connect();
 
 // Class that performs database queries related to notes
 class getEmployee {
-  getEmployees(): Promise< ?Object> {
+  getEmployees(): Promise<User> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM employee', (error, result) => {
+      connection.query('SELECT employee.username, first_name, surname, adress, zipcode FROM employee', (error, result) => {
         if(error) {
           reject(error);
           return;
@@ -91,9 +117,10 @@ class getEmployee {
     });
   }
 
-  getLogin(mail: string): Promise<User[]> {
+
+  getLogin(mail: string): Promise<User> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM employee WHERE email=?', [mail], (error, result) => {
+      connection.query('SELECT username, email, password FROM employee WHERE email=?', [mail], (error, result) => {
         if(error) {
           reject(error);
           return;
@@ -111,7 +138,9 @@ class getEmployee {
     history.push("/page1")
   }
   //Hente ut alle certifikater som ikke har blitt godkjent
-  getUnconfirmedCertificates(): Promise<User[]> {
+
+
+  getUnconfirmedCertificates(): Promise<getuserCertificates[]> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT employee.first_name, employee.surname, employee.user_id, certificate.certificate_name FROM ((employee INNER JOIN employee_certificate ON employee.user_id = employee_certificate.employee_id) INNER JOIN certificate ON certificate.certificate_id = employee_certificate.certificate_id) WHERE employee_certificate.confirmed = 0 ORDER BY surname', (error, result) => {
         if(error) {
@@ -123,7 +152,8 @@ class getEmployee {
     })
   }
 
-  signUp(first_name, surname, email, adress, zipcode, password): Promise<void>{
+
+  signUp(first_name: string, surname: string, email: string, adress: string, zipcode: number, password: string): Promise<void>{
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO employee (first_name, surname, email, adress, zipcode, password) VALUES (?, ?, ?, ?, ?, ?)', [first_name, surname, email, adress, zipcode, password], (error, result) => {
         if(error) {
