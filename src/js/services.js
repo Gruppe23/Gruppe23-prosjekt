@@ -36,9 +36,10 @@ class Newuser {
   zipcode: number;
   password: string;
 }
-class getuserCertificates {
+class userCertificates {
   first_name: string;
   surname: string;
+  username: string;
   user_id: number;
   certificate_name: string;
   certificate_id: number;
@@ -74,9 +75,10 @@ connect();
 
 // Class that performs database queries related to notes
 class getEmployee {
+
   getEmployees(): Promise<User> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT employee.username, first_name, surname, adress, zipcode FROM employee', (error, result) => {
+      connection.query('SELECT username, first_name, surname, adress, zipcode FROM employee', (error, result) => {
         if(error) {
           reject(error);
           return;
@@ -92,9 +94,25 @@ class getEmployee {
     return JSON.parse(item);
   }
 
-  getEmployee(mail: string): Promise<User[]> {
+  getEmployee(mail: number): Promise<User> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM employee WHERE first_name=?', [mail], (error, result) => {
+      connection.query('SELECT * FROM employee WHERE user_id=?', [mail], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        console.log(result)
+        resolve(result);
+      });
+    });
+  }
+
+
+
+  getNewUsers(): Promise<User[]> {
+    let nada = 0
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT first_name, surname, adress, email, user_id FROM employee where status = ? ORDER BY surname', [nada], (error, result) => {
         if(error) {
           reject(error);
           return;
@@ -104,15 +122,14 @@ class getEmployee {
     });
   }
 
-  getNewUsers(): Promise<any> {
-    let nada = 0
+  acceptNewUser(id: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT first_name, surname FROM employee where status = ? ORDER BY surname', [nada], (error, result) => {
+      connection.query('UPDATE employee SET status = 1 WHERE user_id = ?', [id], (error, result) => {
         if(error) {
           reject(error);
           return;
         }
-        resolve(result)
+        resolve();
       });
     });
   }
@@ -120,14 +137,14 @@ class getEmployee {
 
   getLogin(mail: string): Promise<User> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT username, email, password FROM employee WHERE email=?', [mail], (error, result) => {
+      connection.query('SELECT username, email, password, status, user_type FROM employee WHERE username=?', [mail], (error, result) => {
         if(error) {
           reject(error);
           return;
         }
 
         console.log(result)
-        resolve(result);
+        resolve(result[0]);
       });
     });
   }
@@ -140,14 +157,26 @@ class getEmployee {
   //Hente ut alle certifikater som ikke har blitt godkjent
 
 
-  getUnconfirmedCertificates(): Promise<getuserCertificates[]> {
+  getUnconfirmedCertificates(): Promise<userCertificates[]> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT employee.first_name, employee.surname, employee.user_id, certificate.certificate_name FROM ((employee INNER JOIN employee_certificate ON employee.user_id = employee_certificate.employee_id) INNER JOIN certificate ON certificate.certificate_id = employee_certificate.certificate_id) WHERE employee_certificate.confirmed = 0 ORDER BY surname', (error, result) => {
+      connection.query('SELECT employee.username, certificate.certificate_id, employee.first_name, employee.email, employee.adress, employee.surname, employee.user_id, certificate.certificate_name FROM ((employee INNER JOIN employee_certificate ON employee.user_id = employee_certificate.employee_id) INNER JOIN certificate ON certificate.certificate_id = employee_certificate.certificate_id) WHERE employee_certificate.confirmed = 0 ORDER BY surname', (error, result) => {
         if(error) {
           reject(error);
           return;
         }
         resolve(result);
+      })
+    })
+  }
+
+  acceptCertificate(employeeid: number, certificateid: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      connection.query('UPDATE employee_certificate SET confirmed = 1 WHERE employee_id = ? AND certificate_id = ?', [employeeid, certificateid], (error, result)=> {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve();
       })
     })
   }
@@ -165,6 +194,7 @@ class getEmployee {
     });
 
   }
+
 }
 
 
@@ -197,4 +227,4 @@ class getEmployee {
 // }
 let employee = new getEmployee();
 
-export { employee, User };
+export { employee, User, userCertificates };

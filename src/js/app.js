@@ -56,7 +56,7 @@ class ProgramRender extends React.Component<{}> {
         programRender = this
       }
 }
-let programRender: ReactDom;
+let programRender: React$Component;
 function forside(){
     ReactDOM.render((
         <ProgramRender />

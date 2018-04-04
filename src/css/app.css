@@ -240,7 +240,7 @@ html, body, .app {
 }
 
 #AcceptUsersBox {
-  height: 250px;
+  height: 28%;
   width: 90%;
   border: 1px solid black;
   margin: auto;
@@ -250,12 +250,27 @@ html, body, .app {
 }
 
 #AcceptLicenseBox{
-  height: 250px;
+  height: 28%;
   width: 90%;
   border: 1px solid black;
   margin: auto;
   margin-top: 20px;
   background-color: white;
+}
+
+#UserInfoBox {
+  height: 28%;
+  width: 90%;
+  border: 1px solid black;
+  margin: auto;
+  margin-top: 20px;
+  background-color: white;
+}
+
+#UserInfoBoxBTNS {
+  position: absolute;
+  float: 0;
+  bottom:0;
 }
 
 .regSearch {

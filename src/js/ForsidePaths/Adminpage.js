@@ -5,18 +5,24 @@ import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { AdminPageUserCreate } from "./AdminPage/AdminPageUserCreate.js"
 import { employee } from "../services"
-import { User } from "../services"
+import { User, userCertificates } from "../services"
 import ReactTooltip from 'react-tooltip'
 
 let reglist;
 let licenselist;
+let ClickedLicence: userCertificates;
+let ClickedRegister: User;
+let AdminPageRef: React$Component<{}>;
+let RegisterClick: boolean;
 
 type State = {
-  userinfo: React.Component[],
+  userinfo: React.Component<{}>,
   showPopup: Boolean,
-
+  LicenseList: React.Component<{}>,
+  RegisterList: React.Component<{}>,
+  UsersList: React.Component<{}>,
 }
-class AdminPage extends React.Component<State> {
+class AdminPage extends React.Component<{}> {
   refs: {
     RegSearch: HTMLInputElement,
     LicSearch: HTMLInputElement,
@@ -25,16 +31,17 @@ class AdminPage extends React.Component<State> {
   }
   constructor() {
     super()
+    AdminPageRef = this
     this.state = {userinfo: <div></div>,
                   showPopup: false,
                   RegisterList:"",
                   LicenseList: "",
-                  userInfo: ""}
+                  userInfo: <UserInfo />}
 
   }
 
   togglePopup(): void {
-    {/* Funksjonen som slår av/på registreringspopup*/}
+    /* Funksjonen som slår av/på registreringspopup*/
     this.setState({
       showPopup: !this.state.showPopup
     });
@@ -56,9 +63,9 @@ class AdminPage extends React.Component<State> {
       </div>
       <div id="AdminPage_RightBox" className="grey hundre">
           <span>Nye registrerte brukere.</span>
-          {// Vi oppretter boksen for å akseptere nye brukere til appen. Vi må bruke state for selecten  fordi det er et element som skal oppdateres dynamisk
-          //med det vi søker etter.
-        }
+          {/* Vi oppretter boksen for å akseptere nye brukere til appen. Vi må bruke state for selecten  fordi det er et element som skal oppdateres dynamisk
+          med det vi søker etter.*/}
+
           <div id="AcceptUsersBox">
           <input type="text" className="regSearch" ref="RegSearch" onKeyUp={this.SearchRegFilter.bind(this)} placeholder="Search for names.." />
             <ul ref="UsersList" className="myUL">
@@ -66,8 +73,8 @@ class AdminPage extends React.Component<State> {
             </ul>
           </div>
               <span>Nye kvalifikasjoner trenger godkjenning</span>
-              {//Vi gjør det samme med LicenseBox,
-              }
+              /*Vi gjør det samme med LicenseBox*/
+
               <div id="AcceptLicenseBox">
               <input type="text" className="licSearch" ref="LicSearch" onKeyUp={this.SearchLicFilter.bind(this)} placeholder="Search for names or licenses"/>
               <ul ref="LicenseList" className="myUL">
@@ -75,37 +82,37 @@ class AdminPage extends React.Component<State> {
               </ul>
               </div>
 
-              <div id="UserInformation">
+              <div id="UserInfoBox">
               <ul className="myUL">
                   {this.state.userInfo}
               </ul>
               </div>
+
       </div>
       </div>
     )
 
   }
-  componentWillMount () {
-    employee.getNewUsers().then((post: User[]) => {
-      //Når AdminPage lastes inn vil alle brukere som ikke har blitt godkjent hentes fra database og presenteres.
+  loadRegisterList() {
+    employee.getNewUsers().then((post) => {
+      //Når AdminPage lastes inn vil alle brukere som ikke har blitt godkjent hentes fra database og presenteres i en søkbar liste.
       reglist = post
       console.log(reglist)
       this.setState({ // vi lager alle elementene i "nye registrerte" området
         RegisterList: reglist.map((post: User) =>
                           /*Vi oppretter alle linjene i selecten, funksjonen map er basicly en For løkke, den tar for seg hvert element i reglist og oppretter react-elementene under.
                             Anbefales å se console.log av reglist for å se bedre hva som menes.""*/
-                          <li id={"Reg" + post.user_id} className="" key={post.first_name}>
-                          <a data-tip data-event="click" data-event-off="mouseleave" data-for={"Reg" + post.user_id}>{post.surname}, {post.first_name}</a>
-                          {/* ReactTooltip er et modul som lar oss lett lage popup messages på elementer av vårt valg. Ved å bruke data-for i et element kan vi velge å binde en popup til det elementet
-                            ved å gi ReactTooltip id=elementets data-for verdi. Inne i <ReactTooltip  /> kan vi designe hvordan vi vil at popuppen skal bli.*/}
-                          <ReactTooltip id={"Reg" + post.user_id} aria-haspopup="true">
-                              <span> SMILEFJESBIRGER </span>
-                          </ReactTooltip>
+                          <li id={"Reg" + post.user_id} className="" key={post.first_name} onClick = { () => {this.RegisterUpdateUserInfoBox(post, event)}}>
+                          <a>{post.surname}, {post.first_name}</a>
                           </li>)
       })
     });
+  }
 
-    employee.getUnconfirmedCertificates().then((post: User[]) => {
+  loadLicenseList() {
+    employee.getUnconfirmedCertificates().then((post) => {
+      //Vi rendrer alle lisensene som folk har søkt om å få godkjent.
+      // alle listelementene rendres en gang og blir visuelt sortert med display = "none" i søkefunksjonen under. @SearchLicFilter/RegFilter
               licenselist = post
               console.log(licenselist)
               this.setState({
@@ -113,22 +120,17 @@ class AdminPage extends React.Component<State> {
                   let fullname: string = post.first_name + " " + post.surname
                   let surnamefirst: string = post.surname + " " + post.first_name
                   if(fullname.toUpperCase().indexOf(this.refs.LicSearch.value.toUpperCase()) > -1 || surnamefirst.toUpperCase().indexOf(this.refs.LicSearch.value.toUpperCase()) > -1 || post.certificate_name.toUpperCase().indexOf(this.refs.LicSearch.value.toUpperCase()) > -1){
-                    {/*   */}
-                          return    <li className="" key={post.first_name}>
+                          return    <li className="" key={post.first_name} onClick = { () => {this.CertificateUpdateUserInfoBox(post, event)}} >
                                      <a><div className="row"><div className="col-sm-6">{post.surname}, {post.first_name}</div><div className="col-sm-6"> - {post.certificate_name}</div></div></a>
                                      </li>
                    }})
               })
     })
   }
+  componentWillMount () {
+    this.loadRegisterList()
+    this.loadLicenseList()
 
-  expandLine(event: Event): void {
-    console.log(event)
-
-  }
-
-  contractLine(event: Event): void {
-    event.target.style.height = "32px"
   }
 
   SearchRegFilter(): void {
@@ -149,21 +151,8 @@ class AdminPage extends React.Component<State> {
 }
   }
 
-  // SearchLicFilter(): void {// Funksjonen blir kjørt hver gang noen skriver noe i input og sorterer ut elementene som ikke har bokstavene i fornavnet, etternavnet eller i sertifikatnavnet.
-    // this.setState({
-      // LicenseList: licenselist.map((post: User) => {
-              // let fullname: string = post.first_name + " " + post.surname
-              // let surnamefirst: string = post.surname + " " + post.first_name
-              // if(fullname.toUpperCase().indexOf(this.refs.LicSearch.value.toUpperCase()) > -1 || surnamefirst.toUpperCase().indexOf(this.refs.LicSearch.value.toUpperCase()) > -1 || post.certificate_name.toUpperCase().indexOf(this.refs.LicSearch.value.toUpperCase()) > -1){
-              //  Hvis bokstavene matcher, returner elementet til state.
-                // return     <li className="" key={post.first_name}>
-                           // <a><div className="row"><div className="col-sm-6">{post.surname}, {post.first_name}</div><div className="col-sm-6"> - {post.certificate_name}</div></div></a>
-                           // </li>
-               // }})
-    // })
-  // }
 
-   SearchLicFilter(): void {// Funksjonen blir kjørt hver gang noen skriver noe i input og sorterer ut elementene som ikke har bokstavene i fornavnet, etternavnet eller i sertifikatnavnet.
+   SearchLicFilter(): void { //* Funksjonen blir kjørt hver gang noen skriver noe i input og sorterer ut elementene som ikke har bokstavene i fornavnet, etternavnet eller i sertifikatnavnet. */
      let list = this.refs.LicenseList.getElementsByTagName("li")
      console.log(list)
          var input, filter, ul, li, a, i;
@@ -182,8 +171,83 @@ class AdminPage extends React.Component<State> {
             }
           }
         }
+
+        CertificateUpdateUserInfoBox(object: userCertificates, event) {
+            userInfoRef.refs.UIBName.textContent = "Navn: " + object.first_name + " " + object.surname;
+            userInfoRef.refs.UIBUsername.textContent = "Brukernavn: " + object.username;
+            userInfoRef.refs.UIBEmail.textContent = "Email: " + object.email;
+            userInfoRef.refs.UIBAdress.textContent = "Adresse: " + object.adress;
+            userInfoRef.refs.UIBCertificate.textContent = "Sertifikatnavn: " + object.certificate_name + ", Sertifikatid: " + object.certificate_id;
+            userInfoRef.refs.UIBCertificate.style.display = ""
+            RegisterClick = false;
+            ClickedLicence = object;
+            console.log(object)
+        }
+
+        RegisterUpdateUserInfoBox(object: User, event) {
+          userInfoRef.refs.UIBName.textContent = "Navn: " + object.first_name + " " + object.surname;
+          userInfoRef.refs.UIBUsername.textContent = "Brukernavn: " + object.username;
+          userInfoRef.refs.UIBEmail.textContent = "Email: " + object.email;
+          userInfoRef.refs.UIBAdress.textContent = "Adresse: " + object.adress;
+          userInfoRef.refs.UIBCertificate.textContent = ""
+          userInfoRef.refs.UIBCertificate.style.display = "none"
+          ClickedRegister = object;
+          RegisterClick = true;
+          console.log(object)
+        }
 }
 
+let userInfoRef;
+class UserInfo extends React.Component <{}> {
+  refs: {
+    UIBUsername: HTMLDivElement;
+    UIBCertificate: HTMLDivElement;
+    UIBName: HTMLDivElement;
+    UIBEmail: HTMLDivElement;
+    UIBAdress: HTMLDivElement;
+    AcceptBTN: HTMLInputElement;
+    DeclineBTN: HTMLInputElement;
+  }
+  constructor() {
+    super();
+    userInfoRef = this
+  }
+  render() {
+    return(
+    <div>
+      <div ref="UIBUsername">Informasjon om valgte brukere som har registrert seg eller lagt inn nye sertifikater til godkjenning vises her. For å velge trykk på tilgjengelige alternativer i boksene over.</div>
+      <div ref="UIBCertificate"></div>
+      <div ref="UIBName"></div>
+      <div ref="UIBEmail"></div>
+      <div ref="UIBAdress"></div>
+      <div id="UserInfoBoxBTNS">
+        <button ref="AcceptBTN">Aksepter</button>
+        <button ref="DeclineBTN>">Avvis</button>
+      </div>
+    </div>
+    )
+  }
+  componentDidMount(){
+    this.refs.AcceptBTN.onclick = () => {
+      if (RegisterClick == true) {
+        employee.acceptNewUser(ClickedRegister.user_id).then(() => {
+          AdminPageRef.loadRegisterList()
+          ClickedRegister=""
+        })
+      } else {
+        console.log(ClickedLicence)
+        employee.acceptCertificate(ClickedLicence.user_id, ClickedLicence.certificate_id).then(() => {
+          AdminPageRef.loadLicenseList();
+          ClickedLicence=''
+        })
+      }
+
+    }
+    // this.refs.DeclineBTN.onclick = () => {
+    //
+    // }
+  }
+}
 
 
 export { AdminPage }

@@ -10,9 +10,12 @@ import { ProgramRender, programRender } from "./app.js"
 import createHashHistory from 'history/createHashHistory';
 const history = createHashHistory();
 
-class LoginWindow extends React.Component {
+class LoginWindow extends React.Component<{}> {
   constructor(){
     super();
+  }
+  refs: {
+    login: HTMLInputElement;
   }
 
   render() {
@@ -25,8 +28,6 @@ class LoginWindow extends React.Component {
                 <input type="password" id="loginPassword"></input><p></p>
                 <button ref="login">Login</button>
                 <p></p>
-                <button onClick={forside2}>Til forsiden</button>
-                <p></p>
                 <button><Link to='/page2'>Til Registrering</Link></button>
             </div>
         </div>
@@ -35,15 +36,17 @@ class LoginWindow extends React.Component {
 
   componentDidMount() {
     this.refs.login.onclick = () => {
-      let mail = document.getElementById("loginMail").value
-      let pass = document.getElementById("loginPassword").value
+      let mail: string = document.getElementById("loginMail").value
+      let pass: string = document.getElementById("loginPassword").value
       console.log(mail + ' ' + pass)
-      employee.getLogin(mail).then((notes) => {
-        console.log(notes[0].password);
-        if (passwordHash.verify(pass, notes[0].password) == true) {
+      employee.getLogin(mail).then((notes: User) => {
+        console.log(notes.password);
+        console.log(notes)
+
+        if (passwordHash.verify(pass, notes.password) == true) {
           alert("password match")
           localStorage.removeItem('signedInUser')
-          localStorage.setItem('signedInUser', JSON.stringify(notes[0]))
+          localStorage.setItem('signedInUser', JSON.stringify(notes))
           programRender.forceUpdate();
         } else {
           alert("password does not match")
