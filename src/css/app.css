@@ -6,6 +6,10 @@ html, body {
   max-width: 1920px;
 }
 
+.centered {
+margin: auto;
+}
+
 .all {
   height: calc(100% - 2px);
   width: calc(100% - 2px);
@@ -68,10 +72,10 @@ html, body {
 }
 
 .loginContent {
+  margin-top: 75px;
   margin-left: auto;
   margin-right: auto;
   width: 400px;
-  height: 400px;
   border: 1px solid Black;
   display: block;
   background-color: #8B8484;
@@ -221,10 +225,10 @@ html, body, .app {
   border: 1px solid black;
   border-radius: 10px;
   position: absolute;
-  left: 32.5%;
-  top: 25%;
-  width: 35%;
-  height: 50%;
+  left: 45px;
+  top: 100px;
+  width: 500px;
+  height: 500px;
   margin: auto;
   background: white;
 }

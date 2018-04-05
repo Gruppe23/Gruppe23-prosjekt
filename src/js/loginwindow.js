@@ -7,6 +7,7 @@ import { Link, HashRouter, Switch, Route } from 'react-router-dom';
 import { employee } from "./services"
 import { forside2 } from "./forside.js"
 import { ProgramRender, programRender } from "./app.js"
+import {User} from './services';
 import createHashHistory from 'history/createHashHistory';
 const history = createHashHistory();
 
@@ -15,7 +16,9 @@ class LoginWindow extends React.Component<{}> {
     super();
   }
   refs: {
-    login: HTMLInputElement;
+    login: HTMLInputElement,
+    loginMail: HTMLInputElement,
+    loginPassword: HTMLInputElement,
   }
 
   render() {
@@ -23,9 +26,9 @@ class LoginWindow extends React.Component<{}> {
       <div className="login">
             <div className="loginelements">
                 <span>Login<p></p></span>
-                <input type="text" id="loginMail"></input><p></p>
+                <input type="text" ref="loginMail"></input><p></p>
                 <span>Password<p></p></span>
-                <input type="password" id="loginPassword"></input><p></p>
+                <input type="password" compareFn="loginPassword"></input><p></p>
                 <button ref="login">Login</button>
                 <p></p>
                 <button><Link to='/page2'>Til Registrering</Link></button>
@@ -36,8 +39,8 @@ class LoginWindow extends React.Component<{}> {
 
   componentDidMount() {
     this.refs.login.onclick = () => {
-      let mail: string = document.getElementById("loginMail").value
-      let pass: string = document.getElementById("loginPassword").value
+      let mail: string = this.refs.loginMail.value
+      let pass: string = this.refs.loginPassword.value
       console.log(mail + ' ' + pass)
       employee.getLogin(mail).then((notes: User) => {
         console.log(notes.password);

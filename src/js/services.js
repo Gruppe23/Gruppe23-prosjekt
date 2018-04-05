@@ -182,9 +182,9 @@ class getEmployee {
   }
 
 
-  signUp(first_name: string, surname: string, email: string, adress: string, zipcode: number, password: string): Promise<void>{
+  signUp(first_name: string, surname: string, email: string, adress: string, zipcode: number, password: string, username: string ): Promise<void>{
     return new Promise((resolve, reject) => {
-      connection.query('INSERT INTO employee (first_name, surname, email, adress, zipcode, password) VALUES (?, ?, ?, ?, ?, ?)', [first_name, surname, email, adress, zipcode, password], (error, result) => {
+      connection.query('INSERT INTO employee (first_name, surname, email, adress, zipcode, password, username) VALUES (?, ?, ?, ?, ?, ?, ?)', [first_name, surname, email, adress, zipcode, password, username], (error, result) => {
         if(error) {
           reject(error);
           return;

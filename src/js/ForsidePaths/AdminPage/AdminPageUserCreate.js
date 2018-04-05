@@ -2,19 +2,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route } from 'react-router-dom';
-import {employee} from '../../services';
+import {RegisterWindow} from '../../registerwindow';
+import { employee } from '../../services';
 
- class AdminPageUserCreate extends React.Component {
+let userCreateRef;
+ class AdminPageUserCreate extends React.Component<{}> {
    refs: {
-     Signupbtn: HTMLInputElement,
-     firstname: HTMLInputElement,
-     surname: HTMLInputElement,
-     email: HTMLInputElement,
-     confirmemail: HTMLInputElement,
-     pwd: HTMLInputElement,
-     confirmpwd: HTMLInputElement,
-
+     Signupbtn: ?HTMLButtonElement,
+     firstname: ?HTMLInputElement,
+     surname: ?HTMLInputElement,
+     email: ?HTMLInputElement,
+     confirmemail: ?HTMLInputElement,
+     pwd: ?HTMLInputElement,
+     confirmpwd: ?HTMLInputElement,
+     adress: ?HTMLInputElement,
+     username: ?HTMLInputElement,
+     zipcode: ?HTMLInputElement,
    }
+   constructor() {
+     super();
+     userCreateRef = this;
+   }
+
   render() {
     return (
     <div className="popup">
@@ -41,7 +50,7 @@ import {employee} from '../../services';
           </div>
 
         <div className="form-group-horizontal">
-                <button ref="Signupbtn" className="btn btn-default">Opprett Bruker</button>
+                <button ref="Signupbtn" className="btn btn-default" onClick={this.register}>Opprett Bruker</button>
                 <button className="btn btn-default" onClick={this.props.closePopup}> Lukk </button>
         </div>
 
@@ -51,6 +60,14 @@ import {employee} from '../../services';
     <div className="col-sm-6">
         <span>Kontoinfo</span>
     <form className="form">
+    <div className="form-group">
+        <label className="control-label col-sm-4">Adresse: </label>
+        <input type="text" className="form-control" ref="adress" placeholder="Fornavn"/>
+    </div>
+    <div className="form-group">
+        <label className="control-label col-sm-4">Postnr: </label>
+        <input type="text" className="form-control" ref="zipcode" placeholder="Fornavn"/>
+    </div>
     <div className="form-group">
         <label className="control-label col-sm-4" htmlFor="username">Brukernavn: </label>
         <input type="text" className="form-control" ref="username" placeholder="Fornavn"/>
@@ -69,13 +86,15 @@ import {employee} from '../../services';
     </div>
     )
 }
-componentDidMount(){
-  this.refs.Signupbtn.onClick = () =>{
-    if (this.refs.pwd.value == this.refs.confirmpwd && this.refs.email.value == this.refs.confirmemail.value){
-      employee.signUpUser(this.refs.firstname.value, this.refs.surname.value, this.refs.username.value)
-    }
 
-}
+register(){
+    console.log("trykka")
+    if (userCreateRef.refs.pwd.value == userCreateRef.refs.confirmpwd.value && userCreateRef.refs.email.value == userCreateRef.refs.confirmemail.value){
+      console.log("success")
+        employee.signUp(userCreateRef.refs.firstname.value, userCreateRef.refs.surname.value, userCreateRef.refs.email.value, userCreateRef.refs.adress.value, userCreateRef.refs.zipcode.value, userCreateRef.refs.pwd.value, userCreateRef.refs.adress.value)
+    } else {
+      console.log("fail")
+    }
   }
 }
 
