@@ -45,6 +45,24 @@ class userCertificates {
   certificate_id: number;
   employee_id: number;
 }
+class userRoles {
+  first_name: string;
+  surname: string;
+  username: string;
+  user_id: number;
+  role_id: number;
+  role_name: string;
+  role_description: string;
+}
+
+class roleCertificates {
+  role_id: number;
+  certificate_id: number;
+  role_name: number;
+  certificate_name: string;
+  valid_time: number;
+}
+
 
 // Setup database server reconnection when server timeouts connection:
 let connection;
@@ -90,8 +108,15 @@ class getEmployee {
   }
 
   getSignedInUser(): Promise<User[]> {
+    return new Promise((resolve, reject) => {
     let item = localStorage.getItem('signedInUser'); // Get User-object from browser
-    return JSON.parse(item);
+    resolve(JSON.parse(item));
+  })
+  }
+
+  getSignedInUser2(): Promise<User[]> {
+    let item = localStorage.getItem('signedInUser'); // Get User-object from browser
+    return JSON.parse(item)
   }
 
   getEmployee(mail: number): Promise<User> {
@@ -122,7 +147,7 @@ class getEmployee {
     });
   }
 
-  getRoles(): Promise<Object[]> {
+  getRoles(): Promise<roleCertificates[]> {
     let nada = 0
     return new Promise((resolve, reject) => {
       connection.query('select role.role_id, rc.certificate_id, c.certificate_name, role.role_name from (role_certificate rc inner join certificate c on c.certificate_id = rc.certificate_id) INNER JOIN role on role.role_id = rc.role_id', [nada], (error, result) => {
@@ -135,29 +160,44 @@ class getEmployee {
     });
   }
 
-  getUserCertifications(id): Promise<Object[]> {
-    return new Promise ((resolve, reject) => {
-      connection.query("select * from employee_certificate where employee_id = ?", [id], (error, result) => {
+  getDistinctRoles(): Promise<roleCertificates[]> {
+    let nada = 0
+    return new Promise((resolve, reject) => {
+      connection.query('select * from role', (error, result) => {
         if(error) {
           reject(error);
           return;
         }
         resolve(result);
-      })
-    })
+      });
+    });
   }
 
-  getUserRoles(id: number): Promise<Object[]> {
+  getUserCertifications(id): Promise<userCertificates[]> {
+    return new Promise ((resolve, reject) => {
+      connection.query("select * from employee_certificate ec inner join certificate c on c.certificate_id = ec.certificate_id where employee_id = ?", [id], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+
+  getUserRoles(id: number): Promise<userRoles[]> {
     return new Promise ((resolve, reject) => {
       let userRolesReturn = []
       employee.getRoles().then((roles) => {
         employee.getUserCertifications(id).then((user_cert) => {
-          let x;
+          employee.getDistinctRoles().then((distinct_roles) => {
+          let x: ArrayIndex;
           let rolesArr = []
           rolesArr.push(new Array())
-          for (x in roles){
+          //SKjekker hvert rolle opp imot kvalifikasjonene
+          for (x in distinct_roles){
             rolesArr.push(new Array())
-            rolesArr[roles[x].role_id].push(roles[x].certificate_id)
+            rolesArr[distinct_roles[x].role_id].push(distinct_roles[x].certificate_id)
             }
             console.log(user_cert)
             console.log (roles)
@@ -166,7 +206,6 @@ class getEmployee {
             let matchCounter = 0
             for (y in rolesArr[x]) {
               let z;
-
               for (z in user_cert) {
                 console.log(rolesArr[x][y] +" " + user_cert[z].certificate_id)
                 if (rolesArr[x][y] == user_cert[z].certificate_id){
@@ -188,9 +227,11 @@ class getEmployee {
               }
             }
           }
+          resolve(userRolesReturn)
         })
       })
-      resolve(userRolesReturn)
+      })
+
     })
   }
 
@@ -209,7 +250,7 @@ class getEmployee {
 
   getLogin(mail: string): Promise<User> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT username, email, password, status, user_type FROM employee WHERE username=?', [mail], (error, result) => {
+      connection.query('SELECT * FROM employee WHERE username=?', [mail], (error, result) => {
         if(error) {
           reject(error);
           return;

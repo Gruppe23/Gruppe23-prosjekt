@@ -26,12 +26,14 @@ class Forside2 extends React.Component<{}> {
     console.log(userInfo)
     let admin: component;
     let adminpath: reactComponent;
-    if(userInfo.user_type == 2){
-       admin = <li><Link to='/AdminPage'>Admin page</Link></li>
-       adminpath = <Route exact path="/AdminPage" component={AdminPage} />
-    } else {
-      admin = <span> Velkommen til Røde Kors appen!</span>;
+    if(userInfo){
+      if(userInfo.user_type == 2){
+        admin = <li><Link to='/AdminPage'>Admin page</Link></li>
+        adminpath = <Route exact path="/AdminPage" component={AdminPage} />
+      } else {
+        admin = <span> Velkommen til Røde Kors appen!</span>;
     }
+  }
     return(
           <HashRouter>
             <div className="full">
@@ -43,8 +45,8 @@ class Forside2 extends React.Component<{}> {
                   <ul className="nav navbar-nav">
                     <li><Link to='/forside'>Home</Link></li>
                     <li><Link to='/kalender'>Kalender</Link></li>
-                    <li><Link to='/profil'>Profil</Link></li>
-                    <li><Link ref="logout" to="/logout"> Log ut</Link></li>
+                    <li><Link to='/profil:user_id'>Profil</Link></li>
+                    <li><Link ref="/logout" to="/logout"> Log ut</Link></li>
                     {admin}
 
                   </ul>
@@ -53,7 +55,7 @@ class Forside2 extends React.Component<{}> {
               <div className="forsideContent">
                 <Switch>
                   <Route exact path='/forside' component={WelcomePage} />
-                  <Route exact path='/profil' component={ProfilSide} />
+                  <Route exact path='/profil:user_id' component={ProfilSide} />
                   <Route exact path='/kalender' component={Kalender} />
                   <Route exact path='/logout' component={Logout} />
                   {adminpath}

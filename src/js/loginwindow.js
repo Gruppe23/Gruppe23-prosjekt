@@ -28,7 +28,7 @@ class LoginWindow extends React.Component<{}> {
                 <span>Login<p></p></span>
                 <input type="text" ref="loginMail"></input><p></p>
                 <span>Password<p></p></span>
-                <input type="password" compareFn="loginPassword"></input><p></p>
+                <input type="password" ref="loginPassword"></input><p></p>
                 <button ref="login">Login</button>
                 <p></p>
                 <button><Link to='/page2'>Til Registrering</Link></button>
@@ -46,13 +46,15 @@ class LoginWindow extends React.Component<{}> {
         console.log(notes.password);
         console.log(notes)
 
-        if (passwordHash.verify(pass, notes.password) == true) {
+        if (passwordHash.verify(pass, notes.password) == true && notes.status == 1)  {
           alert("password match")
           localStorage.removeItem('signedInUser')
           localStorage.setItem('signedInUser', JSON.stringify(notes))
           programRender.forceUpdate();
-        } else {
+        } else if(notes.status == 1) {
           alert("password does not match")
+        } else {
+          alert("Your account is not verified")
         }
     }).catch((error) => {
       console.log('Error getting notes: ' + error);
