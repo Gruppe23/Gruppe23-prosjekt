@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route } from 'react-router-dom';
 import {RegisterWindow} from '../../registerwindow';
 import { employee } from '../../services';
+import {AdminPage} from '../Adminpage';
 
 let userCreateRef;
  class AdminPageUserCreate extends React.Component<{}> {
@@ -91,7 +92,9 @@ register(){
     console.log("trykka")
     if (userCreateRef.refs.pwd.value == userCreateRef.refs.confirmpwd.value && userCreateRef.refs.email.value == userCreateRef.refs.confirmemail.value){
       console.log("success")
-        employee.signUp(userCreateRef.refs.firstname.value, userCreateRef.refs.surname.value, userCreateRef.refs.email.value, userCreateRef.refs.adress.value, userCreateRef.refs.zipcode.value, userCreateRef.refs.pwd.value, userCreateRef.refs.adress.value)
+        employee.signUp(userCreateRef.refs.firstname.value, userCreateRef.refs.surname.value, userCreateRef.refs.email.value, userCreateRef.refs.adress.value, userCreateRef.refs.zipcode.value, userCreateRef.refs.pwd.value, userCreateRef.refs.adress.value).then(() => {
+          AdminPageRef.loadRegisterList()
+        })
     } else {
       console.log("fail")
     }

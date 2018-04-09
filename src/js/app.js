@@ -20,7 +20,9 @@ const history = createHashHistory();
 //==========Rendering==========================================================================
 //======================================================================================================
 //ProgramRender er hoved DOM Objektet hvor alle andre DOM objekter blir dynamisk endret ved hjelp av React State.
-
+employee.getUserRoles(2).then((result) => {
+  console.log(result)
+})
 
 class ProgramRender extends React.Component<{}> {
   constructor() {

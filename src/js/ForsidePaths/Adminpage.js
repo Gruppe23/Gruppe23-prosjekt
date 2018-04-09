@@ -98,7 +98,6 @@ class AdminPage extends React.Component<{}> {
     employee.getNewUsers().then((post) => {
       //Når AdminPage lastes inn vil alle brukere som ikke har blitt godkjent hentes fra database og presenteres i en søkbar liste.
       reglist = post
-      console.log(reglist)
       this.setState({ // vi lager alle elementene i "nye registrerte" området
         RegisterList: reglist.map((post: User) =>
                           /*Vi oppretter alle linjene i selecten, funksjonen map er basicly en For løkke, den tar for seg hvert element i reglist og oppretter react-elementene under.
@@ -115,7 +114,6 @@ class AdminPage extends React.Component<{}> {
       //Vi rendrer alle lisensene som folk har søkt om å få godkjent.
       // alle listelementene rendres en gang og blir visuelt sortert med display = "none" i søkefunksjonen under. @SearchLicFilter/RegFilter
               licenselist = post
-              console.log(licenselist)
               this.setState({
                 LicenseList: licenselist.map((post) => {
                           return    <li className="" key={post.first_name} onClick = { () => {this.CertificateUpdateUserInfoBox(post, event)}} >

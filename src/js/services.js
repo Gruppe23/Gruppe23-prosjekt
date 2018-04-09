@@ -122,6 +122,78 @@ class getEmployee {
     });
   }
 
+  getRoles(): Promise<Object[]> {
+    let nada = 0
+    return new Promise((resolve, reject) => {
+      connection.query('select role.role_id, rc.certificate_id, c.certificate_name, role.role_name from (role_certificate rc inner join certificate c on c.certificate_id = rc.certificate_id) INNER JOIN role on role.role_id = rc.role_id', [nada], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+
+  getUserCertifications(id): Promise<Object[]> {
+    return new Promise ((resolve, reject) => {
+      connection.query("select * from employee_certificate where employee_id = ?", [id], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      })
+    })
+  }
+
+  getUserRoles(id: number): Promise<Object[]> {
+    return new Promise ((resolve, reject) => {
+      let userRolesReturn = []
+      employee.getRoles().then((roles) => {
+        employee.getUserCertifications(id).then((user_cert) => {
+          let x;
+          let rolesArr = []
+          rolesArr.push(new Array())
+          for (x in roles){
+            rolesArr.push(new Array())
+            rolesArr[roles[x].role_id].push(roles[x].certificate_id)
+            }
+            console.log(user_cert)
+            console.log (roles)
+          for (x in rolesArr) {
+            let y;
+            let matchCounter = 0
+            for (y in rolesArr[x]) {
+              let z;
+
+              for (z in user_cert) {
+                console.log(rolesArr[x][y] +" " + user_cert[z].certificate_id)
+                if (rolesArr[x][y] == user_cert[z].certificate_id){
+                  console.log("MATCH")
+                  matchCounter++
+                } else {
+                console.log("NOTMATCH")
+                }
+              }
+            }
+            if (matchCounter == rolesArr[x].length && matchCounter != 0){
+              let d;
+              for (d in roles) {
+                let c;
+                if (roles[d].role_id == x){
+                  console.log("USER QUALIFIED AS: " +  roles[d].role_name)
+                  userRolesReturn.push({role_name: roles[d].role_name, role_id: x})
+                }
+              }
+            }
+          }
+        })
+      })
+      resolve(userRolesReturn)
+    })
+  }
+
   acceptNewUser(id: number): Promise<void> {
     return new Promise((resolve, reject) => {
       connection.query('UPDATE employee SET status = 1 WHERE user_id = ?', [id], (error, result) => {
@@ -142,7 +214,6 @@ class getEmployee {
           reject(error);
           return;
         }
-
         console.log(result)
         resolve(result[0]);
       });
@@ -176,7 +247,7 @@ class getEmployee {
           reject(error);
           return;
         }
-        resolve();
+          resolve();
       })
     })
   }
@@ -192,39 +263,9 @@ class getEmployee {
           resolve();
       });
     });
-
   }
-
 }
 
 
-// // Class that performs database queries related to customers
-// class getEmployee {
-//   getEmployees(callback) {
-//       connection.query('SELECT * FROM certificate', (error, result) => {
-//       if (error) throw error;
-//
-//       callback(result);
-//     });
-//   }
-//
-//   getEmployeeByMail(mail, callback) {
-//     connection.query('SELECT * FROM employees WHERE email=?', [id], (error, result) => {
-//       if (error) throw error;
-//
-//       callback(result[0]);
-//     });
-//   }
-//
-//   addEmployee(firstName, city, callback) {
-//     connection.query('INSERT INTO Customers (firstName, city) values (?, ?)', [firstName, city], (error, result) => {
-//       if (error) throw error;
-//
-//       callback();
-//     });
-//
-//   }
-// }
 let employee = new getEmployee();
-
 export { employee, User, userCertificates };
