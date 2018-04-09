@@ -98,7 +98,22 @@ class getEmployee {
     programRender.forceUpdate()
     history.push("/page1")
   }
+  
+  getEvents(): Promise< ?Object> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM events', (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+
+        resolve(result);
+      });
+    });
+  }
+
 }
+
 
 
 // // Class that performs database queries related to customers
