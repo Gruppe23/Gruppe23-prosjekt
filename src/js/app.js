@@ -18,6 +18,35 @@ import { LoginWindow } from "./loginwindow.js"
 import { RegisterWindow } from "./registerwindow.js"
 import createHashHistory from 'history/createHashHistory';
 const history = createHashHistory();
+
+// https://medium.com/@manojsinghnegi/sending-an-email-using-nodemailer-gmail-7cfa0712a799
+//Email service setup
+var transporter = nodemailer.createTransport({
+ service: 'gmail',
+ auth: {
+        user: 'gruppe23prosjekt@gmail.com',
+        pass: 'superl3tt'
+    }
+});
+
+const mailOptions = {
+  from: 'gruppe23prosjekt@gmail.com', // Avsender
+  to: 'aslak.kh@live.no', // Mottakere
+  subject: 'Subject of your email', // Subject line
+  html: '<p>Your html here</p>'
+}; /* Innholdet i mailen skrives inn i HTML feltet. Må kombineres med
+SQL spørringer */
+
+
+//Render som sender mail
+transporter.sendMail(mailOptions, function (err, info) {
+   if(err)
+     console.log(err)
+   else
+     console.log(info);
+});
+
+
 //======================================================================================================
 //==========Rendering==========================================================================
 //======================================================================================================
