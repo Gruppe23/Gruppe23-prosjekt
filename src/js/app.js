@@ -1,5 +1,4 @@
 // @flow
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
@@ -17,11 +16,13 @@ import { Forside2, forside2 } from "./forside.js"
 import { LoginWindow } from "./loginwindow.js"
 import { RegisterWindow } from "./registerwindow.js"
 import createHashHistory from 'history/createHashHistory';
+//import {nodemailer} from 'nodemailer';
 const history = createHashHistory();
-
 // https://medium.com/@manojsinghnegi/sending-an-email-using-nodemailer-gmail-7cfa0712a799
-//Email service setup
-var transporter = nodemailer.createTransport({
+
+let nodemailer = require('nodemailer');
+
+let transporter = nodemailer.createTransport({
  service: 'gmail',
  auth: {
         user: 'gruppe23prosjekt@gmail.com',
@@ -30,15 +31,12 @@ var transporter = nodemailer.createTransport({
 });
 
 const mailOptions = {
-  from: 'gruppe23prosjekt@gmail.com', // Avsender
-  to: 'aslak.kh@live.no', // Mottakere
+  from: 'gruppe23prosjekt@gmail.com', // sender address
+  to: 'aslak.kh@live.no', // list of receivers
   subject: 'Subject of your email', // Subject line
-  html: '<p>Your html here</p>'
-}; /* Innholdet i mailen skrives inn i HTML feltet. Må kombineres med
-SQL spørringer */
+  html: '<p>Your html here</p>'// plain text body
+};
 
-
-//Render som sender mail
 transporter.sendMail(mailOptions, function (err, info) {
    if(err)
      console.log(err)
@@ -46,12 +44,10 @@ transporter.sendMail(mailOptions, function (err, info) {
      console.log(info);
 });
 
-
 //======================================================================================================
 //==========Rendering==========================================================================
 //======================================================================================================
 //ProgramRender er hoved DOM Objektet hvor alle andre DOM objekter blir dynamisk endret ved hjelp av React State.
-
 
 class ProgramRender extends React.Component<{}> {
   constructor() {
