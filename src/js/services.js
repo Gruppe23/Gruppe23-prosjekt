@@ -139,7 +139,7 @@ class getEmployee {
           return;
         }
 
-        resolve(result);
+        resolve(result[0]);
       });
     });
   }

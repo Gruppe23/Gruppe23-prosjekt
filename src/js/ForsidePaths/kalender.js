@@ -46,11 +46,17 @@ class Kalender extends React.Component<{}> {
         {this.state.showPopup ?
           <EventPopup
             text="Close Me"
-            closePopup={this.togglePopup.bind(this)}
+            closePopup={this.closePopup.bind(this)}
             />:null
         }
       </div>
     )
+  }
+
+  closePopup(){
+    this.setState({
+      showPopup: !this.state.showPopup
+    });
   }
 
   togglePopup(event) {
@@ -70,7 +76,7 @@ class Kalender extends React.Component<{}> {
       employee.getEvents().then((events) => {
         employee.getShifts(user.user_id).then((shifts) => {
           let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
-          for(let x in shifts){events.push({id: shifts[x].event_id ,start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employe_id, rolle: shifts[x].role_id,title: shifts[x].shift_name })}
+          for(let x in shifts){events.push({id: shifts[x].event_id ,start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id,title: shifts[x].shift_name })}
           console.log(event);
           this.setState({kalender:
             <BigCalendar

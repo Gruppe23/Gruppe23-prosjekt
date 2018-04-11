@@ -9,6 +9,7 @@
     "bootstrap": "^4.0.0",
     "flow": "^0.2.3",
     "flow-react": "^0.1.1",
+    "google-maps-react": "^2.0.0",
     "history": "^4.7.2",
     "jquery": "^3.3.1",
     "moment": "^2.22.0",
