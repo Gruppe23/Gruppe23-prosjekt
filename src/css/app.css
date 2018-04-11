@@ -210,6 +210,16 @@ html, body, .app {
   width: 100%;
   height: 100vh;
 }
+.TopRight {
+  position: fixed;
+  width: 25px;
+  height: 25px;
+  top:50px;
+  right:50px;
+}
+.red {
+  color: red !important;
+}
 .popup {
   position: fixed;
   width: 100%;
@@ -240,7 +250,7 @@ html, body, .app {
 
 .forsideContent{
   height: 100%;
-  margin-top: 45px;
+  margin-top: 55px;
 }
 
 #AcceptUsersBox {
@@ -260,6 +270,11 @@ html, body, .app {
   margin: auto;
   margin-top: 20px;
   background-color: white;
+}
+#UserList {
+  height: 100%;
+  width:300px;
+  float: left;
 }
 
 #UserInfoBox {

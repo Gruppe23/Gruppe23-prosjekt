@@ -29,39 +29,32 @@ class LoginWindow extends React.Component<{}> {
                 <input type="text" ref="loginMail"></input><p></p>
                 <span>Password<p></p></span>
                 <input type="password" ref="loginPassword"></input><p></p>
-                <button ref="login">Login</button>
+                <button ref="login" onClick= {() => {this.login()}}>Login</button>
                 <p></p>
                 <button><Link to='/page2'>Til Registrering</Link></button>
             </div>
         </div>
     );
   }
+ login(){
+     let mail: string = this.refs.loginMail.value
+     let pass: string = this.refs.loginPassword.value
+     employee.getLogin(mail).then((notes: User) => {
+       if (passwordHash.verify(pass, notes.password) == true && notes.status == 1)  {
+         alert("password match")
+         localStorage.removeItem('signedInUser')
+         localStorage.setItem('signedInUser', JSON.stringify(notes))
+         programRender.forceUpdate();
+       } else if(notes.status == 1) {
+         alert("password does not match")
+       } else {
+         alert("Your account is not verified")
+       }
+   }).catch((error) => {
+     console.log('Error getting notes: ' + error);
+   });
+ }
 
-  componentDidMount() {
-    this.refs.login.onclick = () => {
-      let mail: string = this.refs.loginMail.value
-      let pass: string = this.refs.loginPassword.value
-      console.log(mail + ' ' + pass)
-      employee.getLogin(mail).then((notes: User) => {
-        console.log(notes.password);
-        console.log(notes)
-
-        if (passwordHash.verify(pass, notes.password) == true && notes.status == 1)  {
-          alert("password match")
-          localStorage.removeItem('signedInUser')
-          localStorage.setItem('signedInUser', JSON.stringify(notes))
-          programRender.forceUpdate();
-        } else if(notes.status == 1) {
-          alert("password does not match")
-        } else {
-          alert("Your account is not verified")
-        }
-    }).catch((error) => {
-      console.log('Error getting notes: ' + error);
-    });
-  }
-console.log("LoginWindow Did mount")
-  };
 }
 
 export { LoginWindow }

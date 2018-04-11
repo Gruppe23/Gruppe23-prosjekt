@@ -96,15 +96,63 @@ class getEmployee {
 
   getEmployees(): Promise<User> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT username, first_name, surname, adress, zipcode FROM employee', (error, result) => {
+      connection.query('SELECT username, user_id, first_name, surname, adress, zipcode, status FROM employee', (error, result) => {
         if(error) {
           reject(error);
           return;
         }
-
         resolve(result);
       });
     });
+  }
+
+  getEmployee(mail: number): Promise<User> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM employee WHERE user_id=?', [mail], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+
+  getNewUsers(): Promise<User[]> {
+    let nada = 0
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT first_name, surname, adress, email, user_id FROM employee where status = ? ORDER BY surname', [nada], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+
+  acceptNewUser(id: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      connection.query('UPDATE employee SET status = 1 WHERE user_id = ?', [id], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve();
+      });
+    });
+  }
+
+  deactivateUser(employeeid: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      connection.query('UPDATE employee SET status = 0 WHERE employee_id = ?', [employeeid, certificateid], (error, result)=> {
+        if(error) {
+          reject(error);
+          return;
+        }
+          resolve();
+      })
+    })
   }
 
   getSignedInUser(): Promise<User[]> {
@@ -119,33 +167,7 @@ class getEmployee {
     return JSON.parse(item)
   }
 
-  getEmployee(mail: number): Promise<User> {
-    return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM employee WHERE user_id=?', [mail], (error, result) => {
-        if(error) {
-          reject(error);
-          return;
-        }
-        console.log(result)
-        resolve(result);
-      });
-    });
-  }
 
-
-
-  getNewUsers(): Promise<User[]> {
-    let nada = 0
-    return new Promise((resolve, reject) => {
-      connection.query('SELECT first_name, surname, adress, email, user_id FROM employee where status = ? ORDER BY surname', [nada], (error, result) => {
-        if(error) {
-          reject(error);
-          return;
-        }
-        resolve(result);
-      });
-    });
-  }
 
   getRoles(): Promise<roleCertificates[]> {
     let nada = 0
@@ -173,18 +195,6 @@ class getEmployee {
     });
   }
 
-  getUserCertifications(id): Promise<userCertificates[]> {
-    return new Promise ((resolve, reject) => {
-      connection.query("select * from employee_certificate ec inner join certificate c on c.certificate_id = ec.certificate_id where employee_id = ?", [id], (error, result) => {
-        if(error) {
-          reject(error);
-          return;
-        }
-        resolve(result);
-      });
-    });
-  }
-
   getUserRoles(id: number): Promise<userRoles[]> {
     return new Promise ((resolve, reject) => {
       let userRolesReturn = []
@@ -195,33 +205,27 @@ class getEmployee {
           let rolesArr = []
           rolesArr.push(new Array())
           //SKjekker hvert rolle opp imot kvalifikasjonene
-          for (x in distinct_roles){
+          for (x in roles){
             rolesArr.push(new Array())
-            rolesArr[distinct_roles[x].role_id].push(distinct_roles[x].certificate_id)
+            rolesArr[roles[x].role_id].push(roles[x].certificate_id)
             }
-            console.log(user_cert)
-            console.log (roles)
           for (x in rolesArr) {
             let y;
             let matchCounter = 0
             for (y in rolesArr[x]) {
               let z;
               for (z in user_cert) {
-                console.log(rolesArr[x][y] +" " + user_cert[z].certificate_id)
                 if (rolesArr[x][y] == user_cert[z].certificate_id){
-                  console.log("MATCH")
                   matchCounter++
                 } else {
-                console.log("NOTMATCH")
                 }
               }
             }
             if (matchCounter == rolesArr[x].length && matchCounter != 0){
               let d;
-              for (d in roles) {
+              for (d in distinct_roles) {
                 let c;
-                if (roles[d].role_id == x){
-                  console.log("USER QUALIFIED AS: " +  roles[d].role_name)
+                if (distinct_roles[d].role_id == x){
                   userRolesReturn.push({role_name: roles[d].role_name, role_id: x})
                 }
               }
@@ -231,54 +235,46 @@ class getEmployee {
         })
       })
       })
-
     })
   }
 
-  acceptNewUser(id: number): Promise<void> {
+  getUsersWithRole(id: number, count: number): Promise<Object[]>  {
+  return new Promise((resolve, reject) => {
+    connection.query("Select count(*) as CertCount, rc.role_id, e.user_id from employee e inner Join (employee_certificate ec INNER JOIN role_certificate rc on rc.certificate_id = ec.certificate_id) on e.user_id = ec.employee_id where rc.role_id = ? GROUP BY e.user_id HAVINg CertCount = ?", [id, count], (error, result) => {
+      if(error) {
+        reject(error);
+        return;
+      }
+      resolve();
+    })
+  })
+}
+
+  getCertificates(): Promise<userCertificates[]> {
+    let nada = 0
     return new Promise((resolve, reject) => {
-      connection.query('UPDATE employee SET status = 1 WHERE user_id = ?', [id], (error, result) => {
-        if(error) {
-          reject(error);
-          return;
-        }
-        resolve();
-      });
-    });
-  }
-
-
-  getLogin(mail: string): Promise<User> {
-    return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM employee WHERE username=?', [mail], (error, result) => {
-        if(error) {
-          reject(error);
-          return;
-        }
-        console.log(result)
-        resolve(result[0]);
-      });
-    });
-  }
-
-  signOut() {
-    localStorage.removeItem('signedInUser')
-    programRender.forceUpdate()
-    history.push("/page1")
-  }
-  //Hente ut alle certifikater som ikke har blitt godkjent
-
-
-  getUnconfirmedCertificates(): Promise<userCertificates[]> {
-    return new Promise((resolve, reject) => {
-      connection.query('SELECT employee.username, certificate.certificate_id, employee.first_name, employee.email, employee.adress, employee.surname, employee.user_id, certificate.certificate_name FROM ((employee INNER JOIN employee_certificate ON employee.user_id = employee_certificate.employee_id) INNER JOIN certificate ON certificate.certificate_id = employee_certificate.certificate_id) WHERE employee_certificate.confirmed = 0 ORDER BY surname', (error, result) => {
+      connection.query('select * from certificate', (error, result) => {
         if(error) {
           reject(error);
           return;
         }
         resolve(result);
-      })
-    })
+      });
+    });
+  }
+
+  addCertificate(user_id: number, certificate_id: number, confirmed): Promise<string>{
+    return new Promise((resolve, reject) => {
+      let date = new Date()
+      connection.query('INSERT INTO employee_certificate (employee_id, certificate_id, certification_date, confirmed) VALUES (?, ?, ?, ?)', [user_id, certificate_id, date, confirmed], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+
+          resolve("Certificate was successfully added to database");
+      });
+    });
   }
 
   acceptCertificate(employeeid: number, certificateid: number): Promise<void> {
@@ -293,10 +289,56 @@ class getEmployee {
     })
   }
 
-
-  signUp(first_name: string, surname: string, email: string, adress: string, zipcode: number, password: string, username: string ): Promise<void>{
+  getUnconfirmedCertificates(): Promise<userCertificates[]> {
     return new Promise((resolve, reject) => {
-      connection.query('INSERT INTO employee (first_name, surname, email, adress, zipcode, password, username) VALUES (?, ?, ?, ?, ?, ?, ?)', [first_name, surname, email, adress, zipcode, password, username], (error, result) => {
+      connection.query('SELECT employee.username, certificate.certificate_id, employee.first_name, employee.email, employee.adress, employee.surname, employee.user_id, certificate.certificate_name FROM ((employee INNER JOIN employee_certificate ON employee.user_id = employee_certificate.employee_id) INNER JOIN certificate ON certificate.certificate_id = employee_certificate.certificate_id) WHERE employee_certificate.confirmed = 0 ORDER BY surname', (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      })
+    })
+  }
+
+  getUserCertifications(id: number): Promise<userCertificates[]> {
+    return new Promise ((resolve, reject) => {
+      connection.query("select * from employee_certificate ec inner join certificate c on c.certificate_id = ec.certificate_id where employee_id = ?", [id], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+
+
+  getLogin(mail: string): Promise<User> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM employee WHERE username=?', [mail], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result[0]);
+      });
+    });
+  }
+
+
+  signOut() {
+    localStorage.removeItem('signedInUser')
+    programRender.forceUpdate()
+    history.push("/page1")
+  }
+  //Hente ut alle certifikater som ikke har blitt godkjent
+
+
+
+  signUp(first_name: string, surname: string, email: string, adress: string, zipcode: number, password: string, username: string, tlf: string ): Promise<void>{
+    return new Promise((resolve, reject) => {
+      connection.query('INSERT INTO employee (first_name, surname, email, adress, zipcode, password, username, tlf) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [first_name, surname, email, adress, zipcode, password, username, tlf], (error, result) => {
         if(error) {
           reject(error);
           return;

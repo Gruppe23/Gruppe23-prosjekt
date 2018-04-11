@@ -10,7 +10,6 @@ if (typeof localStorage === "undefined" || localStorage === null) {
   var LocalStorage = require('node-localstorage').LocalStorage;
   localStorage = new LocalStorage('./scratch');
 }
-console.log(hashedPassword)
 import { Forside2, forside2 } from "./forside.js"
 import { LoginWindow } from "./loginwindow.js"
 import { RegisterWindow } from "./registerwindow.js"

@@ -5,7 +5,7 @@ import { Link, HashRouter, Switch, Route } from 'react-router-dom';
 import {RegisterWindow} from '../../registerwindow';
 import { employee } from '../../services';
 import {AdminPage} from '../Adminpage';
-
+var passwordHash = require('password-hash');
 let userCreateRef;
  class AdminPageUserCreate extends React.Component<{}> {
    refs: {
@@ -50,6 +50,11 @@ let userCreateRef;
                   <input type="confirmemail" className="form-control" ref="confirmemail" placeholder="Enter email"/>
           </div>
 
+          <div className="form-group">
+              <label className="control-label col-sm-8" htmlFor="tlf">Telefonnummer:</label>
+                  <input type="confirmemail" className="form-control" ref="tlf" placeholder="Enter email"/>
+          </div>
+
         <div className="form-group-horizontal">
                 <button ref="Signupbtn" className="btn btn-default" onClick={this.register}>Opprett Bruker</button>
                 <button className="btn btn-default" onClick={this.props.closePopup}> Lukk </button>
@@ -89,14 +94,11 @@ let userCreateRef;
 }
 
 register(){
-    console.log("trykka")
     if (userCreateRef.refs.pwd.value == userCreateRef.refs.confirmpwd.value && userCreateRef.refs.email.value == userCreateRef.refs.confirmemail.value){
-      console.log("success")
-        employee.signUp(userCreateRef.refs.firstname.value, userCreateRef.refs.surname.value, userCreateRef.refs.email.value, userCreateRef.refs.adress.value, userCreateRef.refs.zipcode.value, userCreateRef.refs.pwd.value, userCreateRef.refs.adress.value).then(() => {
-          AdminPageRef.loadRegisterList()
+        let hashedPassword = passwordHash.generate(userCreateRef.refs.pwd.value);
+        employee.signUp(userCreateRef.refs.firstname.value, userCreateRef.refs.surname.value, userCreateRef.refs.email.value, userCreateRef.refs.adress.value, userCreateRef.refs.zipcode.value, hashedPassword, userCreateRef.refs.adress.value, userCreateRef.refs.tlf.value).then(() => {
         })
     } else {
-      console.log("fail")
     }
   }
 }

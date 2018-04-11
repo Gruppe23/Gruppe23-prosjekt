@@ -132,7 +132,6 @@ class AdminPage extends React.Component<{}> {
   SearchRegFilter(): void {
     //Filtererer listen av nye brukere som har registrert seg etter navn eller etternavn.
     let list = this.refs.UsersList.getElementsByTagName("li")
-    console.log(list)
         var input, filter, ul, li, a, i;
         input = this.refs.RegSearch
         filter = input.value.toUpperCase();
@@ -153,7 +152,6 @@ class AdminPage extends React.Component<{}> {
      //* Funksjonen blir kjørt hver gang noen skriver noe i input og sorterer ut elementene som ikke har
      //bokstavene i fornavnet, etternavnet eller i sertifikatnavnet. */
      let list = this.refs.LicenseList.getElementsByTagName("li")
-     console.log(list)
          var input, filter, ul, li, a, i;
          input = this.refs.LicSearch
          filter = input.value.toUpperCase();
