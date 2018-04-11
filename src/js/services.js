@@ -66,6 +66,14 @@ class getEmployee {
     return JSON.parse(item);
   }
 
+  getSignedInUser2(): Promise<User[]> {
+    return new Promise((resolve, reject) => {
+    let item: User[] = localStorage.getItem('signedInUser'); // Get User-object from browser
+    if(!item) return null
+    resolve(JSON.parse(item));
+  })
+  }
+
   getEmployee(mail: string): Promise<User[]> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM employee WHERE first_name=?', [mail], (error, result) => {
@@ -98,10 +106,47 @@ class getEmployee {
     programRender.forceUpdate()
     history.push("/page1")
   }
-  
+
   getEvents(): Promise< ?Object> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM events', (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+
+        resolve(result);
+      });
+    });
+  }
+  getEvent(id): Promise< ?Object> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM events WHERE id=?', [id], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+
+        resolve(result);
+      });
+    });
+  }
+  getExtContact(id): Promise< ?Object> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM external_contact WHERE contact_id=?', [id], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+
+        resolve(result);
+      });
+    });
+  }
+
+  getShifts(id): Promise< ?Object> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM employee_events WHERE employee_id=?', [id], (error, result) => {
         if(error) {
           reject(error);
           return;
