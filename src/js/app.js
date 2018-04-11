@@ -10,9 +10,6 @@ if (typeof localStorage === "undefined" || localStorage === null) {
   var LocalStorage = require('node-localstorage').LocalStorage;
   localStorage = new LocalStorage('./scratch');
 }
-console.log(hashedPassword)
-let loginState;
-console.log(window.innerWidth + "Width + Height" + window.innerHeight)
 import { Forside2, forside2 } from "./forside.js"
 import { LoginWindow } from "./loginwindow.js"
 import { RegisterWindow } from "./registerwindow.js"
@@ -23,15 +20,16 @@ const history = createHashHistory();
 //======================================================================================================
 //ProgramRender er hoved DOM Objektet hvor alle andre DOM objekter blir dynamisk endret ved hjelp av React State.
 
-
+history.push("/")
 class ProgramRender extends React.Component<{}> {
   constructor() {
-    super(); //Vi binder this.startpage, enkelt forklart lar det oss bruke this.startpage i klassen for å
+    super();
 }
       render() {
-
-        let signedInUser = employee.getSignedInUser();
+        let signedInUser = employee.getSignedInUser2();
         if(signedInUser) {
+          //Vi returnerer enten forsiden, eller login/registrering basert på om en bruker er logget inn.
+          // Ved innlogging/utlogging forceupdater vi ProgramREnder til å skjekke JSON filen om vi er logget inn.
         return (
           <Forside2 />
         )
@@ -57,7 +55,7 @@ class ProgramRender extends React.Component<{}> {
         programRender = this
       }
 }
-let programRender: Object;
+let programRender: React$Component;
 function forside(){
     ReactDOM.render((
         <ProgramRender />
