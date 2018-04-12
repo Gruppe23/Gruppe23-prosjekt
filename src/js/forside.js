@@ -9,6 +9,7 @@ import { AdminPage } from "./ForsidePaths/Adminpage.js"
 import { WelcomePage } from "./ForsidePaths/welcomepage.js"
 import { employee } from "./services"
 import { programRender, appLogout } from "./app.js"
+import {createevents } from "./ForsidePaths/createevents.js"
 import { UserSearch } from './ForsidePaths/user_search';
 import createHashHistory from 'history/createHashHistory';
 const history = createHashHistory();
@@ -28,7 +29,7 @@ class Forside2 extends React.Component<{}> {
     let adminpath: reactComponent;
     if(userInfo){
       if(userInfo.user_type == 2){
-        admin = <li><Link to='/AdminPage'>Admin page</Link></li>
+        admin = <li><Link className="tooltipxx" to='/AdminPage'><span className="tooltiptextxx">Administratorverktøy</span><i className="fa fa-wrench"></i></Link></li>
         adminpath = <Route exact path="/AdminPage" component={AdminPage} />
       } else {
         admin = <span> Velkommen til Røde Kors appen!</span>;
@@ -43,13 +44,16 @@ class Forside2 extends React.Component<{}> {
                     <a className="navbar-brand">Røde Kors</a>
                   </div>
                   <ul className="nav navbar-nav">
-                    <li><Link to='/forside'>Home</Link></li>
-                    <li><Link to='/kalender'>Kalender</Link></li>
-                    <li><Link to={'/profil/' + userInfo.user_id}>Profil</Link></li>
-                    <li><Link to='/profiler'>Brukeroversikt</Link></li>
-                    <li><Link ref="/logout" to="/logout"> Log ut</Link></li>
-                    {admin}
+                    <li ><Link className="tooltipxx" to='/forside'><span className="tooltiptextxx">Forside</span><i className="fa fa-home"></i></Link></li>
+                    <li><Link className="tooltipxx" to='/kalender'><span className="tooltiptextxx">Kalender</span><i className="fa fa-calendar"></i></Link></li>
+                    <li><Link className="tooltipxx"  to={'/profil/' + userInfo.user_id}><span className="tooltiptextxx">Profilside</span><i className="fa fa-user"></i></Link></li>
+                    <li><Link className="tooltipxx" to='/profiler'><span className="tooltiptextxx">Brukeroversikt</span><i className="fa fa-users"></i></Link></li>
+                    <li><Link className="tooltipxx" to='/opprettevent'><span className="tooltiptextxx">Opprett Arrangement</span><i className="fa fa-calendar-plus-o"></i></Link></li>
 
+                  </ul>
+                  <ul className="nav navbar-nav ml-auto">
+                    {admin}
+                    <li className="logout"><Link className="tooltipxx" ref="/logout" to="/logout"><span className="tooltiptextxx">Log ut</span><i className="fa fa-sign-out"></i></Link></li>
                   </ul>
                 </div>
               </nav>
@@ -60,6 +64,7 @@ class Forside2 extends React.Component<{}> {
                   <Route exact path='/kalender' component={Kalender} />
                   <Route exact path='/logout' component={Logout} />
                   <Route exact path='/profiler' component={UserSearch} />
+                  <Route exact path='/opprettevent' component={createevents} />
                   {adminpath}
                 </Switch>
               </div>
@@ -70,7 +75,6 @@ class Forside2 extends React.Component<{}> {
   }
   componentDidMount(){
     history.push("/forside")
-
 }
 }
 class Logout extends React.Component<{}> {
