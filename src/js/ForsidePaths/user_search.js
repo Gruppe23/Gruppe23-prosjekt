@@ -6,6 +6,7 @@ import {ProfileDetails} from './profilewindow';
 import { history } from '../forside';
 
 
+
 class UserSearch extends React.Component<{}> {
   constructor() {
     super()
@@ -14,19 +15,27 @@ class UserSearch extends React.Component<{}> {
   }
   render(){
     return(
-      <div>
+      <div className="full">
         <div id="UserList">
         <input type="text" className="licSearch" ref="UserSearchInput" onKeyUp={this.UserSearchFilter.bind(this)} placeholder="Søk etter brukere"/>
         <ul ref="UserList" className="myUL">
             {this.state.userlist}
         </ul>
         </div>
-      <div className ="">{this.state.userinfo}</div>
+      <div className="userInfo">
+        {this.state.userinfo}</div>
     </div>
     )
   }
   componentDidMount(){
     this.loadUserList()
+  }
+  componentOnUpdate(){
+    this.loadUserList()
+  }
+
+  componentWillUnmount(){
+    this.setState({userlist: ""})
   }
 
   loadUserList() {
@@ -53,9 +62,10 @@ class UserSearch extends React.Component<{}> {
     });
   })
   }
+
   loadUserInfo(id){
     employee.getEmployee(id).then((user) => {
-      this.setState({userinfo: ""}) //å sette staten på nytt funket ikke slik som det har gjort tidligere. Måtte sette state vekk fra <ProfileDetails/> for at det skulle funke.
+      this.setState({userinfo: ""}) //å sette staten på nytt funket ikke slik som det har gjort tidligere. Måtte sette state vekk fra <ProfileDetails/> for at det skulle funke. componentOnUpdate og lignende funskjoner funket ikke tross mange forsøk og mye pønsking.
       this.setState({userinfo: <ProfileDetails profil_id={user.user_id}/>}) //GJenbruker profilsiden sin profilinformasjon klasse.
     })
   }

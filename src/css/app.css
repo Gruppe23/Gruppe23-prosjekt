@@ -6,6 +6,9 @@ html, body {
   max-width: 1920px;
 }
 
+.profilside {
+  margin-top:10px;
+}
 .centered {
 margin: auto;
 }
@@ -26,6 +29,14 @@ margin: auto;
   border: 1px solid black;
   height: calc(100% - 3px);
   width: calc(100% - 3px;);
+}
+
+.logout{
+  right: 5px;
+}
+
+.navbar-nav > li > a > i {
+font-size: 30px;
 }
 
 #logoutBTN {
@@ -212,10 +223,19 @@ html, body, .app {
 }
 .TopRight {
   position: fixed;
-  width: 25px;
-  height: 25px;
-  top:50px;
-  right:50px;
+  width: 40px;
+  height: 40px;
+  top:63px;
+  right:0px;
+  background-color: red;
+  border: none; /* Remove borders */
+  color: white; /* White text */
+  font-size: 20px; /* Set a font size */
+  cursor: pointer; /* Mouse pointer on hover */
+}
+/* Darker background on mouse-over */
+.TopRight:hover {
+    background-color: DarkRed;
 }
 .red {
   color: red !important;
@@ -250,7 +270,7 @@ html, body, .app {
 
 .forsideContent{
   height: 100%;
-  margin-top: 55px;
+  margin-top: 70px;
 }
 
 #AcceptUsersBox {
@@ -274,6 +294,7 @@ html, body, .app {
 #UserList {
   height: 100%;
   width:300px;
+  margin-right: 10px;
   float: left;
 }
 
@@ -338,4 +359,64 @@ html, body, .app {
 
 .myUL li a:hover:not(.header) {
     background-color: #eee; /* Add a hover effect to all links, except for headers */
+}
+
+.tooltipxx {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltipxx .tooltiptextxx {
+  visibility: hidden;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  width: 150px;
+  /* Position the tooltip */
+   top: 100%;
+   left: 50%;
+   margin-left: -75px; /* Use half of the width (120/2 = 60), to center the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+li:hover a span {
+  visibility: visible !important;
+}
+
+a.hover span {
+  visibility: visible !important;
+}
+.tooltixxp:hover .tooltiptextxx {
+  visibility: visible !important;
+}
+
+.ce_Row1 {
+  width: 300px;
+  height: 100%;
+  overflow: hidden;
+  float: left;
+}
+
+.ce_Row2 {
+  width: 300px;
+  height: 100%;
+  overflow: hidden;
+  float: left;
+}
+.ce_Row3 {
+  width: 300px;
+  height: 100%;
+  overflow: hidden;
+  float: left;
+}
+
+.ce_inputDiv {
+  float: left;
+}
+
+input, label {
+  display: block;
 }

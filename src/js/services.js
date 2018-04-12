@@ -1,9 +1,31 @@
-
 // @flow
 import mysql from 'mysql';
-import { programRender, ProgramRender } from "./app.js"
+import {programRender, ProgramRender} from "./app.js"
 import createHashHistory from 'history/createHashHistory';
 const history = createHashHistory();
+let error: Error;
+// Setup database server reconnection when server timeouts connection:
+let connection;
+function connect() {
+  connection = mysql.createConnection({host: 'mysql.stud.iie.ntnu.no', user: 'g_oops_23', password: 'sIrRhlP1', database: 'g_oops_23'});
+
+  // Connect to MySQL-server
+  connection.connect((error) => {
+    if (error)
+      throw error; // If error, show error in console and return from this function
+    }
+  );
+
+  // Add connection error handler
+  connection.on('error', (error : Error) => {
+    if (error.code === 'PROTOCOL_CONNECTION_LOST') { // Reconnect if connection to server is lost
+      connect();
+    } else {
+      throw error;
+    }
+  });
+}
+connect();
 
 class User {
   adress: string;
@@ -17,25 +39,11 @@ class User {
   user_type: number;
   zipcode: number;
   certificate_name: string;
+  tlf: number;
+  shiftscore: number;
+
 }
 
-class Signup {
-  first_name: string;
-  surname: string;
-  email: string;
-  adress: string;
-  zipcode: number;
-  password: string;
-}
-
-class Newuser {
-  first_name: string;
-  surname: string;
-  email: string;
-  adress: string;
-  zipcode: number;
-  password: string;
-}
 class userCertificates {
   first_name: string;
   surname: string;
@@ -44,6 +52,8 @@ class userCertificates {
   certificate_name: string;
   certificate_id: number;
   employee_id: number;
+  tlf: number;
+  shiftscore: number;
 }
 class userRoles {
   first_name: string;
@@ -52,7 +62,8 @@ class userRoles {
   user_id: number;
   role_id: number;
   role_name: string;
-  role_description: string;
+  role_description: string
+  shiftscore: number;
 }
 
 class roleCertificates {
@@ -64,32 +75,6 @@ class roleCertificates {
 }
 
 
-// Setup database server reconnection when server timeouts connection:
-let connection;
-function connect() {
-  connection = mysql.createConnection({
-    host: 'mysql.stud.iie.ntnu.no',
-    user: 'g_oops_23',
-    password: 'sIrRhlP1',
-    database: 'g_oops_23'
-  });
-
-  // Connect to MySQL-server
-  connection.connect((error) => {
-    if (error) throw error; // If error, show error in console and return from this function
-  });
-
-  // Add connection error handler
-  connection.on('error', (error: Error) => {
-    if (error.code === 'PROTOCOL_CONNECTION_LOST') { // Reconnect if connection to server is lost
-      connect();
-    }
-    else {
-      throw error;
-    }
-  });
-}
-connect();
 
 // Class that performs database queries related to notes
 class getEmployee {
@@ -97,7 +82,7 @@ class getEmployee {
   getEmployees(): Promise<User> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT username, user_id, first_name, surname, adress, zipcode, status FROM employee', (error, result) => {
-        if(error) {
+        if (error) {
           reject(error);
           return;
         }
@@ -106,23 +91,24 @@ class getEmployee {
     });
   }
 
-  getEmployee(mail: number): Promise<User> {
+  getEmployee(mail : number): Promise<User> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM employee WHERE user_id=?', [mail], (error, result) => {
-        if(error) {
+        if (error) {
           reject(error);
           return;
         }
-        resolve(result);
+        resolve(result[0]);
+        console.log(result[0])
       });
     });
   }
 
   getNewUsers(): Promise<User[]> {
-    let nada = 0
+    let nada = 0;
     return new Promise((resolve, reject) => {
       connection.query('SELECT first_name, surname, adress, email, user_id FROM employee where status = ? ORDER BY surname', [nada], (error, result) => {
-        if(error) {
+        if (error) {
           reject(error);
           return;
         }
@@ -131,10 +117,10 @@ class getEmployee {
     });
   }
 
-  acceptNewUser(id: number): Promise<void> {
+  acceptNewUser(id : number): Promise<void> {
     return new Promise((resolve, reject) => {
       connection.query('UPDATE employee SET status = 1 WHERE user_id = ?', [id], (error, result) => {
-        if(error) {
+        if (error) {
           reject(error);
           return;
         }
@@ -143,37 +129,36 @@ class getEmployee {
     });
   }
 
-  deactivateUser(employeeid: number): Promise<void> {
+  deactivateAccount(employeeid : number): Promise<void> {
     return new Promise((resolve, reject) => {
-      connection.query('UPDATE employee SET status = 0 WHERE employee_id = ?', [employeeid, certificateid], (error, result)=> {
-        if(error) {
+      connection.query('UPDATE employee SET status = 0 WHERE user_id = ?', [employeeid], (error, result) => {
+        if (error) {
           reject(error);
           return;
         }
-          resolve();
+        resolve();
       })
     })
   }
 
   getSignedInUser(): Promise<User[]> {
     return new Promise((resolve, reject) => {
-    let item = localStorage.getItem('signedInUser'); // Get User-object from browser
-    resolve(JSON.parse(item));
-  })
+      let item = localStorage.getItem('signedInUser'); // Get User-object from browser
+      resolve(JSON.parse(item));
+    })
   }
+
+  //Bruker 2 forskjellige, kommer litt an på hva man må bruke det til, ofte hvis jeg brukte det i sammarbeid med react var ikke et resolve svar funksjonelt siden resolve gir et object som svar, og det vil ikke react ha noe av.
 
   getSignedInUser2(): Promise<User[]> {
     let item = localStorage.getItem('signedInUser'); // Get User-object from browser
     return JSON.parse(item)
   }
 
-
-
   getRoles(): Promise<roleCertificates[]> {
-    let nada = 0
     return new Promise((resolve, reject) => {
-      connection.query('select role.role_id, rc.certificate_id, c.certificate_name, role.role_name from (role_certificate rc inner join certificate c on c.certificate_id = rc.certificate_id) INNER JOIN role on role.role_id = rc.role_id', [nada], (error, result) => {
-        if(error) {
+      connection.query('select role.role_id, rc.certificate_id, c.certificate_name, role.role_name from (role_certificate rc inner join certificate c on c.certificate_id = rc.certificate_id) INNER JOIN role on role.role_id = rc.role_id', (error, result) => {
+        if (error) {
           reject(error);
           return;
         }
@@ -183,10 +168,10 @@ class getEmployee {
   }
 
   getDistinctRoles(): Promise<roleCertificates[]> {
-    let nada = 0
-    return new Promise((resolve, reject) => {
+    let nada = 0;
+     return new Promise((resolve, reject) => {
       connection.query('select * from role', (error, result) => {
-        if(error) {
+        if (error) {
           reject(error);
           return;
         }
@@ -195,66 +180,36 @@ class getEmployee {
     });
   }
 
-  getUserRoles(id: number): Promise<userRoles[]> {
-    return new Promise ((resolve, reject) => {
-      let userRolesReturn = []
-      employee.getRoles().then((roles) => {
-        employee.getUserCertifications(id).then((user_cert) => {
-          employee.getDistinctRoles().then((distinct_roles) => {
-          let x: ArrayIndex;
-          let rolesArr = []
-          rolesArr.push(new Array())
-          //SKjekker hvert rolle opp imot kvalifikasjonene
-          for (x in roles){
-            rolesArr.push(new Array())
-            rolesArr[roles[x].role_id].push(roles[x].certificate_id)
-            }
-          for (x in rolesArr) {
-            let y;
-            let matchCounter = 0
-            for (y in rolesArr[x]) {
-              let z;
-              for (z in user_cert) {
-                if (rolesArr[x][y] == user_cert[z].certificate_id){
-                  matchCounter++
-                } else {
-                }
-              }
-            }
-            if (matchCounter == rolesArr[x].length && matchCounter != 0){
-              let d;
-              for (d in distinct_roles) {
-                let c;
-                if (distinct_roles[d].role_id == x){
-                  userRolesReturn.push({role_name: roles[d].role_name, role_id: x})
-                }
-              }
-            }
-          }
-          resolve(userRolesReturn)
-        })
-      })
+  getUserRoles2(id : number): Promise<userRoles[]> {
+    return new Promise((resolve, reject) => {
+      connection.query("select ra.role_id, ra.role_name, rec.employee_id, first_name, surname from ( select rc.role_id, r.role_name, count(*) as antall from role_certificate rc INNER JOIN role r on rc.role_id = r.role_id group by role_id ) ra INNER JOIN ( select eec.first_name, eec.surname, rc.role_id, employee_id, count(*) as antall from ( SELECT * FROM employee_certificate ec INNER JOIN employee e ON ec.employee_id = e.user_id having ec.confirmed = 1 ) eec INNER JOIN role_certificate rc ON rc.certificate_id = eec.certificate_id group by role_id, employee_id ) rec ON ra.role_id = rec.role_id where ra.antall = rec.antall AND rec.employee_id = 2", [id], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
       })
     })
   }
 
-  getUsersWithRole(id: number, count: number): Promise<Object[]>  {
-  return new Promise((resolve, reject) => {
-    connection.query("Select count(*) as CertCount, rc.role_id, e.user_id from employee e inner Join (employee_certificate ec INNER JOIN role_certificate rc on rc.certificate_id = ec.certificate_id) on e.user_id = ec.employee_id where rc.role_id = ? GROUP BY e.user_id HAVINg CertCount = ?", [id, count], (error, result) => {
-      if(error) {
-        reject(error);
-        return;
-      }
-      resolve();
+  getUsersWithRole(id : number, count : number): Promise<Object[]> {
+    return new Promise((resolve, reject) => {
+      connection.query("Select count(*) as CertCount, rc.role_id, e.user_id from employee e inner Join (employee_certificate ec INNER JOIN role_certificate rc on rc.certificate_id = ec.certificate_id) on e.user_id = ec.employee_id where rc.role_id = ? GROUP BY e.user_id HAVINg CertCount = (Select count(*) from role_certificate where role_id=? group by rc.role_id)", [
+        id, id
+      ], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      })
     })
-  })
-}
+  }
 
   getCertificates(): Promise<userCertificates[]> {
-    let nada = 0
-    return new Promise((resolve, reject) => {
+     return new Promise((resolve, reject) => {
       connection.query('select * from certificate', (error, result) => {
-        if(error) {
+        if (error) {
           reject(error);
           return;
         }
@@ -263,28 +218,32 @@ class getEmployee {
     });
   }
 
-  addCertificate(user_id: number, certificate_id: number, confirmed): Promise<string>{
+  addCertificate(user_id : number, certificate_id : number, confirmed: number): Promise<string> {
     return new Promise((resolve, reject) => {
       let date = new Date()
-      connection.query('INSERT INTO employee_certificate (employee_id, certificate_id, certification_date, confirmed) VALUES (?, ?, ?, ?)', [user_id, certificate_id, date, confirmed], (error, result) => {
-        if(error) {
+      connection.query('INSERT INTO employee_certificate (employee_id, certificate_id, certification_date, confirmed) VALUES (?, ?, ?, ?)', [
+        user_id, certificate_id, date, confirmed
+      ], (error, result) => {
+        if (error) {
           reject(error);
           return;
         }
 
-          resolve("Certificate was successfully added to database");
+        resolve("Certificate was successfully added to database");
       });
     });
   }
 
-  acceptCertificate(employeeid: number, certificateid: number): Promise<void> {
+  acceptCertificate(employeeid : number, certificateid : number): Promise<void> {
     return new Promise((resolve, reject) => {
-      connection.query('UPDATE employee_certificate SET confirmed = 1 WHERE employee_id = ? AND certificate_id = ?', [employeeid, certificateid], (error, result)=> {
-        if(error) {
+      connection.query('UPDATE employee_certificate SET confirmed = 1 WHERE employee_id = ? AND certificate_id = ?', [
+        employeeid, certificateid
+      ], (error, result) => {
+        if (error) {
           reject(error);
           return;
         }
-          resolve();
+        resolve();
       })
     })
   }
@@ -292,7 +251,7 @@ class getEmployee {
   getUnconfirmedCertificates(): Promise<userCertificates[]> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT employee.username, certificate.certificate_id, employee.first_name, employee.email, employee.adress, employee.surname, employee.user_id, certificate.certificate_name FROM ((employee INNER JOIN employee_certificate ON employee.user_id = employee_certificate.employee_id) INNER JOIN certificate ON certificate.certificate_id = employee_certificate.certificate_id) WHERE employee_certificate.confirmed = 0 ORDER BY surname', (error, result) => {
-        if(error) {
+        if (error) {
           reject(error);
           return;
         }
@@ -301,10 +260,21 @@ class getEmployee {
     })
   }
 
-  getUserCertifications(id: number): Promise<userCertificates[]> {
-    return new Promise ((resolve, reject) => {
+  getUserCertifications(id : number): Promise<userCertificates[]> {
+    return new Promise((resolve, reject) => {
       connection.query("select * from employee_certificate ec inner join certificate c on c.certificate_id = ec.certificate_id where employee_id = ?", [id], (error, result) => {
-        if(error) {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+  getUnobtainedUserCertifications(id : number): Promise<userCertificates[]> {
+    return new Promise((resolve, reject) => {
+      connection.query("SELECT * From certificate WHERE certificate_id NOT IN (SELECT certificate_id FROM employee_certificate WHERE employee_id = ?)", [id], (error, result) => {
+        if (error) {
           reject(error);
           return;
         }
@@ -313,11 +283,22 @@ class getEmployee {
     });
   }
 
+  getConfirmedUserCertifications(id : number): Promise<userCertificates[]> {
+    return new Promise((resolve, reject) => {
+      connection.query("Select ec.certificate_id, c.certificate_name From (employee_certificate ec inner join employee e on ec.employee_id = e.user_id) INNER JOIN certificate c ON ec.certificate_id = c.certificate_id WHERE ec.confirmed = 1 AND ec.employee_id = ?", [id], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
 
-  getLogin(mail: string): Promise<User> {
+  getLogin(mail : string): Promise<User> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM employee WHERE username=?', [mail], (error, result) => {
-        if(error) {
+        if (error) {
           reject(error);
           return;
         }
@@ -326,29 +307,38 @@ class getEmployee {
     });
   }
 
-
   signOut() {
     localStorage.removeItem('signedInUser')
     programRender.forceUpdate()
     history.push("/page1")
-  }
+  };
   //Hente ut alle certifikater som ikke har blitt godkjent
 
-
-
-  signUp(first_name: string, surname: string, email: string, adress: string, zipcode: number, password: string, username: string, tlf: string ): Promise<void>{
+  signUp(first_name : string, surname : string, email : string, adress : string, zipcode : number, password : string, username : string, tlf : string): Promise<void> {
     return new Promise((resolve, reject) => {
-      connection.query('INSERT INTO employee (first_name, surname, email, adress, zipcode, password, username, tlf) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [first_name, surname, email, adress, zipcode, password, username, tlf], (error, result) => {
-        if(error) {
+      connection.query('INSERT INTO employee (first_name, surname, email, adress, zipcode, password, username, tlf) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [
+        first_name,
+        surname,
+        email,
+        adress,
+        zipcode,
+        password,
+        username,
+        tlf
+      ], (error, result) => {
+        if (error) {
           reject(error);
           return;
         }
-          resolve();
+        resolve();
       });
     });
   }
 }
 
-
 let employee = new getEmployee();
-export { employee, User, userCertificates };
+export {
+  employee,
+  User,
+  userCertificates
+};
