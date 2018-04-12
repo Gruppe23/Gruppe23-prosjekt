@@ -17,21 +17,20 @@ import createHashHistory from 'history/createHashHistory';
 const history = createHashHistory();
 // https://medium.com/@manojsinghnegi/sending-an-email-using-nodemailer-gmail-7cfa0712a799
 
-let nodemailer = require('nodemailer');
-let transporter = nodemailer.createTransport({
- service: 'gmail',
- auth: {
-        user: 'rexp22@gmail.com',
-        pass: 'hedgehogged3'
-    },
-});
+let api_key = 'key-53691f7229e0eec8522473b2e853cabf';
+let domain = 'sandboxb5cedbd4224a4475ac49059ce199712a.mailgun.org';
+let mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
 
-const mailOptions = {
-  from: 'gruppe23prosjekt@gmail.com', // sender address
-  to: 'andreasfrenning@gmail.com', // list of receivers
-  subject: 'Subject of your email', // Subject line
-  html: '<p>Your html here</p>'// plain text body
+var data = {
+  from: 'Rode Kors <gruppe23prosjekt@gmail.com>',
+  to: 'andreasfrenning@gmail.com',
+  subject: 'Hei',
+  text: 'Her kjører vi en test av mailgun'
 };
+//Send mail...
+/*mailgun.messages().send(data, function (error, body) {
+  console.log(body);
+});*/
 
 //======================================================================================================
 //==========Rendering==========================================================================
@@ -80,4 +79,4 @@ function forside(){
 }
 
 forside()
-export { ProgramRender, programRender, history, transporter, nodemailer }
+export { ProgramRender, programRender, history }
