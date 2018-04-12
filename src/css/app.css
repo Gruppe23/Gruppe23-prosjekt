@@ -14,7 +14,7 @@ margin: auto;
 }
 
 .all {
-  height: calc(100% - 2px);
+  height: calc(99% - 2px);
   width: calc(100% - 2px);
   position: absolute;
 
@@ -171,7 +171,8 @@ height: calc(100% - 12px);
 
 .AdminPage_Container {
   height: 100%;
-  margin-top: 60px;
+  display: block;
+  overflow:hidden;
 }
 
 .hundre {
@@ -271,6 +272,7 @@ html, body, .app {
 .forsideContent{
   height: 100%;
   margin-top: 70px;
+  overflow: scroll;
 }
 
 #AcceptUsersBox {
@@ -396,12 +398,14 @@ a.hover span {
 .ce_Row1 {
   width: 300px;
   height: 100%;
-  overflow: hidden;
+  overflow: show;
   float: left;
+  margin-right: 25px;
+  margin-left: 5px;
 }
 
 .ce_Row2 {
-  width: 300px;
+  width: 600px;
   height: 100%;
   overflow: hidden;
   float: left;
@@ -421,7 +425,22 @@ input, label {
   display: block;
 }
 
-.extContactSelect {
+button, label {
+  display: block;
+}
+
+.inputWidth {
+  width: 100%;
+}
+.adr{
+  width: 68%;
+  float: left;
+}
+.zip {
+  width: 28%;
+}
+
+.ce_zip {
   width: 100%;
 }
 
@@ -443,7 +462,62 @@ input, label {
     transition: 0.3s;
     font-size: 14px;
 }
+.ec_SelectRole{
+  width:300px;
+  float: left;
+}
 
+.ec_addRoles {
+  width: 100%;
+  height: 32px;
+  margin-right:5px;
+}
+
+.ec_addedRoles {
+  width: 100%;
+  margin-right:5px;
+  float:left;
+}
+
+.ec_RoleAmount {
+  width: 100px;
+  float: left;
+}
+.ec_RoleAddButtonDiv{
+  width: 75px;
+  float: left;
+  margin-top: 5px;
+}
+
+.cancel {
+  position:absolute;
+  top: 65px;
+  right: 20px;
+}
+.ce_textAreaLabel{
+  margin-top: 5px;
+}
+.ce_textArea{
+  width: 100%;
+  height: 150px;
+  resize: none;
+}
+.ec_opprett{
+    background-color: lightgrey;
+    float: left;
+    border: 1px solid grey;
+    outline: none;
+    cursor: pointer;
+    padding: 8px 16px;
+    WIDTH:  100%;
+    transition: 0.3s;
+    font-size: 14px;
+    bottom: 5px;
+    left: 5px;
+}
+.ec_opprett:hover {
+    background-color: #ddd;
+}
 /* Change background color of buttons on hover */
 .tab button:hover {
     background-color: #ddd;

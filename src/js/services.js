@@ -26,7 +26,12 @@ function connect() {
   });
 }
 connect();
-
+class ExtContact {
+  contact_id: number;
+  first_name: string;
+  last_name: string;
+  phone_number: number;
+}
 class User {
   adress: string;
   email: string;
@@ -104,6 +109,18 @@ class getEmployee {
     });
   }
 
+  getExternalContacts(): Promise<ExtContact>{
+    return new Promise((resolve, reject) => {
+      connection.query("SELECT * FROM external_contact", (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result)
+      })
+    })
+  }
+
   getNewUsers(): Promise<User[]> {
     let nada = 0;
     return new Promise((resolve, reject) => {
@@ -167,6 +184,20 @@ class getEmployee {
     });
   }
 
+  getRoleByName(name: string): Promise<roleCertificates[]> {
+    let nada = 0;
+     return new Promise((resolve, reject) => {
+      connection.query('select * from role where role_name = ?', [name], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result[0]);
+      });
+    });
+  }
+
+
   getDistinctRoles(): Promise<roleCertificates[]> {
     let nada = 0;
      return new Promise((resolve, reject) => {
@@ -182,7 +213,19 @@ class getEmployee {
 
   getUserRoles2(id : number): Promise<userRoles[]> {
     return new Promise((resolve, reject) => {
-      connection.query("select ra.role_id, ra.role_name, rec.employee_id, first_name, surname from ( select rc.role_id, r.role_name, count(*) as antall from role_certificate rc INNER JOIN role r on rc.role_id = r.role_id group by role_id ) ra INNER JOIN ( select eec.first_name, eec.surname, rc.role_id, employee_id, count(*) as antall from ( SELECT * FROM employee_certificate ec INNER JOIN employee e ON ec.employee_id = e.user_id having ec.confirmed = 1 ) eec INNER JOIN role_certificate rc ON rc.certificate_id = eec.certificate_id group by role_id, employee_id ) rec ON ra.role_id = rec.role_id where ra.antall = rec.antall AND rec.employee_id = 2", [id], (error, result) => {
+      connection.query("select ra.role_id, ra.role_name, rec.employee_id, first_name, surname from ( select rc.role_id, r.role_name, count(*) as antall from role_certificate rc INNER JOIN role r on rc.role_id = r.role_id group by role_id ) ra INNER JOIN ( select eec.first_name, eec.surname, rc.role_id, employee_id, count(*) as antall from ( SELECT * FROM employee_certificate ec INNER JOIN employee e ON ec.employee_id = e.user_id having ec.confirmed = 1 ) eec INNER JOIN role_certificate rc ON rc.certificate_id = eec.certificate_id group by role_id, employee_id ) rec ON ra.role_id = rec.role_id where ra.antall = rec.antall AND rec.employee_id = ?", [id], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      })
+    })
+  }
+
+  getRolesNotInEvent(id : number): Promise<userRoles[]> {
+    return new Promise((resolve, reject) => {
+      connection.query("SELECT * FROM role WHERE role_id NOT IN (SELECT role_id from shift where event_id = 1)", [id], (error, result) => {
         if (error) {
           reject(error);
           return;
@@ -340,5 +383,6 @@ let employee = new getEmployee();
 export {
   employee,
   User,
-  userCertificates
+  userCertificates,
+  ExtContact
 };
