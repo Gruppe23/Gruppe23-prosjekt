@@ -4,6 +4,7 @@ import { Link, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { employee } from "../services"
 import { User, userCertificates, ExtContact } from "../services"
 import {history} from '../forside';
+import {SelectRoleTemplate} from './createeventpopup/RoleTemplatePopup';
 let EventFile: LSEventObject;
 
 if (localStorage.getItem("eventFile") === null) {
@@ -55,9 +56,21 @@ class createevents extends React.Component<{}> {
                   addedroles: ""}
   }
 
+  togglePopup(): void {
+    /* Funksjonen som slår av/på registreringspopup */
+    this.setState({
+      showPopup: !this.state.showPopup
+    });
+  }
+
   render() {
  return (
    <div className="full">
+     {
+       this.state.showPopup
+         ? <SelectRoleTemplate text="Close Me" closePopup={this.togglePopup.bind(this)}/>
+         : null
+     }
    <div className="ce_Row1">
      <section>
      <div className="ec_inputDiv">
@@ -149,8 +162,7 @@ class createevents extends React.Component<{}> {
      <label className="ce_textAreaLabel">Legg til beskrivelse: </label>
      <textarea ref="details" defaultValue={EventFile.event.details} className="ce_textArea"></textarea>
    </div>
-     <button ref="create" onClick={()=>{this.saveEventProgress()}}className="ec_opprett">Opprett Arrangement</button>
-     <button ref="cancel" onClick={()=>{this.cancelEventCreation()}} className="cancel">Avbytt opprettelse</button>
+     <button ref="create" onClick={()=>{}}className="ec_opprett">Opprett Arrangement</button>
 </div>
 
 <div className="ce_Row2">
@@ -170,8 +182,13 @@ class createevents extends React.Component<{}> {
         <div className="ec_addedRoles">
           {this.state.addedroles}
         </div>
-        <br/>
+        <div className="gMaps"></div>
       </div>
+
+<div className="ce_Row3">
+  <button ref="cancel" onClick={()=>{this.cancelEventCreation()}} className="Row_3buttons">Avbytt opprettelse</button>
+  <button ref="cancel" onClick={()=>{this.cancelEventCreation()}} className="Row_3buttons">Opprett Vakt Template</button>
+</div>
 </div>)
 }
 
@@ -194,13 +211,18 @@ class createevents extends React.Component<{}> {
 
   renderRoles(){
     this.setState({
-      addedroles: EventFile.roles.map((role) => {if(role != null){console.log("SKJEDDE"); return <div>{role.amount + " " + role.role_name + " er satt opp."}</div>}})
+      addedroles: EventFile.roles.map((role) => {if(role != null){console.log("SKJEDDE"); return <div key={role.role_id} className="AddedRolesRow">{role.amount + " skift for ansatte med rollen: " + role.role_name + " er satt opp."}</div>}})
     })
+  }
+
+  createRoleTemplate(){
+    EventFile.map
   }
 
   addRoles(){
     employee.getRoleByName(this.refs.addroles.value).then((role) => {
       EventFile.roles[role.role_id] = {role_id: role.role_id, role_name: role.role_name, amount: this.refs.addRoleAmount.value}
+      //Med løsningen over får vi ikke duplikate innslag av samme rolle i eventet
       localStorage.setItem("eventFile", JSON.stringify(EventFile))
         console.log(EventFile)
         this.renderRoles()
@@ -235,7 +257,6 @@ class createevents extends React.Component<{}> {
 
 
   componentDidMount(){
-
     this.renderRoles()
     employee.getExternalContacts().then((extContacts: ExtContact[]) => {
       this.setState({
@@ -254,6 +275,13 @@ class createevents extends React.Component<{}> {
 
   componentWillUnmount() {
     this.saveEventProgress()
+    this.setState({
+                    externcontact: "",
+                    addroles: "",
+                    addedroles: "",
+                    contactpersons: "",
+                    addedroles: ""
+    })
   }
 
 }

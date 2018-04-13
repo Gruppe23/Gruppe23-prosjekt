@@ -298,6 +298,7 @@ html, body, .app {
   width:300px;
   margin-right: 10px;
   float: left;
+  border: 1px solid black;
 }
 
 #UserInfoBox {
@@ -397,7 +398,7 @@ a.hover span {
 
 .ce_Row1 {
   width: 300px;
-  height: 100%;
+  height: 700px;
   overflow: show;
   float: left;
   margin-right: 25px;
@@ -405,16 +406,19 @@ a.hover span {
 }
 
 .ce_Row2 {
-  width: 600px;
-  height: 100%;
-  overflow: hidden;
+  width: 480px;
+  height: 700px;
+  overflow: show;
   float: left;
+  position:relative;
 }
+
 .ce_Row3 {
   width: 300px;
-  height: 100%;
+  height: 700px;
   overflow: hidden;
   float: left;
+  margin-top: 19px;
 }
 
 .ce_inputDiv {
@@ -467,6 +471,18 @@ button, label {
   float: left;
 }
 
+.AddedRolesRow{
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  float: left;
+  cursor: pointer;
+  margin-top:5px;
+  padding: 8px 16px;
+  transition: 0.3s;
+  font-size: 14px;
+  width: 461px;
+}
+
 .ec_addRoles {
   width: 100%;
   height: 32px;
@@ -487,12 +503,56 @@ button, label {
   width: 75px;
   float: left;
   margin-top: 5px;
+
+}
+.ec_RoleAddButton {
+    background-color: #f1f1f1;
+    outline: none;
+    border: 1px solid #ccc;
+    height: 26px;
+}
+.ec_RoleAddButton:hover {
+  background-color: #ddd;
+  cursor: pointer;
 }
 
-.cancel {
-  position:absolute;
-  top: 65px;
-  right: 20px;
+button {
+  cursor: pointer;
+}
+
+.gMaps {
+  width: 461px;
+  height: 300px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  left: 0px;
+  bottom: 19px;
+  margin-top: 5px;
+  position: absolute;
+}
+
+.Row_3buttons {
+  background-color: #f1f1f1;
+  outline: none;
+  float: left;
+  border: 1px solid #ccc;
+  background-color: inherit;
+  cursor: pointer;
+  padding: 8px 5px;
+  transition: 0.3s;
+  font-size: 14px;
+  margin-top: 5px;
+  width: 100%;
+}
+
+
+.Row_3buttons:hover {
+  background-color: #ccc;
+}
+
+
+.cancer:hover {
+  background-color: #ddd;
 }
 .ce_textAreaLabel{
   margin-top: 5px;
