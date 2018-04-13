@@ -377,8 +377,58 @@ class getEmployee {
       });
     });
   }
-}
 
+  createTemplate(name: string, description: string): Promise<Object[]>{
+    return new Promise((resolve, reject) => {
+      connection.query('INSERT INTO shift_template (template_name, description) VALUES (?, ?)', [
+        name, description
+      ], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+
+  addRolesToTemplate(template_id: string, role_id: number, amount: number): Promise<void>{
+    return new Promise((resolve, reject) => {
+      connection.query('INSERT INTO shift_template_roles (template_id, role_id, amount) VALUES (?, ?, ?)', [template_id, role_id, amount], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve();
+      });
+    });
+  }
+
+  getTemplateRoles(id: number): Promise<Object[]>{
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * from shift_template_roles st INNER JOIN role r ON st.role_id = r.role_id where template_id = ?', [id], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+
+
+getTemplates(): Promise<Object[]>{
+  return new Promise((resolve, reject) => {
+   connection.query('select * from shift_template', (error: Error, result) => {
+     if (error) {
+       reject(error);
+       return;
+     }
+     resolve(result);
+   });
+ });
+}
+}
 let employee = new getEmployee();
 export {
   employee,

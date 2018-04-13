@@ -18,15 +18,15 @@ console.log(EventFile)
 function eventObject(){
   //Oppretter objektet vi bruker til å lagre eventcreation mellom visninger, queries og opprettelse av arrangementer.
   let object = {roles: [],
-                  event: {id: "", start: "", end: "", contact_id: "", prep: "", adress: "", gmaps: "", postal: "", title: "", extContact: "", details: ""}
+                  event: {id: "", start: "", end: "", contact_id: "", prep: "", adress: "", gmaps: "", postal: "", title: "", extContact: "", details: "", hostname: ""}
                                 }
-                                localStorage.setItem("eventFile", JSON.stringify(object))
+  localStorage.setItem("eventFile", JSON.stringify(object))
 return object
 }
 
 class LSEventObject {
   roles: array;
-  event: {id: number, start: datetime, end: datetime, prep: datetime, contact_id: number, adress: string, gmaps: string, postal: number, extContact: string, details: string}
+  event: {id: number, start: datetime, end: datetime, prep: datetime, hostname: string, contact_id: number, adress: string, gmaps: string, postal: number, extContact: string, details: string}
 }
 
 class createevents extends React.Component<{}> {
@@ -63,12 +63,14 @@ class createevents extends React.Component<{}> {
     });
   }
 
+
   render() {
  return (
    <div className="full">
      {
        this.state.showPopup
-         ? <SelectRoleTemplate text="Close Me" closePopup={this.togglePopup.bind(this)}/>
+         ? <SelectRoleTemplate text="Close Me" closePopup={this.togglePopup.bind(this)}
+         loadTemplate={this.renderRoles.bind(this)}/>
          : null
      }
    <div className="ce_Row1">
@@ -169,7 +171,7 @@ class createevents extends React.Component<{}> {
     <div className="ec_addRoles">
       <div className="ec_inputDiv" className="ec_SelectRole">
         <label htmlFor="myBrowser" className="inputWidth">
-            Velg rolle å legge til arrangementet:</label>
+            Velg roller å legge til arrangementet:</label>
             <input ref="addroles" list="addroles" name="myBrowser" placeholder="Søk i roller" className="inputWidth" />
             <datalist ref="addrolesList" id="addroles">
               {this.state.addroles}
@@ -187,17 +189,22 @@ class createevents extends React.Component<{}> {
 
 <div className="ce_Row3">
   <button ref="cancel" onClick={()=>{this.cancelEventCreation()}} className="Row_3buttons">Avbytt opprettelse</button>
-  <button ref="cancel" onClick={()=>{this.cancelEventCreation()}} className="Row_3buttons">Opprett Vakt Template</button>
+  <label>Opprett ny template</label>
+  <input type="text" ref="templatename" placeholder="Template Navn" className="Row_3Input"/>
+  <textarea ref="templatedesc" defaultValue={EventFile.event.details} className="ce_textArea"></textarea>
+  <button ref="cancel" onClick={()=>{this.createRoleTemplate()}} className="Row_3buttons">Opprett Vakt Mal</button>
+  <button ref="cancel" onClick={()=>{this.togglePopup()}} className="Row_3buttons">Velg Vakt Mal</button>
 </div>
 </div>)
 }
+
+
 
   cancelEventCreation(){
     localStorage.removeItem("eventFile")
     EventFile = ""
     EventFile = eventObject()
     this.forceUpdate()
-
     this.refs.eventname.value = ""
     this.refs.adress.value = ""
     this.refs.start.value = ""
@@ -207,16 +214,38 @@ class createevents extends React.Component<{}> {
     this.refs.ExtContactName.value = ""
     this.refs.RKContactPerson.value = ""
     this.refs.details.value = ""
+    this.renderRoles()
+  }
+
+  eventCreate(){
+    if(this.refs.eventname.value == ""){
+      alert("Vennligst fyll inn et arrangementnavn")
+    } else{
+      if(this.refs.adress.value == ""){
+        alert("vennligst fyll inn en adresse")
+      } else {
+        if((this.refs.start.value instanceof Date) == false){
+          alert("er ikke en dato!")
+        }
+      }
+    }
   }
 
   renderRoles(){
+  EventFile = localStorage.getItem("eventFile")
+  EventFile = JSON.parse(EventFile)
     this.setState({
       addedroles: EventFile.roles.map((role) => {if(role != null){console.log("SKJEDDE"); return <div key={role.role_id} className="AddedRolesRow">{role.amount + " skift for ansatte med rollen: " + role.role_name + " er satt opp."}</div>}})
     })
   }
 
   createRoleTemplate(){
-    EventFile.map
+    employee.createTemplate(this.refs.templatename.value, this.refs.templatedesc.value).then((template) => {
+      console.log(template)
+      EventFile.roles.map((role) => {
+        if (role != null) {employee.addRolesToTemplate(template.insertId, role.role_id, role.amount)}
+      })
+    })
   }
 
   addRoles(){
@@ -224,12 +253,13 @@ class createevents extends React.Component<{}> {
       EventFile.roles[role.role_id] = {role_id: role.role_id, role_name: role.role_name, amount: this.refs.addRoleAmount.value}
       //Med løsningen over får vi ikke duplikate innslag av samme rolle i eventet
       localStorage.setItem("eventFile", JSON.stringify(EventFile))
-        console.log(EventFile)
-        this.renderRoles()
+      console.log(EventFile)
+      this.renderRoles()
     })
   }
 
   saveEventProgress(){
+    console.log((this.refs.start.value instanceof Date) + "start !" +  this.refs.start.value)
     EventFile.event.title = this.refs.eventname.value
     EventFile.event.adress = this.refs.adress.value
     EventFile.event.start = this.refs.start.value
@@ -239,6 +269,7 @@ class createevents extends React.Component<{}> {
     EventFile.event.extContact = this.refs.ExtContactName.value
     EventFile.event.contact_id = this.refs.RKContactPerson.value
     EventFile.event.details = this.refs.details.value
+    EventFile.event.hostname = this.refs.Hostname.value
     console.log(EventFile)
     localStorage.setItem("eventFile", JSON.stringify(EventFile))
   }
@@ -252,6 +283,7 @@ class createevents extends React.Component<{}> {
     this.refs.ExtContactName.value = EventFile.event.extContact
     this.refs.RKContactPerson.value = EventFile.event.contact_id
     this.refs.details.value = EventFile.event.details
+    this.refs.Hostname.value = EventFile.event.hostname
     console.log("butnuttin happerned")
   }
 

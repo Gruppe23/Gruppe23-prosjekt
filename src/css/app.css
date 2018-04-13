@@ -251,14 +251,17 @@ html, body, .app {
   bottom: 0;
   margin: auto;
   background-color: rgba(0,0,0, 0.5);
+  z-index: 1000;
 }
 .popup_inner {
-  border: 1px solid black;
-  border-radius: 10px;
+  border: 1px solid #ccc;
   position: absolute;
-  left: 45px;
+  margin-left: auto;
+  margin-right: auto;
   top: 100px;
-  width: 500px;
+  right: 0;
+  left: 0;
+  width: 700px;
   height: 500px;
   margin: auto;
   background: white;
@@ -482,11 +485,50 @@ button, label {
   font-size: 14px;
   width: 461px;
 }
+.templateLabel{
+  float:left;
+  width: 100%;
+  height: 20px;
+  text-align: center;
+}
+.TemplateRolesRow{
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  float: left;
+  cursor: pointer;
+  margin-top:5px;
+  margin-right: 5px;
+  margin-left: 5px;
+  padding: 8px 16px;
+  transition: 0.3s;
+  font-size: 14px;
+  width: calc(100% - 10px);
+}
+
+
+.TemplateRolesRow:hover{
+    background-color: #ccc;
+    height: Auto;
+    transition: height 1s;
+
+}
+
+.TemplateRolesRow:hover > .templateRoleInfo{
+  display: block;
+  transition: all 0.5s ease-in-out;
+
+}
+
+.templateRoleInfo{
+  display:none;
+}
+
 
 .ec_addRoles {
   width: 100%;
   height: 32px;
   margin-right:5px;
+
 }
 
 .ec_addedRoles {
@@ -505,6 +547,7 @@ button, label {
   margin-top: 5px;
 
 }
+
 .ec_RoleAddButton {
     background-color: #f1f1f1;
     outline: none;
@@ -545,6 +588,39 @@ button {
   width: 100%;
 }
 
+.Row_3Input {
+  background-color: #f1f1f1;
+  outline: none;
+  float: left;
+  border: 1px solid #ccc;
+  background-color: inherit;
+  cursor: text;
+  padding: 5px 5px;
+  transition: 0.3s;
+  font-size: 14px;
+  margin-top: 5px;
+  width: 100%;
+  text-align: center;
+}
+
+.RTClose {
+  background-color: #f1f1f1;
+  position: absolute;
+  outline: none;
+  float: right;
+  border: 1px solid #ccc;
+  background-color: inherit;
+  cursor: pointer;
+  padding: 8px 5px;
+  transition: 0.3s;
+  font-size: 14px;
+bottom: 5px;
+right: 5px;
+  width: 100px;
+}
+.RTClose:hover {
+  background-color: #ccc;
+}
 
 .Row_3buttons:hover {
   background-color: #ccc;
@@ -557,6 +633,8 @@ button {
 .ce_textAreaLabel{
   margin-top: 5px;
 }
+
+
 .ce_textArea{
   width: 100%;
   height: 150px;
