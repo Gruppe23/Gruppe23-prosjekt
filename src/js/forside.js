@@ -15,7 +15,11 @@ import createHashHistory from 'history/createHashHistory';
 const history = createHashHistory();
 
 
+if (localStorage.getItem("signedInUser") == true){
 
+}else {
+  history.push("/")
+}
 
 class Forside2 extends React.Component<{}> {
   constructor() {
@@ -24,6 +28,7 @@ class Forside2 extends React.Component<{}> {
 
   render(){
     let item: obj = localStorage.getItem('signedInUser')
+    if (item != null){
     let userInfo: obj = JSON.parse(item)
     let admin: component;
     let adminpath: reactComponent;
@@ -72,6 +77,7 @@ class Forside2 extends React.Component<{}> {
           </HashRouter>
 
    )
+ }
   }
   componentDidMount(){
     history.push("/forside")

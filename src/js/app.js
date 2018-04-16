@@ -43,6 +43,7 @@ class ProgramRender extends React.Component<{}> {
 }
       render() {
         let signedInUser = employee.getSignedInUser2();
+        console.log(signedInUser)
         if(signedInUser) {
           //Vi returnerer enten forsiden, eller login/registrering basert på om en bruker er logget inn.
           // Ved innlogging/utlogging forceupdater vi ProgramREnder til å skjekke JSON filen om vi er logget inn.
@@ -50,6 +51,7 @@ class ProgramRender extends React.Component<{}> {
           <Forside2 />
         )
       }else{
+
         return(
           <div id="full">
           <div className="loginContent" id="loginContent">

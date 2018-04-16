@@ -40,6 +40,7 @@ class LoginWindow extends React.Component<{}> {
      let mail: string = this.refs.loginMail.value
      let pass: string = this.refs.loginPassword.value
      employee.getLogin(mail).then((notes: User) => {
+       console.log(notes)
        if (passwordHash.verify(pass, notes.password) == true && notes.status == 1)  {
          alert("password match")
          localStorage.removeItem('signedInUser')

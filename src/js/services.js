@@ -140,7 +140,7 @@ class getEmployee {
           reject(error);
           return;
         }
-        console.log(result)
+        console.log(result[0])
         resolve(result[0])
       })
     })
@@ -156,7 +156,6 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
         reject(error);
         return;
       }
-
       resolve("Certificate was successfully added to database");
     });
   });
@@ -226,7 +225,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
   }
 
 
-  getSignedInUser2(): Promise<User[]> {
+  getSignedInUser(): Promise<User[]> {
     return new Promise((resolve, reject) => {
     let item: User[] = localStorage.getItem('signedInUser'); // Get User-object from browser
     if(!item) return null
@@ -235,7 +234,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
   }
 
 
-    
+
   getRoles(): Promise<roleCertificates[]> {
     return new Promise((resolve, reject) => {
       connection.query('select role.role_id, rc.certificate_id, c.certificate_name, role.role_name from (role_certificate rc inner join certificate c on c.certificate_id = rc.certificate_id) INNER JOIN role on role.role_id = rc.role_id', (error, result) => {
@@ -335,7 +334,6 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
           reject(error);
           return;
         }
-
         resolve("Certificate was successfully added to database");
       });
     });
@@ -476,11 +474,12 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
 
   getEvents(): Promise< ?Object> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM events', (error, result) => {
+      connection.query('SELECT id, start, end, prep, address, postal, gmaps, title, contact_id, ext_contact_id, description, hostname, allDay, (select count(*) from shift where event_id=id and employee_id IS NULL) AS empty_shifts from events', (error, result) => {
         if(error) {
           reject(error);
           return;
         }
+        resolve(result)
       })
     })
 }
@@ -494,7 +493,6 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
           reject(error);
           return;
         }
-
         resolve(result);
       });
     });
@@ -508,8 +506,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
           reject(error);
           return;
         }
-
-        resolve(result);
+        resolve(result[0]);
       });
     });
   }
@@ -541,11 +538,12 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
 
   getShifts(id): Promise< ?Object> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM shift', [id], (error, result) => {
+      connection.query('SELECT s.start, s.end, e.id, s.employee_id, s.role_id, s.shift_name, e.title, e.address, e.hostname, e.postal, e.ext_contact_id, e.contact_id, em.first_name AS contact_first_name, em.surname AS contact_last_name, em.tlf AS contact_tlf, ec.first_name AS ec_first_name, ec.last_name AS ec_last_name, ec.phone_number AS ec_tlf FROM shift s INNER JOIN ( employee em inner join ( events e INNER JOIN external_contact ec ON e.ext_contact_id = ec.contact_id ) on e.contact_id = em.user_id ) on s.event_id = e.id group by shift_id', (error, result) => {
         if(error) {
           reject(error);
           return;
         }
+        resolve(result)
       })
     })
   }
@@ -572,7 +570,6 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
           reject(error);
           return;
         }
-
         resolve(result);
       });
     });

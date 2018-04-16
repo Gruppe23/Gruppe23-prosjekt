@@ -50,8 +50,7 @@ class EventPopup extends React.Component<{}> {
           <div ref="eventName"></div>
           <div ref="eventDescription"></div>
           <div ref="eventLocation"></div>
-
-          <a href="" ref="eventMapsLink">Google Maps Link</a>
+        //  <a href="" ref="eventMapsLink">Google Maps Link</a>
           <div>Ekstern kontakt</div>
           <div ref="contactName"></div>
           <div ref="contactNumber"></div>

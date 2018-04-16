@@ -35,17 +35,17 @@ eventStyleGetter(event, start, end, isSelected) {
     console.log(event);
     var backgroundColor = '#' + event.hexColor;
     var style = {
-        backgroundColor: backgroundColor,
-        borderRadius: '0px',
-        opacity: 0.8,
-        color: 'red',
-        border: '0px',
-        display: 'block'
+        backgroundColor: backgroundColor
     };
-    if(event.employee_id == null && event.isshift == 1) {
-      style.backgroundColor = "#E679E3"
+    if(event.employee_id == null && event.isshift == true) {
+      style.backgroundColor = "#a59e9e"
+    } else if (event.employee_id != null) {
+      style.backgroundColor= "#9CEC9C"
     }
 
+    if(event.empty_shifts > 0 && event.empty_shifts){
+      style.backgroundColor = "#b2262e"
+    }
     return {
         style: style
     };
@@ -95,27 +95,42 @@ eventStyleGetter(event, start, end, isSelected) {
     })
   }
 
+componentWillUnmount(){
+  this.setState({
+    kalender1: "",
+    kalender2: "",
+    firstSlotSelected: false
+  })
+}
+
   componentDidMount(){
-    employee.getSignedInUser2().then((user) =>{
+    employee.getSignedInUser().then((user) =>{
+      console.log("user")
       employee.getEvents().then((EventFetch) => {
+        console.log("EventFetch")
         employee.getShifts(user.user_id).then((shifts) => {
           console.log(EventFetch)
           let events = EventFetch
           let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
           new Promise((resolve, reject)=> {
-              for(let x in shifts){events.push({isshift: 1, id: shifts[x].event_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id,title: shifts[x].shift_name })
+              events = EventFetch
+              console.log(shifts)
+              if(user.user_type == 2) {
+              for(let x in shifts){events.push({isshift: true, id: shifts[x].event_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id, title: shifts[x].shift_name, address: shifts[x].address, contact_first_name: shifts[x].contact_first_name, contact_last_name: shifts[x].contact_last_name, contact_tlf: shifts[x].contact_tlf})
+            }} else {
+              for(let x in shifts){
+                if(shifts[x].employee_id == user.user_id){
+                  events.push({isshift: true, id: shifts[x].event_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id,title: shifts[x].shift_name })
+              }
+              }
+          }
               console.log(events)
-            }
               resolve(events)
           }).then((eventz)=> {
           console.log('nice for what');
           this.setState({kalender1:
             <BigCalendar
-              questionmark = {console.log(eventz)}
               events={eventz}
-              views={allViews}
-              step={60}
-              showMultiDayTimes
               defaultDate={new Date()}
               eventPropGetter={(this.eventStyleGetter)}
               onSelectEvent={event => {this.togglePopup(event)}}
@@ -125,10 +140,7 @@ eventStyleGetter(event, start, end, isSelected) {
           this.setState({kalender2:
             <BigCalendar
               selectable
-              events={events}
-              views={allViews}
-              step={60}
-              showMultiDayTimes
+              events={eventz}
               defaultDate={new Date()}
               eventPropGetter={(this.eventStyleGetter)}
               onSelectSlot={(
