@@ -1,5 +1,4 @@
 // @flow
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
@@ -10,28 +9,43 @@ if (typeof localStorage === "undefined" || localStorage === null) {
   var LocalStorage = require('node-localstorage').LocalStorage;
   localStorage = new LocalStorage('./scratch');
 }
-console.log(hashedPassword)
-let loginState;
-console.log(window.innerWidth + "Width + Height" + window.innerHeight)
 import { Forside2, forside2 } from "./forside.js"
 import { LoginWindow } from "./loginwindow.js"
 import { RegisterWindow } from "./registerwindow.js"
 import createHashHistory from 'history/createHashHistory';
+//import {nodemailer} from 'nodemailer';
 const history = createHashHistory();
+// https://medium.com/@manojsinghnegi/sending-an-email-using-nodemailer-gmail-7cfa0712a799
+console.log(history)
+let api_key = 'key-53691f7229e0eec8522473b2e853cabf';
+let domain = 'sandboxb5cedbd4224a4475ac49059ce199712a.mailgun.org';
+let mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
+
+var data = {
+  from: 'Rode Kors <gruppe23prosjekt@gmail.com>',
+  to: 'andreasfrenning@gmail.com',
+  subject: 'Hei',
+  text: 'Her kjører vi en test av mailgun'
+};
+//Send mail...
+/*mailgun.messages().send(data, function (error, body) {
+  console.log(body);
+});*/
+
 //======================================================================================================
 //==========Rendering==========================================================================
 //======================================================================================================
 //ProgramRender er hoved DOM Objektet hvor alle andre DOM objekter blir dynamisk endret ved hjelp av React State.
 
-
 class ProgramRender extends React.Component<{}> {
   constructor() {
-    super(); //Vi binder this.startpage, enkelt forklart lar det oss bruke this.startpage i klassen for å
+    super();
 }
       render() {
-
-        let signedInUser = employee.getSignedInUser();
+        let signedInUser = employee.getSignedInUser2();
         if(signedInUser) {
+          //Vi returnerer enten forsiden, eller login/registrering basert på om en bruker er logget inn.
+          // Ved innlogging/utlogging forceupdater vi ProgramREnder til å skjekke JSON filen om vi er logget inn.
         return (
           <Forside2 />
         )
@@ -57,7 +71,7 @@ class ProgramRender extends React.Component<{}> {
         programRender = this
       }
 }
-let programRender: Object;
+let programRender: React$Component;
 function forside(){
     ReactDOM.render((
         <ProgramRender />

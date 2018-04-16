@@ -6,15 +6,22 @@ html, body {
   max-width: 1920px;
 }
 
+.profilside {
+  margin-top:10px;
+}
+.centered {
+margin: auto;
+}
+
 .all {
-  height: calc(100% - 2px);
+  height: calc(99% - 2px);
   width: calc(100% - 2px);
   position: absolute;
 
 }
 
 .full {
-  height: 99%;
+  height: calc(99% - 55px);
   width: 100%;
 }
 
@@ -22,6 +29,14 @@ html, body {
   border: 1px solid black;
   height: calc(100% - 3px);
   width: calc(100% - 3px;);
+}
+
+.logout{
+  right: 5px;
+}
+
+.navbar-nav > li > a > i {
+font-size: 30px;
 }
 
 #logoutBTN {
@@ -68,11 +83,11 @@ html, body {
 }
 
 .loginContent {
+  margin-top: 75px;
   margin-left: auto;
   margin-right: auto;
 margin-top: 75px;
   width: 400px;
-  height: 400px;
   border: 1px solid Black;
   display: block;
   background-color: #8B8484;
@@ -157,6 +172,8 @@ height: calc(100% - 12px);
 
 .AdminPage_Container {
   height: 100%;
+  display: block;
+  overflow:hidden;
 }
 
 .hundre {
@@ -206,6 +223,25 @@ html, body, .app {
   width: 100%;
   height: 100vh;
 }
+.TopRight {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  top:63px;
+  right:0px;
+  background-color: red;
+  border: none; /* Remove borders */
+  color: white; /* White text */
+  font-size: 20px; /* Set a font size */
+  cursor: pointer; /* Mouse pointer on hover */
+}
+/* Darker background on mouse-over */
+.TopRight:hover {
+    background-color: DarkRed;
+}
+.red {
+  color: red !important;
+}
 .popup {
   position: fixed;
   width: 100%;
@@ -216,16 +252,18 @@ html, body, .app {
   bottom: 0;
   margin: auto;
   background-color: rgba(0,0,0, 0.5);
-z-index: 999;	
+  z-index: 1000;
 }
 .popup_inner {
-  border: 1px solid black;
-  border-radius: 10px;
+  border: 1px solid #ccc;
   position: absolute;
-  left: 25%;
-  right: 25%;
-  top: 25%;
-  bottom: 25%;
+  margin-left: auto;
+  margin-right: auto;
+  top: 100px;
+  right: 0;
+  left: 0;
+  width: 700px;
+  height: 500px;
   margin: auto;
   background: white;
 }
@@ -236,14 +274,423 @@ z-index: 999;
 }
 
 .forsideContent{
-  height: 95%;
-  margin-top: 60px;
+  height: 100%;
+  margin-top: 70px;
+  overflow: scroll;
 }
 
 #AcceptUsersBox {
-  height: 150px;
-  width: 150px;
+  height: 28%;
+  width: 90%;
   border: 1px solid black;
+  margin: auto;
+  margin-top: 20px;
+  background-color: white;
+  overflow: scroll;
+}
+
+#AcceptLicenseBox{
+  height: 28%;
+  width: 90%;
+  border: 1px solid black;
+  margin: auto;
+  margin-top: 20px;
+  background-color: white;
+}
+#UserList {
+  height: 100%;
+  width:300px;
+  margin-right: 10px;
+  float: left;
+  border: 1px solid black;
+}
+
+#UserInfoBox {
+  height: 28%;
+  width: 90%;
+  border: 1px solid black;
+  margin: auto;
+  margin-top: 20px;
+  background-color: white;
+}
+
+#UserInfoBoxBTNS {
+  position: absolute;
+  float: 0;
+  bottom:0;
+}
+
+.regSearch {
+    background-image: url('../pictures/searchicon.png'); /* Add a search icon to input */
+    background-position: 5px 5px; /* Position the search icon */
+    background-repeat: no-repeat; /* Do not repeat the icon image */
+    width: 100%; /* Full-width */
+    font-size: 16px; /* Increase font-size */
+    padding: 5px 20px 5px 40px; /* Add some padding */
+    border: 1px solid #ddd; /* Add a grey border */
+     /* Add some space below the input */
+}
+
+.popup_inner {
+  margin: auto;
+}
+
+.licSearch {
+    background-image: url('../pictures/searchicon.png'); /* Add a search icon to input */
+    background-position: 5px 5px; /* Position the search icon */
+    background-repeat: no-repeat; /* Do not repeat the icon image */
+    width: 100%; /* Full-width */
+    font-size: 16px; /* Increase font-size */
+    padding: 5px 20px 5px 40px; /* Add some padding */
+    border: 1px solid #ddd; /* Add a grey border */
+     /* Add some space below the input */
+}
+
+.myUL {
+    /* Remove default list styling */
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.myUL li a {
+    border: 1px solid #ddd; /* Add a border to all links */
+    margin-top: -1px; /* Prevent double borders */
+    background-color: #f6f6f6; /* Grey background color */
+    padding: 5px; /* Add some padding */
+    text-decoration: none; /* Remove default text underline */
+    font-size: 14px; /* Increase the font-size */
+    color: black; /* Add a black text color */
+    display: block; /* Make it into a block element to fill the whole list */
+}
+
+.myUL li a:hover:not(.header) {
+    background-color: #eee; /* Add a hover effect to all links, except for headers */
+}
+
+.tooltipxx {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltipxx .tooltiptextxx {
+  visibility: hidden;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  width: 150px;
+  /* Position the tooltip */
+   top: 100%;
+   left: 50%;
+   margin-left: -75px; /* Use half of the width (120/2 = 60), to center the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+li:hover a span {
+  visibility: visible !important;
+}
+
+a.hover span {
+  visibility: visible !important;
+}
+.tooltixxp:hover .tooltiptextxx {
+  visibility: visible !important;
+}
+
+.ce_Row1 {
+  width: 300px;
+  height: 700px;
+  overflow: show;
+  float: left;
+  margin-right: 25px;
+  margin-left: 5px;
+}
+
+.ce_Row2 {
+  width: 480px;
+  height: 700px;
+  overflow: show;
+  float: left;
+  overflow: scroll;
+  position:relative;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+.ce_Row3 {
+  width: 300px;
+  height: 700px;
+  overflow: hidden;
+  float: left;
+  margin-top: 19px;
+  position: relative;
+}
+
+.ce_inputDiv {
+  float: left;
+}
+
+input, label {
+  display: block;
+}
+
+button, label {
+  display: block;
+}
+
+.inputWidth {
+  width: 100%;
+}
+.adr{
+  width: 68%;
+  float: left;
+}
+.zip {
+  width: 28%;
+}
+
+.ce_zip {
+  width: 100%;
+}
+
+.tab {
+  margin-top: 10px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+
+.ce_tip:hover {
+  cursor: pointer;
+
+}
+.floatRight{
+  float:right;
+}
+/* Style the buttons inside the tab */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 8px 16px;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+.removeShift{
+  float: right;
+}
+.ec_SelectRole{
+  width:300px;
+  float: left;
+}
+
+.AddedRolesRow{
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  float: left;
+  cursor: pointer;
+  margin-top:5px;
+  padding: 8px 16px;
+  transition: 0.3s;
+  font-size: 14px;
+  width: 461px;
+}
+.templateLabel{
+  float:left;
+  width: 100%;
+  height: 20px;
+  text-align: center;
+}
+.TemplateRolesRow{
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  float: left;
+  cursor: pointer;
+  margin-top:5px;
+  margin-right: 5px;
+  margin-left: 5px;
+  padding: 8px 16px;
+  transition: 0.3s;
+  font-size: 14px;
+  width: calc(100% - 10px);
+}
+
+
+.TemplateRolesRow:hover{
+    background-color: #ccc;
+    height: Auto;
+    transition: height 1s;
+
+}
+
+.TemplateRolesRow:hover > .templateRoleInfo{
+  display: block;
+  transition: all 0.5s ease-in-out;
+
+}
+
+.templateRoleInfo{
+  display:none;
+}
+
+
+.ec_addRoles {
+  width: 100%;
+  height: 32px;
+  margin-right:5px;
+
+}
+
+.ec_addedRoles {
+  width: 100%;
+  margin-right:5px;
+  float:left;
+}
+
+.ec_RoleAmount {
+  width: 100px;
+  float: left;
+}
+.ec_RoleAddButtonDiv{
+  width: 75px;
+  float: left;
+  margin-top: 5px;
+
+}
+
+.ec_RoleAddButton {
+    background-color: #f1f1f1;
+    outline: none;
+    border: 1px solid #ccc;
+    height: 26px;
+}
+.ec_RoleAddButton:hover {
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+button {
+  cursor: pointer;
+}
+
+.gMaps {
+  width: 100%;
+  height: 300px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  left: 0px;
+  bottom: 19px;
+  margin-top: 5px;
+  position: absolute;
+}
+
+.Row_3buttons {
+  background-color: #f1f1f1;
+  outline: none;
+  float: left;
+  border: 1px solid #ccc;
+  background-color: inherit;
+  cursor: pointer;
+  padding: 8px 5px;
+  transition: 0.3s;
+  font-size: 14px;
+  margin-top: 5px;
+  width: 100%;
+}
+
+.Row_3Input {
+  background-color: #f1f1f1;
+  outline: none;
+  float: left;
+  border: 1px solid #ccc;
+  background-color: inherit;
+  cursor: text;
+  padding: 5px 5px;
+  transition: 0.3s;
+  font-size: 14px;
+  margin-top: 5px;
+  width: 100%;
+  text-align: center;
+}
+
+.RTClose {
+  background-color: #f1f1f1;
+  position: absolute;
+  outline: none;
+  float: right;
+  border: 1px solid #ccc;
+  background-color: inherit;
+  cursor: pointer;
+  padding: 8px 5px;
+  transition: 0.3s;
+  font-size: 14px;
+bottom: 5px;
+right: 5px;
+  width: 100px;
+}
+.RTClose:hover {
+  background-color: #ccc;
+}
+
+.Row_3buttons:hover {
+  background-color: #ccc;
+}
+
+
+.cancer:hover {
+  background-color: #ddd;
+}
+.ce_textAreaLabel{
+  margin-top: 5px;
+}
+
+
+.ce_textArea{
+  width: 100%;
+  height: 150px;
+  resize: none;
+}
+.ec_opprett{
+    background-color: lightgrey;
+    float: left;
+    border: 1px solid grey;
+    outline: none;
+    cursor: pointer;
+    padding: 8px 16px;
+    WIDTH:  100%;
+    transition: 0.3s;
+    font-size: 14px;
+    bottom: 5px;
+    left: 5px;
+}
+.ec_opprett:hover {
+    background-color: #ddd;
+}
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
 }
 
 .hidden {

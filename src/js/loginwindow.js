@@ -7,12 +7,18 @@ import { Link, HashRouter, Switch, Route } from 'react-router-dom';
 import { employee } from "./services"
 import { forside2 } from "./forside.js"
 import { ProgramRender, programRender } from "./app.js"
+import {User} from './services';
 import createHashHistory from 'history/createHashHistory';
 const history = createHashHistory();
 
-class LoginWindow extends React.Component {
+class LoginWindow extends React.Component<{}> {
   constructor(){
     super();
+  }
+  refs: {
+    login: HTMLInputElement,
+    loginMail: HTMLInputElement,
+    loginPassword: HTMLInputElement,
   }
 
   render() {
@@ -20,40 +26,35 @@ class LoginWindow extends React.Component {
       <div className="login">
             <div className="loginelements">
                 <span>Login<p></p></span>
-                <input type="text" id="loginMail"></input><p></p>
+                <input type="text" ref="loginMail"></input><p></p>
                 <span>Password<p></p></span>
-                <input type="password" id="loginPassword"></input><p></p>
-                <button ref="login">Login</button>
-                <p></p>
-                <button onClick={forside2}>Til forsiden</button>
+                <input type="password" ref="loginPassword"></input><p></p>
+                <button ref="login" onClick= {() => {this.login()}}>Login</button>
                 <p></p>
                 <button><Link to='/page2'>Til Registrering</Link></button>
             </div>
         </div>
     );
   }
+ login(){
+     let mail: string = this.refs.loginMail.value
+     let pass: string = this.refs.loginPassword.value
+     employee.getLogin(mail).then((notes: User) => {
+       if (passwordHash.verify(pass, notes.password) == true && notes.status == 1)  {
+         alert("password match")
+         localStorage.removeItem('signedInUser')
+         localStorage.setItem('signedInUser', JSON.stringify(notes))
+         programRender.forceUpdate();
+       } else if(notes.status == 1) {
+         alert("password does not match")
+       } else {
+         alert("Your account is not verified")
+       }
+   }).catch((error) => {
+     console.log('Error getting notes: ' + error);
+   });
+ }
 
-  componentDidMount() {
-    this.refs.login.onclick = () => {
-      let mail = document.getElementById("loginMail").value
-      let pass = document.getElementById("loginPassword").value
-      console.log(mail + ' ' + pass)
-      employee.getLogin(mail).then((notes) => {
-        console.log(notes[0].password);
-        if (passwordHash.verify(pass, notes[0].password) == true) {
-          alert("password match")
-          localStorage.removeItem('signedInUser')
-          localStorage.setItem('signedInUser', JSON.stringify(notes[0]))
-          programRender.forceUpdate();
-        } else {
-          alert("password does not match")
-        }
-    }).catch((error) => {
-      console.log('Error getting notes: ' + error);
-    });
-  }
-console.log("LoginWindow Did mount")
-  };
 }
 
 export { LoginWindow }
