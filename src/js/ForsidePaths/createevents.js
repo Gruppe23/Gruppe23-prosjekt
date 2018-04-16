@@ -35,7 +35,7 @@ class createevents extends React.Component<{}> {
     prep: HTMLInputElement;
     start: HTMLInputElement;
     end: HTMLInputElement;
-    ExtFirstname: HTMLInputElement;
+    Extfirstname: HTMLInputElement;
     Extlastname: HTMLInputElement;
     Exttlf: HTMLInputElement;
     eventname: HTMLInputElement;
@@ -92,6 +92,8 @@ class createevents extends React.Component<{}> {
                 <input ref="ExtContactName" defaultValue={EventFile.event.extContact} list="externcontacts" placeholder="Søk gjennom externkontakter" className="inputWidth"name="myBrowser" />
             </label>
             <datalist id="externcontacts">
+              {/*Ikke så fornøyd med å bruke datalist, men det er en veldig rask løsning som ikke trenger mye scripting eller arbeid for å brukes. Det som er mest irriterende med det er at det er ingen måte å velge elementet i objectlisten som jeg har funnet ut av.
+                slik at vi må referere til verdier i databsen med navn istedet for id som ikke er ideelt. Men i et så lite system burde det gå greit.  */}
               {this.state.externcontact}
             </datalist>
           </div>
@@ -100,7 +102,7 @@ class createevents extends React.Component<{}> {
      <div id="newExtContact" className="tabcontent">
        <div className="ec_inputDiv">
          <label htmlFor="Arranger">Fornavn: </label>
-            <input ref="ExtFirstname" id="ExtFirstname" type="text"  name="Arranger"/>
+            <input ref="Extfirstname" id="ExtFirstname" type="text"  name="Arranger"/>
        </div>
        <div className="ec_inputDiv">
          <label htmlFor="Arranger">Etternavn: </label>
@@ -110,7 +112,7 @@ class createevents extends React.Component<{}> {
          <label htmlFor="Arranger">Telefonnummer: </label>
             <input ref="Exttlf" id="Exttlf" type="text"  name="Arranger"/>
        </div>
-       <button>Opprett</button>
+       <button onClick={() => {this.addNewExtContact()}} >Opprett</button>
      </div>
 
      <div className="ec_inputDiv">
@@ -121,32 +123,23 @@ class createevents extends React.Component<{}> {
 
    <div className="ec_inputDiv">
      <label htmlFor="Startdato" className="inputWidth">Startdato: </label>
-        <input ref="start" id="Startdato" defaultValue={EventFile.event.start} className="inputWidth" type="datetime-local"  name="Startdato"/>
+        <input ref="start" id="Startdato" Max="2999-12-31" defaultValue={EventFile.event.start} className="inputWidth" type="datetime-local"  name="Startdato"/>
    </div>
 
    <div className="ec_inputDiv">
      <label htmlFor="Sluttdato" className="inputWidth">Sluttdato: </label>
-        <input ref="end" id="Sluttdato" className="inputWidth" defaultValue={EventFile.event.end} type="datetime-local"  name="Sluttdato"/>
+        <input ref="end" id="Sluttdato" Max="2999-12-31" className="inputWidth" defaultValue={EventFile.event.end} type="datetime-local"  name="Sluttdato"/>
    </div>
 
    <div className="ec_inputDiv">
      <label  htmlFor="Prep" className="inputWidth">Preparasjon tid: </label>
-        <input ref="prep" id="Prep" defaultValue={EventFile.event.prep} className="inputWidth" type="datetime-local"  name="Prep"/>
+        <input ref="prep" id="Prep" Max="2999-12-31" defaultValue={EventFile.event.prep} className="inputWidth" type="datetime-local"  name="Prep"/>
    </div>
 
    <div className="ec_inputDiv" className="inputWidth">
       <label htmlFor="myBrowser" className="inputWidth">
-         Velg kontaktperson fra Røde Kors: <i title="Kontaktperson kan velges når alle datoer er satt, da vil ansatte med lederrollen som ikke er passive vist." className=" ce_tip fa fa-question-circle"></i>
-         <input ref="RKContactPerson" defaultValue={EventFile.event.contact_id}  onInput={(event) => {
-           console.log(this.refs.prep.value)
-           console.log(this.refs.start.value)
-           console.log(this.refs.end.value)
-           if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16 || this.refs.prep.value.length != 16) {
-             alert("Vennligst sett opp alle datoene på arrangementet før du velger kontaktperson.")
-             event.target.value = ""
-           }else {
-             employee.getAvailableEmployeesEventCreation(this.refs.prep.value, this.refs.end.value).then((x) => {console.log(x)})
-           }}} list="contactpersons" name="myBrowser" placeholder="Søk etter kontaktpersoner" className="inputWidth" />
+         Velg kontaktperson fra Røde Kors: <i title="For å velge kontaktperson må alle datoer være fyllt ut." className=" ce_tip fa fa-question-circle"></i>
+         <input ref="RKContactPerson" defaultValue={EventFile.event.contact_id}  onClick={()=>{this.renderAvailableRKContactPersons()}} list="contactpersons" name="myBrowser" placeholder="Søk etter kontaktpersoner" className="inputWidth" />
      </label>
      <datalist id="contactpersons">
        {this.state.contactpersons}
@@ -166,7 +159,7 @@ class createevents extends React.Component<{}> {
      <label className="ce_textAreaLabel">Legg til beskrivelse: </label>
      <textarea ref="details" defaultValue={EventFile.event.details} className="ce_textArea"></textarea>
    </div>
-     <button ref="create" onClick={()=>{}}className="ec_opprett">Opprett Arrangement</button>
+     <button ref="create" onClick={()=>{this.eventCreate()}}className="ec_opprett">Opprett Arrangement</button>
 </div>
 
 <div className="ce_Row2">
@@ -186,7 +179,7 @@ class createevents extends React.Component<{}> {
         <div className="ec_addedRoles">
           {this.state.addedroles}
         </div>
-        <div className="gMaps"></div>
+
       </div>
 
 <div className="ce_Row3">
@@ -196,6 +189,7 @@ class createevents extends React.Component<{}> {
   <textarea ref="templatedesc" defaultValue={EventFile.event.details} className="ce_textArea"></textarea>
   <button ref="cancel" onClick={()=>{this.createRoleTemplate()}} className="Row_3buttons">Opprett Vakt Mal</button>
   <button ref="cancel" onClick={()=>{this.togglePopup()}} className="Row_3buttons">Velg Vakt Mal</button>
+  <div className="gMaps"></div>
 </div>
 </div>)
 }
@@ -220,26 +214,66 @@ class createevents extends React.Component<{}> {
   }
 
   eventCreate(){
-    if(this.refs.eventname.value == ""){
+    if(this.refs.eventname.value.length == 0){
       alert("Vennligst fyll inn et arrangementnavn")
     } else{
-      if(this.refs.adress.value == ""){
+      if(this.refs.adress.value.length == 0){
         alert("vennligst fyll inn en adresse")
       } else {
         if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16 || this.refs.prep.value.length != 16){
           alert("Vennligst fyll ut alle datoer!")
+        } else {
+        if  (this.refs.Hostname.value.length == 0 ) {
+          alert("Vennligst fyll inn arrangørnavn!")
+        } else {
+          if(this.refs.zip.value.length != 4 || isNaN(this.refs.zip.value) == true){
+            alert("Postnr må være 4 tall")
+          }else {
+            let employee_name = this.refs.RKContactPerson.value.split(" ")
+            console.log(employee_name)
+           employee.getEmployeeByName(employee_name[0], employee_name[1]).then((RKContact) => {
+             let extContact_name = this.refs.ExtContactName.value.split(" ");
+             console.log(extContact_name)
+                  employee.getExternalContactByName(extContact_name[0], extContact_name[1]).then((extContact) => {
+                    console.log(extContact.contact_id +" extContact_id")
+                    employee.createEvent(this.refs.start.value, this.refs.end.value, this.refs.prep.value, this.refs.eventname.value, this.refs.Hostname.value, this.refs.details.value, this.refs.adress.value, this.refs.zip.value, RKContact.user_id, extContact.contact_id).then((eventData) => {
+                      console.log(eventData)
+                      let eventFile = localStorage.getItem("eventFile")
+                      EventFile = JSON.parse(eventFile)
+                      console.log(EventFile)
+                      for (let x in EventFile.roles) {
+                        if(EventFile.roles[x] != null){
+                          let y = 0;
+                          while (y < EventFile.roles[x].amount){
+                            y++
+                            console.log(y)
+                            employee.createShift(eventData.insertId, EventFile.roles[x].role_id, this.refs.start.value, this.refs.end.value, EventFile.role_name)
+                          }
+                        }
+                      }
+                    })
+
+                  })
+
+           })
+          }
+        }
         }
       }
     }
   }
 
+  // start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id
+
   renderRoles(){
   EventFile = localStorage.getItem("eventFile")
   EventFile = JSON.parse(EventFile)
     this.setState({
-      addedroles: EventFile.roles.map((role) => {if(role != null){console.log("SKJEDDE"); return <div key={role.role_id} className="AddedRolesRow">{role.amount + " skift for ansatte med rollen: " + role.role_name + " er satt opp."}</div>}})
+      addedroles: EventFile.roles.map((role) => {if(role != null){console.log("SKJEDDE"); return <div key={role.role_id} className="AddedRolesRow">{role.amount + " skift for ansatte med rollen: " + role.role_name + " er satt opp."} <button onClick={ () => { this.removeRole(role.role_id)} } className="removeShift">X</button></div>}})
     })
   }
+
+
 
   createRoleTemplate(){
     employee.createTemplate(this.refs.templatename.value, this.refs.templatedesc.value).then((template) => {
@@ -249,6 +283,24 @@ class createevents extends React.Component<{}> {
       })
     })
   }
+
+renderAvailableRKContactPersons(){
+  {
+    console.log(this.refs.prep.value)
+    console.log(this.refs.start.value)
+    console.log(this.refs.end.value)
+    //OnInput er ikke den beste metoden. Men har ikke tid til å lage et alternativ. I teorien ville jeg helst ha laget en funksjon som skjekker om alle datoer er satt inn og så utfører get Employee funksjonen.
+    //Eventuelt gjevnlig eller on date-change.
+    if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16 || this.refs.prep.value.length != 16) {
+      alert("Vennligst sett opp alle datoene på arrangementet før du velger kontaktperson.")
+      event.target.value = ""
+    }else {
+      employee.getAvailableEmployeesEventCreation(this.refs.prep.value, this.refs.end.value).then((x) => {
+      this.setState({ contactpersons: x.map((y) => { return <option key={y.first_name + y.last_name} value={y.first_name + " " + y.surname} /> } )})
+    }
+    )
+    }}
+}
 
   addRoles(){
     employee.getRoleByName(this.refs.addroles.value).then((role) => {
@@ -260,7 +312,34 @@ class createevents extends React.Component<{}> {
     })
   }
 
+  removeRole(roleid){
+    console.log(EventFile.roles[roleid])
+
+    EventFile.roles[roleid] = null
+    localStorage.setItem("eventFile", JSON.stringify(EventFile))
+    this.renderRoles()
+  }
+
+  addNewExtContact(){
+    if(this.refs.Exttlf.value.length >= 8){
+      if(this.refs.Extfirstname.value.length > 2 && this.refs.Extlastname.value.length > 2) {
+    employee.newExtContact(this.refs.Extfirstname.value, this.refs.Extlastname.value, this.refs.Exttlf.value)
+    this.renderExternalContacts()
+    this.refs.Extfirstname.value = ""
+    this.refs.Extlastname.value = ""
+    this.refs.Exttlf.value = ""
+  } else {
+    alert("Kontaktperson må ha minst 2 bokstaver i navnet.")
+  }
+  } else {
+    alert("Kan ikke opprette kontakt med ugyldig antall tall i tlfnr")
+  }
+}
+
   saveEventProgress(){
+    let extContact_name = this.refs.ExtContactName.value.split(" ");
+    console.log(extContact_name)
+
     console.log(this.refs.start.value.length)
     console.log(this.refs.start.value)
     EventFile.event.title = this.refs.eventname.value
@@ -293,11 +372,7 @@ class createevents extends React.Component<{}> {
 
   componentDidMount(){
     this.renderRoles()
-    employee.getExternalContacts().then((extContacts: ExtContact[]) => {
-      this.setState({
-        externcontact: extContacts.map((extContact) => <option  key={extContact.contact_id} value={extContact.first_name + " " + extContact.last_name} label={extContact.contact_id} />)
-      })
-    })
+    this.renderExternalContacts()
 
     employee.getDistinctRoles().then((roles) => {
       localStorage.setItem("roles", JSON.stringify(roles))
@@ -306,6 +381,14 @@ class createevents extends React.Component<{}> {
       })
     })
 
+  }
+
+  renderExternalContacts(){
+    employee.getExternalContacts().then((extContacts: ExtContact[]) => {
+      this.setState({
+        externcontact: extContacts.map((extContact) => <option  key={extContact.contact_id} value={extContact.first_name + " " + extContact.last_name} label={extContact.contact_id} />)
+      })
+    })
   }
 
   componentWillUnmount() {

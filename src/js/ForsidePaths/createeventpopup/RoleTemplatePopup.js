@@ -54,14 +54,23 @@ class SelectRoleTemplate extends React.Component<{}> {
     })
   }
 
-  componentDidMount(){
+  renderTemplates(){
     employee.getTemplates().then((templates) => {
-      this.setState({templateString, roletemplates: templates.map((template) => {
-        let returnDiv = <div key={template.template_id} onClick={()=>{this.saveRoles(template.template_id)}} className="TemplateRolesRow">{template.template_name}<div className="templateRoleInfo">{"Beksrivelse: " + template.description}</div></div>
-        return returnDiv
+      this.setState({roletemplates: templates.map((template) => {
+        return <div key={template.template_id}  className="TemplateRolesRow">{template.template_name}<button className="floatRight" onClick={()=>{this.removeTemplate(template.template_id)}}>X</button><button className="floatRight" onClick={()=>{this.saveRoles(template.template_id)}}>Velg</button><div className="templateRoleInfo">{"Beksrivelse: " + template.description}</div></div>
         })
       })
 
+    })
+  }
+
+  componentDidMount(){
+    this.renderTemplates()
+  }
+
+  removeTemplate(id){
+    employee.removeTemplate(id).then(()=> {
+    this.renderTemplates()
     })
   }
 }

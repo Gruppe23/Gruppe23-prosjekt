@@ -413,7 +413,12 @@ a.hover span {
   height: 700px;
   overflow: show;
   float: left;
+  overflow: scroll;
   position:relative;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
 }
 
 .ce_Row3 {
@@ -422,6 +427,7 @@ a.hover span {
   overflow: hidden;
   float: left;
   margin-top: 19px;
+  position: relative;
 }
 
 .ce_inputDiv {
@@ -463,6 +469,9 @@ button, label {
   cursor: pointer;
 
 }
+.floatRight{
+  float:right;
+}
 /* Style the buttons inside the tab */
 .tab button {
     background-color: inherit;
@@ -473,6 +482,10 @@ button, label {
     padding: 8px 16px;
     transition: 0.3s;
     font-size: 14px;
+}
+
+.removeShift{
+  float: right;
 }
 .ec_SelectRole{
   width:300px;
@@ -569,7 +582,7 @@ button {
 }
 
 .gMaps {
-  width: 461px;
+  width: 100%;
   height: 300px;
   background-color: #f1f1f1;
   border: 1px solid #ccc;

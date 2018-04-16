@@ -108,6 +108,18 @@ class getEmployee {
       });
     });
   }
+  getEmployeeByName(fname: string, lname: string): Promise<User> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM employee WHERE first_name=? AND surname=?', [fname, lname], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result[0]);
+        console.log(result[0])
+      });
+    });
+  }
 
   getExternalContacts(): Promise<ExtContact>{
     return new Promise((resolve, reject) => {
@@ -120,6 +132,35 @@ class getEmployee {
       })
     })
   }
+
+  getExternalContactByName(fname: string, lname:string): Promise<ExtContact>{
+    return new Promise((resolve, reject) => {
+      connection.query("SELECT * FROM external_contact WHERE first_name=? AND last_name=?", [fname, lname], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        console.log(result)
+        resolve(result[0])
+      })
+    })
+  }
+
+newExtContact(first_name: string, last_name: string, phone_number: number) {
+  return new Promise((resolve, reject) => {
+    let date = new Date()
+    connection.query('INSERT INTO external_contact (first_name, last_name, phone_number) VALUES (?, ?, ?)', [
+      first_name, last_name, phone_number
+    ], (error, result) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      resolve("Certificate was successfully added to database");
+    });
+  });
+}
 
   getAvailableEmployeesEventCreation(prepDate: Date, endDate: Date): Promise<User[]>{
     return new Promise((resolve, reject) => {
@@ -350,7 +391,38 @@ class getEmployee {
     });
   }
 
-  getLogin(mail : string): Promise<User> {
+  createEvent(start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id){
+    return new Promise((resolve, reject) => {
+      let date = new Date()
+      connection.query('INSERT INTO events (start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+        start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id
+      ], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+
+  createShift(id, role_id, start, end, shift_name){
+    return new Promise((resolve, reject) => {
+      let date = new Date()
+      connection.query('INSERT INTO shift (event_id, role_id, start, end, shift_name) VALUES (?, ?, ?, ?, ?)', [
+        id, role_id, start, end, shift_name
+      ], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+
+
+  getLogin(mail: string): Promise<User> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM employee WHERE username=?', [mail], (error, result) => {
         if (error) {
@@ -429,6 +501,7 @@ class getEmployee {
   }
 
 
+
 getTemplates(): Promise<Object[]>{
   return new Promise((resolve, reject) => {
    connection.query('select * from shift_template', (error: Error, result) => {
@@ -440,7 +513,26 @@ getTemplates(): Promise<Object[]>{
    });
  });
 }
+
+removeTemplate(id: number): Promise<void>{
+  return new Promise((resolve, reject) => {
+    connection.query('DELETE FROM shift_template_roles where template_id=?', [id], (error, result)=> {
+      if(error){
+        reject(error)
+        return;
+      }
+    })
+   connection.query('DELETE FROM shift_template WHERE template_id=?', [id], (error: Error, result) => {
+     if (error) {
+       reject(error);
+       return;
+     }
+     resolve();
+   });
+ });
 }
+}
+
 let employee = new getEmployee();
 export {
   employee,
