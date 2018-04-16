@@ -86,6 +86,7 @@ font-size: 30px;
   margin-top: 75px;
   margin-left: auto;
   margin-right: auto;
+margin-top: 75px;
   width: 400px;
   border: 1px solid Black;
   display: block;
@@ -690,4 +691,8 @@ right: 5px;
     padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
+}
+
+.hidden {
+  visibility: hidden;
 }

@@ -225,7 +225,23 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     return JSON.parse(item)
   }
 
+
+  getSignedInUser2(): Promise<User[]> {
+    return new Promise((resolve, reject) => {
+    let item: User[] = localStorage.getItem('signedInUser'); // Get User-object from browser
+    if(!item) return null
+    resolve(JSON.parse(item));
+  })
+  }
+
+  getEmployee(mail: string): Promise<User[]> {
+
+    
+    
+    
+    
   getRoles(): Promise<roleCertificates[]> {
+
     return new Promise((resolve, reject) => {
       connection.query('select role.role_id, rc.certificate_id, c.certificate_name, role.role_name from (role_certificate rc inner join certificate c on c.certificate_id = rc.certificate_id) INNER JOIN role on role.role_id = rc.role_id', (error, result) => {
         if (error) {
@@ -462,6 +478,16 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     });
   }
 
+
+  getEvents(): Promise< ?Object> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM events', (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+
+
   createTemplate(name: string, description: string): Promise<Object[]>{
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO shift_template (template_name, description) VALUES (?, ?)', [
@@ -471,10 +497,35 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
           reject(error);
           return;
         }
+
         resolve(result);
       });
     });
   }
+
+  
+  getEvent(id): Promise< ?Object> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM events WHERE id=?', [id], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+
+        resolve(result);
+      });
+    });
+  }
+  getExtContact(id): Promise< ?Object> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM external_contact WHERE contact_id=?', [id], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+
+        resolve(result[0]);
+
 
   addRolesToTemplate(template_id: string, role_id: number, amount: number): Promise<void>{
     return new Promise((resolve, reject) => {
@@ -484,9 +535,19 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
           return;
         }
         resolve();
+
       });
     });
   }
+
+  getShifts(id): Promise< ?Object> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM shift', [id], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+
 
   getTemplateRoles(id: number): Promise<Object[]>{
     return new Promise((resolve, reject) => {
@@ -495,10 +556,27 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
           reject(error);
           return;
         }
+
         resolve(result);
       });
     });
   }
+
+
+  setPassive(id, from_date, to_date): Promise< ?Object> {
+    return new Promise((resolve, reject) => {
+      connection.query('INSERT INTO passive(employee_id, from_date,to_date) VALUES( ?, ?, ? )', [id, from_date, to_date], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+
+        resolve(result);
+      });
+    });
+  }
+
+
 
 
 
@@ -512,6 +590,7 @@ getTemplates(): Promise<Object[]>{
      resolve(result);
    });
  });
+
 }
 
 removeTemplate(id: number): Promise<void>{
@@ -532,6 +611,7 @@ removeTemplate(id: number): Promise<void>{
  });
 }
 }
+
 
 let employee = new getEmployee();
 export {
