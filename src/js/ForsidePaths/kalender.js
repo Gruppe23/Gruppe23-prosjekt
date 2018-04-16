@@ -12,6 +12,9 @@ import { EventPopup } from "./eventPopup.js";
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 
 
+
+
+
 class Kalender extends React.Component<{}> {
   constructor(props){
     super(props)
@@ -25,6 +28,28 @@ class Kalender extends React.Component<{}> {
   }
 
 
+
+
+
+eventStyleGetter(event, start, end, isSelected) {
+    console.log(event);
+    var backgroundColor = '#' + event.hexColor;
+    var style = {
+        backgroundColor: backgroundColor,
+        borderRadius: '0px',
+        opacity: 0.8,
+        color: 'red',
+        border: '0px',
+        display: 'block'
+    };
+    if(event.employee_id == null && event.isshift == 1) {
+      style.backgroundColor = "#E679E3"
+    }
+
+    return {
+        style: style
+    };
+}
 
   render() {
     let panes = [
@@ -72,18 +97,27 @@ class Kalender extends React.Component<{}> {
 
   componentDidMount(){
     employee.getSignedInUser2().then((user) =>{
-      employee.getEvents().then((events) => {
+      employee.getEvents().then((EventFetch) => {
         employee.getShifts(user.user_id).then((shifts) => {
+          console.log(shifts)
+          let events = EventFetch
           let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
-          for(let x in shifts){events.push({id: shifts[x].event_id ,start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id,title: shifts[x].shift_name })}
+          new Promise((resolve, reject)=> {
+              for(let x in shifts){events.push({isshift: 1, id: shifts[x].event_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id,title: shifts[x].shift_name })
+              console.log(events)
+            }
+              resolve(events)
+          }).then((eventz)=> {
           console.log('nice for what');
           this.setState({kalender1:
             <BigCalendar
-              events={events}
+              questionmark = {console.log(eventz)}
+              events={eventz}
               views={allViews}
               step={60}
               showMultiDayTimes
               defaultDate={new Date()}
+              eventPropGetter={(this.eventStyleGetter)}
               onSelectEvent={event => {this.togglePopup(event)}}
             />
           })
@@ -96,6 +130,7 @@ class Kalender extends React.Component<{}> {
               step={60}
               showMultiDayTimes
               defaultDate={new Date()}
+              eventPropGetter={(this.eventStyleGetter)}
               onSelectSlot={(
                 slotInfo: {
                   start: Date,
@@ -127,6 +162,7 @@ class Kalender extends React.Component<{}> {
             />
           })
         })
+      })
       })
     })
   }
