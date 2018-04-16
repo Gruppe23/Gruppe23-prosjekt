@@ -136,14 +136,16 @@ class createevents extends React.Component<{}> {
 
    <div className="ec_inputDiv" className="inputWidth">
       <label htmlFor="myBrowser" className="inputWidth">
-         Velg kontaktperson fra Røde Kors:
+         Velg kontaktperson fra Røde Kors: <i title="Kontaktperson kan velges når alle datoer er satt, da vil ansatte med lederrollen som ikke er passive vist." className=" ce_tip fa fa-question-circle"></i>
          <input ref="RKContactPerson" defaultValue={EventFile.event.contact_id}  onInput={(event) => {
            console.log(this.refs.prep.value)
            console.log(this.refs.start.value)
            console.log(this.refs.end.value)
-           if(this.refs.start.value == "" || this.refs.end.value == "" || this.refs.prep.value == "") {
+           if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16 || this.refs.prep.value.length != 16) {
              alert("Vennligst sett opp alle datoene på arrangementet før du velger kontaktperson.")
              event.target.value = ""
+           }else {
+             employee.getAvailableEmployeesEventCreation(this.refs.prep.value, this.refs.end.value).then((x) => {console.log(x)})
            }}} list="contactpersons" name="myBrowser" placeholder="Søk etter kontaktpersoner" className="inputWidth" />
      </label>
      <datalist id="contactpersons">
@@ -224,8 +226,8 @@ class createevents extends React.Component<{}> {
       if(this.refs.adress.value == ""){
         alert("vennligst fyll inn en adresse")
       } else {
-        if((this.refs.start.value instanceof Date) == false){
-          alert("er ikke en dato!")
+        if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16 || this.refs.prep.value.length != 16){
+          alert("Vennligst fyll ut alle datoer!")
         }
       }
     }
@@ -259,7 +261,8 @@ class createevents extends React.Component<{}> {
   }
 
   saveEventProgress(){
-    console.log((this.refs.start.value instanceof Date) + "start !" +  this.refs.start.value)
+    console.log(this.refs.start.value.length)
+    console.log(this.refs.start.value)
     EventFile.event.title = this.refs.eventname.value
     EventFile.event.adress = this.refs.adress.value
     EventFile.event.start = this.refs.start.value

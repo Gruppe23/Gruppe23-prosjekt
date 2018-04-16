@@ -458,6 +458,11 @@ button, label {
     background-color: #f1f1f1;
 }
 
+
+.ce_tip:hover {
+  cursor: pointer;
+
+}
 /* Style the buttons inside the tab */
 .tab button {
     background-color: inherit;

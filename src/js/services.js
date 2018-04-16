@@ -121,6 +121,18 @@ class getEmployee {
     })
   }
 
+  getAvailableEmployeesEventCreation(prepDate: Date, endDate: Date): Promise<User[]>{
+    return new Promise((resolve, reject) => {
+      connection.query("SELECT * FROM employee e WHERE NOT EXISTS (SELECT * FROM passive p WHERE from_date BETWEEN ? AND ? AND p.employee_id = e.user_id)", [prepDate, endDate], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result)
+      })
+    })
+  }
+
   getNewUsers(): Promise<User[]> {
     let nada = 0;
     return new Promise((resolve, reject) => {
