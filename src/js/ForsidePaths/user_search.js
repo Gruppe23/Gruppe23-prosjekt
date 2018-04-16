@@ -30,9 +30,7 @@ class UserSearch extends React.Component<{}> {
   componentDidMount(){
     this.loadUserList()
   }
-  componentOnUpdate(){
-    this.loadUserList()
-  }
+
 
   componentWillUnmount(){
     this.setState({userlist: ""})

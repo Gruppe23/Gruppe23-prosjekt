@@ -16,7 +16,7 @@ import createHashHistory from 'history/createHashHistory';
 //import {nodemailer} from 'nodemailer';
 const history = createHashHistory();
 // https://medium.com/@manojsinghnegi/sending-an-email-using-nodemailer-gmail-7cfa0712a799
-
+console.log(history)
 let api_key = 'key-53691f7229e0eec8522473b2e853cabf';
 let domain = 'sandboxb5cedbd4224a4475ac49059ce199712a.mailgun.org';
 let mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});

@@ -1,11 +1,9 @@
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
-
 let mainWindow;
-
 app.on('ready', () => {
-  mainWindow = new BrowserWindow({width: 1200, height: 900});
+  mainWindow = new BrowserWindow({width: 1200, height: 900, minWidth: 1000, minHeight: 780, });
 
   // Open Development Tools
   mainWindow.openDevTools();

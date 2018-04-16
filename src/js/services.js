@@ -26,7 +26,12 @@ function connect() {
   });
 }
 connect();
-
+class ExtContact {
+  contact_id: number;
+  first_name: string;
+  last_name: string;
+  phone_number: number;
+}
 class User {
   adress: string;
   email: string;
@@ -103,6 +108,71 @@ class getEmployee {
       });
     });
   }
+  getEmployeeByName(fname: string, lname: string): Promise<User> {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM employee WHERE first_name=? AND surname=?', [fname, lname], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result[0]);
+        console.log(result[0])
+      });
+    });
+  }
+
+  getExternalContacts(): Promise<ExtContact>{
+    return new Promise((resolve, reject) => {
+      connection.query("SELECT * FROM external_contact", (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result)
+      })
+    })
+  }
+
+  getExternalContactByName(fname: string, lname:string): Promise<ExtContact>{
+    return new Promise((resolve, reject) => {
+      connection.query("SELECT * FROM external_contact WHERE first_name=? AND last_name=?", [fname, lname], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        console.log(result)
+        resolve(result[0])
+      })
+    })
+  }
+
+newExtContact(first_name: string, last_name: string, phone_number: number) {
+  return new Promise((resolve, reject) => {
+    let date = new Date()
+    connection.query('INSERT INTO external_contact (first_name, last_name, phone_number) VALUES (?, ?, ?)', [
+      first_name, last_name, phone_number
+    ], (error, result) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      resolve("Certificate was successfully added to database");
+    });
+  });
+}
+
+  getAvailableEmployeesEventCreation(prepDate: Date, endDate: Date): Promise<User[]>{
+    return new Promise((resolve, reject) => {
+      connection.query("SELECT * FROM employee e WHERE NOT EXISTS (SELECT * FROM passive p WHERE from_date BETWEEN ? AND ? AND p.employee_id = e.user_id)", [prepDate, endDate], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result)
+      })
+    })
+  }
 
   getNewUsers(): Promise<User[]> {
     let nada = 0;
@@ -167,6 +237,20 @@ class getEmployee {
     });
   }
 
+  getRoleByName(name: string): Promise<roleCertificates[]> {
+    let nada = 0;
+     return new Promise((resolve, reject) => {
+      connection.query('select * from role where role_name = ?', [name], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result[0]);
+      });
+    });
+  }
+
+
   getDistinctRoles(): Promise<roleCertificates[]> {
     let nada = 0;
      return new Promise((resolve, reject) => {
@@ -182,7 +266,19 @@ class getEmployee {
 
   getUserRoles2(id : number): Promise<userRoles[]> {
     return new Promise((resolve, reject) => {
-      connection.query("select ra.role_id, ra.role_name, rec.employee_id, first_name, surname from ( select rc.role_id, r.role_name, count(*) as antall from role_certificate rc INNER JOIN role r on rc.role_id = r.role_id group by role_id ) ra INNER JOIN ( select eec.first_name, eec.surname, rc.role_id, employee_id, count(*) as antall from ( SELECT * FROM employee_certificate ec INNER JOIN employee e ON ec.employee_id = e.user_id having ec.confirmed = 1 ) eec INNER JOIN role_certificate rc ON rc.certificate_id = eec.certificate_id group by role_id, employee_id ) rec ON ra.role_id = rec.role_id where ra.antall = rec.antall AND rec.employee_id = 2", [id], (error, result) => {
+      connection.query("select ra.role_id, ra.role_name, rec.employee_id, first_name, surname from ( select rc.role_id, r.role_name, count(*) as antall from role_certificate rc INNER JOIN role r on rc.role_id = r.role_id group by role_id ) ra INNER JOIN ( select eec.first_name, eec.surname, rc.role_id, employee_id, count(*) as antall from ( SELECT * FROM employee_certificate ec INNER JOIN employee e ON ec.employee_id = e.user_id having ec.confirmed = 1 ) eec INNER JOIN role_certificate rc ON rc.certificate_id = eec.certificate_id group by role_id, employee_id ) rec ON ra.role_id = rec.role_id where ra.antall = rec.antall AND rec.employee_id = ?", [id], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      })
+    })
+  }
+
+  getRolesNotInEvent(id : number): Promise<userRoles[]> {
+    return new Promise((resolve, reject) => {
+      connection.query("SELECT * FROM role WHERE role_id NOT IN (SELECT role_id from shift where event_id = 1)", [id], (error, result) => {
         if (error) {
           reject(error);
           return;
@@ -295,7 +391,38 @@ class getEmployee {
     });
   }
 
-  getLogin(mail : string): Promise<User> {
+  createEvent(start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id){
+    return new Promise((resolve, reject) => {
+      let date = new Date()
+      connection.query('INSERT INTO events (start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+        start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id
+      ], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+
+  createShift(id, role_id, start, end, shift_name){
+    return new Promise((resolve, reject) => {
+      let date = new Date()
+      connection.query('INSERT INTO shift (event_id, role_id, start, end, shift_name) VALUES (?, ?, ?, ?, ?)', [
+        id, role_id, start, end, shift_name
+      ], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+
+
+  getLogin(mail: string): Promise<User> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM employee WHERE username=?', [mail], (error, result) => {
         if (error) {
@@ -334,11 +461,82 @@ class getEmployee {
       });
     });
   }
+
+  createTemplate(name: string, description: string): Promise<Object[]>{
+    return new Promise((resolve, reject) => {
+      connection.query('INSERT INTO shift_template (template_name, description) VALUES (?, ?)', [
+        name, description
+      ], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+
+  addRolesToTemplate(template_id: string, role_id: number, amount: number): Promise<void>{
+    return new Promise((resolve, reject) => {
+      connection.query('INSERT INTO shift_template_roles (template_id, role_id, amount) VALUES (?, ?, ?)', [template_id, role_id, amount], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve();
+      });
+    });
+  }
+
+  getTemplateRoles(id: number): Promise<Object[]>{
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * from shift_template_roles st INNER JOIN role r ON st.role_id = r.role_id where template_id = ?', [id], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      });
+    });
+  }
+
+
+
+getTemplates(): Promise<Object[]>{
+  return new Promise((resolve, reject) => {
+   connection.query('select * from shift_template', (error: Error, result) => {
+     if (error) {
+       reject(error);
+       return;
+     }
+     resolve(result);
+   });
+ });
+}
+
+removeTemplate(id: number): Promise<void>{
+  return new Promise((resolve, reject) => {
+    connection.query('DELETE FROM shift_template_roles where template_id=?', [id], (error, result)=> {
+      if(error){
+        reject(error)
+        return;
+      }
+    })
+   connection.query('DELETE FROM shift_template WHERE template_id=?', [id], (error: Error, result) => {
+     if (error) {
+       reject(error);
+       return;
+     }
+     resolve();
+   });
+ });
+}
 }
 
 let employee = new getEmployee();
 export {
   employee,
   User,
-  userCertificates
+  userCertificates,
+  ExtContact
 };

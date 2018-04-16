@@ -30,6 +30,7 @@ class AdminPage extends React.Component < {} > {
     LicenseList: HTMLElement,
     UsersList: HTMLElement
   }
+
   constructor() {
     super()
     AdminPageRef = this
@@ -201,7 +202,7 @@ class AdminPage extends React.Component < {} > {
         console.log(object)
       }
 
-      RegisterUpdateUserInfoBox(object : User, event) {
+      RegisterUpdateUserInfoBox(object : User, event: Event) {
         //Oppdaterer informasjonen i UserInfoBox ved trykk på en ny bruker i lista.
         userInfoRef.refs.UIBName.textContent = "Navn: " + object.first_name + " " + object.surname;
         userInfoRef.refs.UIBUsername.textContent = "Brukernavn: " + object.username;
