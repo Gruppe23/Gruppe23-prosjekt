@@ -99,7 +99,7 @@ eventStyleGetter(event, start, end, isSelected) {
     employee.getSignedInUser2().then((user) =>{
       employee.getEvents().then((EventFetch) => {
         employee.getShifts(user.user_id).then((shifts) => {
-          console.log(shifts)
+          console.log(EventFetch)
           let events = EventFetch
           let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
           new Promise((resolve, reject)=> {
