@@ -216,6 +216,7 @@ html, body, .app {
   bottom: 0;
   margin: auto;
   background-color: rgba(0,0,0, 0.5);
+z-index: 999;	
 }
 .popup_inner {
   border: 1px solid black;
@@ -243,4 +244,8 @@ html, body, .app {
   height: 150px;
   width: 150px;
   border: 1px solid black;
+}
+
+.hidden {
+  visibility: hidden;
 }

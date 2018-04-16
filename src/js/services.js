@@ -146,7 +146,7 @@ class getEmployee {
 
   getShifts(id): Promise< ?Object> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM employee_events WHERE employee_id=?', [id], (error, result) => {
+      connection.query('SELECT * FROM shift WHERE employee_id=?', [id], (error, result) => {
         if(error) {
           reject(error);
           return;
@@ -157,7 +157,22 @@ class getEmployee {
     });
   }
 
+  setPassive(id, from_date, to_date): Promise< ?Object> {
+    return new Promise((resolve, reject) => {
+      connection.query('INSERT INTO passive(employee_id, from_date,to_date) VALUES( ?, ?, ? )', [id, from_date, to_date], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+
+        resolve(result);
+      });
+    });
+  }
+
+
 }
+
 
 
 
