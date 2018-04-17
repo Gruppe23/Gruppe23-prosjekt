@@ -126,23 +126,21 @@ componentWillUnmount(){
     employee.getSignedInUser().then((user) =>{
       employee.getEvents().then((EventFetch) => {
       employee.getUserPassiveDays(user.user_id).then((passiveDays)=>{
-        console.log("EventFetch")
+        console.log(passiveDays)
         employee.getShifts(user.user_id).then((shifts) => {
-          console.log(shifts)
-          console.log(user)
           eventz = []
           signUpEvents = []
-          console.log(EventFetch)
+          let passiveEvents = []
+
           let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
             for(let x in shifts){
               signUpEvents.push({interest: shifts[x].interest, isshift: true, id: shifts[x].shift_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id, title: shifts[x].shift_name, address: shifts[x].address, contact_first_name: shifts[x].contact_first_name, contact_last_name: shifts[x].contact_last_name, contact_tlf: shifts[x].contact_tlf, ext_contact_name: shifts[x].ec_first_name, ec_last_name: shifts[x].ec_last_name, ec_tlf: shifts[x].ec_tlf })
             }
             for(let x in passiveDays){
-              passiveEvents.push({interest: shift[x].interest, id: shift[x].shift_id, ispassive: true, passiveId:passiveDays[x].passive_id, id:passiveDays[x].employee_id, title: passiveDays[x].title, start: passiveDays[x].from_date, end: passiveDays[x].to_date})
+              passiveEvents.push({ispassive: true, passiveId:passiveDays[x].passive_id, id:passiveDays[x].employee_id, title: passiveDays[x].title, start: passiveDays[x].from_date, end: passiveDays[x].to_date})
             }
-              console.log(shifts)
+
               if(user.user_type == 2){
-                console.log("bigUser")
               for(let x in shifts){
                 eventz.push({interest: shifts[x].interest, isshift: true, id: shifts[x].shift_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id, title: shifts[x].shift_name, address: shifts[x].address, contact_first_name: shifts[x].contact_first_name, contact_last_name: shifts[x].contact_last_name, contact_tlf: shifts[x].contact_tlf, ext_contact_name: shifts[x].ec_first_name, ec_last_name: shifts[x].ec_last_name, ec_tlf: shifts[x].ec_tlf })
             }} else {
@@ -155,9 +153,8 @@ componentWillUnmount(){
           for (let x in EventFetch) {
             signUpEvents.push(EventFetch[x])
             eventz.push(EventFetch[x])
+            passiveEvents.push(EventFetch[x])
           }
-            console.log(eventz)
-            console.log(signUpEvents)
           console.log('nice for what');
           this.setState({kalender1:
             <BigCalendar
@@ -181,7 +178,6 @@ componentWillUnmount(){
                       if(c == true){
                         employee.removePassiveEvent(event.passiveId)
                         this.RenderCalendar();
-                        console.log(event)
                       }
                     }else{
                       this.togglePopup(event)
@@ -233,7 +229,9 @@ componentWillUnmount(){
       })
     })
 })
-  }
+})
+}
+
 
 
 
