@@ -33,12 +33,15 @@ class Kalender extends React.Component<{}> {
 
 
 eventStyleGetter(event, start, end, isSelected) {
-    console.log(event);
     var backgroundColor = '#' + event.hexColor;
     var style = {
         backgroundColor: backgroundColor
     };
-    if(event.employee_id == null && event.isshift == true && event.interest == null) {
+
+    if(event.ispassive){
+      style.backgroundColor= '#696969'
+    }else{
+   if(event.employee_id == null && event.isshift == true && event.interest == null) {
       style.backgroundColor = "#a59e9e"
     } else if (event.employee_id != null || event.interest == 1) {
       if(event.employee_id != null) {
@@ -49,9 +52,10 @@ eventStyleGetter(event, start, end, isSelected) {
 
     }
 
+      if(event.empty_shifts > 0 && event.empty_shifts){
+        style.backgroundColor = "#b2262e"
+      }
 
-    if(event.empty_shifts > 0 && event.empty_shifts){
-      style.backgroundColor = "#b2262e"
     }
     return {
         style: style
@@ -116,12 +120,12 @@ componentWillUnmount(){
   })
 }
 
-  componentDidMount(){
+  RenderCalendar(){
     let eventz;
     let signUpEvents;
     employee.getSignedInUser().then((user) =>{
-      console.log("user")
       employee.getEvents().then((EventFetch) => {
+      employee.getUserPassiveDays(user.user_id).then((passiveDays)=>{
         console.log("EventFetch")
         employee.getShifts(user.user_id).then((shifts) => {
           console.log(shifts)
@@ -132,6 +136,9 @@ componentWillUnmount(){
           let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
             for(let x in shifts){
               signUpEvents.push({interest: shifts[x].interest, isshift: true, id: shifts[x].shift_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id, title: shifts[x].shift_name, address: shifts[x].address, contact_first_name: shifts[x].contact_first_name, contact_last_name: shifts[x].contact_last_name, contact_tlf: shifts[x].contact_tlf, ext_contact_name: shifts[x].ec_first_name, ec_last_name: shifts[x].ec_last_name, ec_tlf: shifts[x].ec_tlf })
+            }
+            for(let x in passiveDays){
+              passiveEvents.push({interest: shift[x].interest, id: shift[x].shift_id, ispassive: true, passiveId:passiveDays[x].passive_id, id:passiveDays[x].employee_id, title: passiveDays[x].title, start: passiveDays[x].from_date, end: passiveDays[x].to_date})
             }
               console.log(shifts)
               if(user.user_type == 2){
@@ -161,43 +168,59 @@ componentWillUnmount(){
             />
           })
 
-          this.setState({kalender2:
-            <BigCalendar
-              selectable
-              events={eventz}
-              defaultDate={new Date()}
-              eventPropGetter={(this.eventStyleGetter)}
-              onSelectSlot={(
-                slotInfo: {
-                  start: Date,
-                  end: Date,
-                  slots: Array<Date>,
-                  action: "select" | "click"
-                }
-                ) => {
-                  if(this.state.firstSlotSelected != true) {
-                    new Promise((resolve, reject) => {
-                    localStorage.setItem('startTime', slotInfo.start)
-                    resolve();
-                    }).then(() => {
-                    this.setState({firstSlotSelected: true})
-                    console.log(this.state.firstSlotSelected);
-                  })
-                } else {
-                  new Promise((resolve, reject) => {
-                    console.log(this.state.firstSlotSelected);
-                    console.log(slotInfo);
-                    // employee.setPassive(user.user_id, localStorage.getItem('startTime', slotInfo.end))
-                    resolve();
-                  }).then(()=>{
-                    this.setState({firstSlotSelected: false})
-                    localStorage.removeItem('startSlot')
-                })
-                }
-              }}
-
-            />
-          })
+              this.setState({kalender2:
+                <BigCalendar
+                  selectable
+                  events={passiveEvents}
+                  defaultDate={new Date()}
+                  eventPropGetter={(this.eventStyleGetter)}
+                  onSelectEvent={
+                    event => {
+                    if(event.ispassive){
+                      let c = confirm('Are you sure you wish to remove this passive event?')
+                      if(c == true){
+                        employee.removePassiveEvent(event.passiveId)
+                        this.RenderCalendar();
+                        console.log(event)
+                      }
+                    }else{
+                      this.togglePopup(event)
+                    }
+                  }
+                  }
+                  onSelectSlot={(
+                    slotInfo: {
+                      start: Date,
+                      end: Date,
+                      slots: Array<Date>,
+                      action: "select" | "click"
+                    }
+                    ) => {
+                      if(this.state.firstSlotSelected != true) {
+                        new Promise((resolve, reject) => {
+                        localStorage.setItem('startTime', slotInfo.start)
+                        resolve();
+                        }).then(() => {
+                        this.setState({firstSlotSelected: true})
+                      })
+                    } else {
+                      new Promise((resolve, reject) => {
+                        let inpdato = new Date(localStorage.getItem('startTime'))
+                        slotInfo.end.setHours(slotInfo.end.getHours() + 1)
+                        let c = confirm('Valgt tidsramme er fra \n' +inpdato+ '\nTil \n'+ slotInfo.end+ '\nØnsker du å sette deg opp som utilgjengelig disse dagene?')
+                        if(c == true){
+                        employee.setPassive(user.user_id, inpdato, slotInfo.end )
+                        }
+                        resolve();
+                      }).then(()=>{
+                        this.setState({firstSlotSelected: false})
+                        localStorage.removeItem('startSlot')
+                        this.RenderCalendar();
+                      })
+                    }
+                  }}
+                />
+              })
 
           this.setState({kalender3:
             <BigCalendar
@@ -208,8 +231,14 @@ componentWillUnmount(){
             />
           })
       })
-      })
     })
+})
+  }
+
+
+
+  componentDidMount(){
+    this.RenderCalendar();
   }
 }
 
