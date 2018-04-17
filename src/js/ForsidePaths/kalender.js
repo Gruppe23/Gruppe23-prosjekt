@@ -21,6 +21,7 @@ class Kalender extends React.Component<{}> {
     this.state = {
       kalender1: "",
       kalender2: "",
+      kalender3: "",
       menuVisible: true,
       showPopup: false,
       firstSlotSelected: false
@@ -37,11 +38,17 @@ eventStyleGetter(event, start, end, isSelected) {
     var style = {
         backgroundColor: backgroundColor
     };
-    if(event.employee_id == null && event.isshift == true) {
+    if(event.employee_id == null && event.isshift == true && event.interest == null) {
       style.backgroundColor = "#a59e9e"
-    } else if (event.employee_id != null) {
-      style.backgroundColor= "#9CEC9C"
+    } else if (event.employee_id != null || event.interest == 1) {
+      if(event.employee_id != null) {
+        style.backgroundColor= "#9CEC9C"
+      } else if(event.interest == 1){
+          style.backgroundColor ="#D3C960"
+        }
+
     }
+
 
     if(event.empty_shifts > 0 && event.empty_shifts){
       style.backgroundColor = "#b2262e"
@@ -60,6 +67,10 @@ eventStyleGetter(event, start, end, isSelected) {
   {
     menuItem: <Menu.Item key='passive'>Velg utilgjendelige dager</Menu.Item>,
     render: () => <Tab.Pane Loading>{this.state.kalender2}</Tab.Pane>,
+  },
+  {
+    menuItem: <Menu.Item key='signup'>Vis interesse for arrangementer</Menu.Item>,
+    render: () => <Tab.Pane Loading>{this.state.kalender3}</Tab.Pane>,
   },
 ]
     return(
@@ -87,6 +98,7 @@ eventStyleGetter(event, start, end, isSelected) {
     new Promise((resolve,reject) =>{
       localStorage.removeItem('event')
       localStorage.setItem('event', JSON.stringify(event))
+      console.log(event)
       resolve()
     }).then(()=>{
       this.setState({
@@ -99,34 +111,46 @@ componentWillUnmount(){
   this.setState({
     kalender1: "",
     kalender2: "",
+    kalender3: "",
     firstSlotSelected: false
   })
 }
 
   componentDidMount(){
+    let eventz;
+    let signUpEvents;
     employee.getSignedInUser().then((user) =>{
       console.log("user")
       employee.getEvents().then((EventFetch) => {
         console.log("EventFetch")
         employee.getShifts(user.user_id).then((shifts) => {
+          console.log(shifts)
+          console.log(user)
+          eventz = []
+          signUpEvents = []
           console.log(EventFetch)
-          let events = EventFetch
           let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
-          new Promise((resolve, reject)=> {
-              events = EventFetch
+            for(let x in shifts){
+              signUpEvents.push({interest: shifts[x].interest, isshift: true, id: shifts[x].shift_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id, title: shifts[x].shift_name, address: shifts[x].address, contact_first_name: shifts[x].contact_first_name, contact_last_name: shifts[x].contact_last_name, contact_tlf: shifts[x].contact_tlf, ext_contact_name: shifts[x].ec_first_name, ec_last_name: shifts[x].ec_last_name, ec_tlf: shifts[x].ec_tlf })
+            }
               console.log(shifts)
-              if(user.user_type == 2) {
-              for(let x in shifts){events.push({isshift: true, id: shifts[x].event_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id, title: shifts[x].shift_name, address: shifts[x].address, contact_first_name: shifts[x].contact_first_name, contact_last_name: shifts[x].contact_last_name, contact_tlf: shifts[x].contact_tlf})
+              if(user.user_type == 2){
+                console.log("bigUser")
+              for(let x in shifts){
+                eventz.push({interest: shifts[x].interest, isshift: true, id: shifts[x].shift_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id, title: shifts[x].shift_name, address: shifts[x].address, contact_first_name: shifts[x].contact_first_name, contact_last_name: shifts[x].contact_last_name, contact_tlf: shifts[x].contact_tlf, ext_contact_name: shifts[x].ec_first_name, ec_last_name: shifts[x].ec_last_name, ec_tlf: shifts[x].ec_tlf })
             }} else {
               for(let x in shifts){
                 if(shifts[x].employee_id == user.user_id){
-                  events.push({isshift: true, id: shifts[x].event_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id,title: shifts[x].shift_name })
-              }
+                  eventz.push({interest: shifts[x].interest, isshift: true, id: shifts[x].shift_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id, title: shifts[x].shift_name, address: shifts[x].address, contact_first_name: shifts[x].contact_first_name, contact_last_name: shifts[x].contact_last_name, contact_tlf: shifts[x].contact_tlf, ext_contact_name: shifts[x].ec_first_name, ec_last_name: shifts[x].ec_last_name, ec_tlf: shifts[x].ec_tlf })
+                }
               }
           }
-              console.log(events)
-              resolve(events)
-          }).then((eventz)=> {
+          for (let x in EventFetch) {
+            signUpEvents.push(EventFetch[x])
+            eventz.push(EventFetch[x])
+          }
+            console.log(eventz)
+            console.log(signUpEvents)
           console.log('nice for what');
           this.setState({kalender1:
             <BigCalendar
@@ -171,9 +195,18 @@ componentWillUnmount(){
                 })
                 }
               }}
+
             />
           })
-        })
+
+          this.setState({kalender3:
+            <BigCalendar
+              events={signUpEvents}
+              defaultDate={new Date()}
+              eventPropGetter={(this.eventStyleGetter)}
+              onSelectEvent={event => {this.togglePopup(event)}}
+            />
+          })
       })
       })
     })

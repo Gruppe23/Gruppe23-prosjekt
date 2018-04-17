@@ -27,6 +27,7 @@ var data = {
   subject: 'Hei',
   text: 'Her kjører vi en test av mailgun'
 };
+
 //Send mail...
 /*mailgun.messages().send(data, function (error, body) {
   console.log(body);
@@ -51,7 +52,6 @@ class ProgramRender extends React.Component<{}> {
           <Forside2 />
         )
       }else{
-
         return(
           <div id="full">
           <div className="loginContent" id="loginContent">
