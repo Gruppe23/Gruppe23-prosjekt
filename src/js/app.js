@@ -27,6 +27,7 @@ var data = {
   subject: 'Hei',
   text: 'Her kjører vi en test av mailgun'
 };
+
 //Send mail...
 /*mailgun.messages().send(data, function (error, body) {
   console.log(body);
@@ -43,6 +44,7 @@ class ProgramRender extends React.Component<{}> {
 }
       render() {
         let signedInUser = employee.getSignedInUser2();
+        console.log(signedInUser)
         if(signedInUser) {
           //Vi returnerer enten forsiden, eller login/registrering basert på om en bruker er logget inn.
           // Ved innlogging/utlogging forceupdater vi ProgramREnder til å skjekke JSON filen om vi er logget inn.
