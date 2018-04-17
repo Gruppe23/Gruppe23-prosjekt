@@ -133,9 +133,9 @@ class getEmployee {
     })
   }
 
-  getExternalContactByName(fname: string, lname:string): Promise<ExtContact>{
+  getExternalContact(id): Promise<ExtContact>{
     return new Promise((resolve, reject) => {
-      connection.query("SELECT * FROM external_contact WHERE first_name=? AND last_name=?", [fname, lname], (error, result) => {
+      connection.query("SELECT * FROM external_contact WHERE contact_id=?", [id], (error, result) => {
         if(error) {
           reject(error);
           return;
@@ -241,10 +241,10 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     });
   }
 
-  getRoleByName(name: string): Promise<roleCertificates[]> {
+  getRole(id): Promise<roleCertificates[]> {
     let nada = 0;
      return new Promise((resolve, reject) => {
-      connection.query('select * from role where role_name = ?', [name], (error, result) => {
+      connection.query('select * from role where role_id = ?', [id], (error, result) => {
         if (error) {
           reject(error);
           return;

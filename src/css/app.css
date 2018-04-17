@@ -102,6 +102,9 @@ text-align: center;
 width: 40%;
 
 }
+#extContact{
+  display: block;
+}
 
 .loginelements{
 padding: 75px 0;
@@ -411,7 +414,7 @@ a.hover span {
 }
 
 .ce_Row2 {
-  width: 480px;
+  width: 540px;
   height: 700px;
   overflow: show;
   float: left;
@@ -561,18 +564,21 @@ button, label {
   width: 100px;
   float: left;
 }
+
+.ec_RoleAmount > input, button {
+  height: 30px;
+  margin-top: 5px;
+}
 .ec_RoleAddButtonDiv{
   width: 75px;
   float: left;
-  margin-top: 5px;
-
+  margin-top: 10px;
 }
 
 .ec_RoleAddButton {
     background-color: #f1f1f1;
     outline: none;
     border: 1px solid #ccc;
-    height: 26px;
 }
 .ec_RoleAddButton:hover {
   background-color: #ddd;
@@ -653,12 +659,24 @@ right: 5px;
 .ce_textAreaLabel{
   margin-top: 5px;
 }
+.floatleft{
+  float: left
+}
 
 
 .ce_textArea{
   width: 100%;
   height: 150px;
   resize: none;
+}
+.h6fix{
+  margin-top: 0px;
+  margin-bottom: 0px;
+
+}
+
+.roleSelectFix{
+  margin-top: 0px;
 }
 .ec_opprett{
     background-color: lightgrey;
@@ -689,7 +707,7 @@ right: 5px;
 /* Style the tab content */
 .tabcontent {
     display: none;
-    padding: 6px 12px;
+    padding: 6px 0px;
     border: 1px solid #ccc;
     border-top: none;
 }
