@@ -40,17 +40,26 @@ export default GoogleApiWrapper({
 class EventPopup extends React.Component<{}> {
   constructor(){
     super();
-
   }
+
   render(){
     let item = localStorage.getItem('event')
     item = JSON.parse(item)
-    let signup
-    if (item.employee_id == null){
+    let signup;
+    let admin;
+    let user = employee.getSignedInUser2()
+    console.log(user)
+    console.log(item)
+    if (item.employee_id == null && user.user_type != 2){
       signup = <button> Vis interesse! </button>
     } else {
+      if (user.user_type == 2) {
+        admin = <AdminContent shift_id={item.id} />
+      }
       signup = ""
     }
+
+
     return(
     <div className="popup">
       <div className="popup_inner">
@@ -69,12 +78,15 @@ class EventPopup extends React.Component<{}> {
           <div ref="contactNumber"></div>
           <div id="map_canvas"></div>
           {signup}
+
         </div>
         <div>
             <button onClick={this.props.closePopup}> Lukk </button>
         </div>
         <div style={{width: '30vw', height: '30vh'}}>
         <MapContainer/>
+      </div>
+      <div className="AdminContentWrap">
       </div>
       </div>
     </div>
@@ -87,8 +99,24 @@ class EventPopup extends React.Component<{}> {
         let item = localStorage.getItem('event')
         resolve(JSON.parse(item))
       }).then((event)=> {
+        employee.getSignedInUser().then((user)=>{
         if(event.isshift){
-          if(event.employee_id == null){
+          if(user.user_type == 2) {
+            console.log(event)
+            let start = new Date(event.start)
+            let end = new Date(event.end)
+            let txtStart = String(start.toTimeString()).split(":")
+            let txtEnd = String(end.toTimeString()).split(":")
+            console.log(start)
+            this.refs.eventName.textContent = "Shifttittel: " + event.title;
+            this.refs.eventLocation.textContent  = "Adresse: " + event.address;
+            this.refs.startTime.textContent = "Starttid: " + txtStart[0] + ":" +  txtStart[1]
+            this.refs.endTime.textContent = "Sluttid: " + txtEnd[0] + ":" + txtEnd[1]
+            this.refs.contactName.textContent = "Navn: " + event.ext_contact_name + ' ' + event.contact_last_name
+            this.refs.contactNumber.textContent = "TLF: " + event.ec_tlf
+            this.refs.RKC_name.textContent = "Navn: " + event.contact_first_name + " " + event.contact_last_name
+            this.refs.RKC_tlf.textContent = "TLF: " + event.contact_tlf
+          } else if(event.employee_id == null){
             console.log(event)
             let start = new Date(event.start)
             let end = new Date(event.end)
@@ -104,25 +132,7 @@ class EventPopup extends React.Component<{}> {
             this.refs.RKC_name.textContent = "Navn: " + event.contact_first_name + " " + event.contact_last_name
             this.refs.RKC_tlf.textContent = "TLF: " + event.contact_tlf
           }
-          console.log(event)
-          let start = new Date(event.start)
-          let end = new Date(event.end)
-          let txtStart = String(start.toTimeString()).split(":")
-          let txtEnd = String(end.toTimeString()).split(":")
-
-
-          console.log(start)
-          this.refs.eventName.textContent = "Shifttittel: " + event.title;
-          this.refs.eventLocation.textContent  = "Adresse: " + event.address;
-          this.refs.startTime.textContent = "Starttid: " + txtStart[0] + ":" +  txtStart[1]
-          this.refs.endTime.textContent = "Sluttid: " + txtEnd[0] + ":" + txtEnd[1]
-          this.refs.contactName.textContent = "Navn: " + event.ext_contact_name + ' ' + event.contact_last_name
-          this.refs.contactNumber.textContent = "TLF: " + event.ec_tlf
-          this.refs.RKC_name.textContent = "Navn: " + event.contact_first_name + " " + event.contact_last_name
-          this.refs.RKC_tlf.textContent = "TLF: " + event.contact_tlf
-
         } else {
-          console.log("hue")
           employee.getExtContact(event.contact_id).then((contact) => {
             console.log(event);
             console.log(contact);
@@ -134,8 +144,25 @@ class EventPopup extends React.Component<{}> {
             })
           }
     })
+  })
   }
 }
+
+class AdminContent extends React.Component {
+  constructor(props){
+    super(props);
+    console.log(this.props.shift_id)
+  }
+
+  render(props){
+    return(
+    <div className="AdminContentWrap">
+      <span>urmom is nr</span> {this.props.shift_id}
+    </div>
+  )
+  }
+}
+
 
 
 export { EventPopup }

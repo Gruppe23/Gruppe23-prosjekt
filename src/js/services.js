@@ -210,12 +210,6 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     })
   }
 
-  getSignedInUser(): Promise<User[]> {
-    return new Promise((resolve, reject) => {
-      let item = localStorage.getItem('signedInUser'); // Get User-object from browser
-      resolve(JSON.parse(item));
-    })
-  }
 
   //Bruker 2 forskjellige, kommer litt an på hva man må bruke det til, ofte hvis jeg brukte det i sammarbeid med react var ikke et resolve svar funksjonelt siden resolve gir et object som svar, og det vil ikke react ha noe av.
 
@@ -564,7 +558,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     });
   }
 
-setInterest(){
+setInterest(id, shift_id){
   return new Promise((resolve, reject) => {
     connection.query('INSERT INTO passive(employee_id, from_date,to_date) VALUES( ?, ?, ? )', [id, shift_id], (error, result) => {
       if(error) {
@@ -633,6 +627,7 @@ getUserPassiveDays(id: number): Promise< ?Object> {
     });
   });
 }
+
 removePassiveEvent(id: number): Promise< ?Object> {
   return new Promise((resolve, reject) => {
     connection.query('DELETE FROM passive WHERE passive_id=?', [id], (error, result) => {
