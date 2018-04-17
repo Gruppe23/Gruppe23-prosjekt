@@ -266,6 +266,7 @@ html, body, .app {
   height: 500px;
   margin: auto;
   background: white;
+  display: block;
 }
 
 .kalender {
@@ -695,4 +696,12 @@ right: 5px;
 
 .hidden {
   visibility: hidden;
+}
+
+.event{
+  float: left;
+}
+
+.AdminContentWrap {
+  float: left;
 }

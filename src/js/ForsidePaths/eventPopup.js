@@ -78,16 +78,15 @@ class EventPopup extends React.Component<{}> {
           <div ref="contactNumber"></div>
           <div id="map_canvas"></div>
           {signup}
-
+          <div>
+              <MapContainer/>
+          </div>
         </div>
         <div>
             <button onClick={this.props.closePopup}> Lukk </button>
         </div>
-        <div style={{width: '30vw', height: '30vh'}}>
-        <MapContainer/>
-      </div>
-      <div className="AdminContentWrap">
-      </div>
+
+      {admin}
       </div>
     </div>
     )
