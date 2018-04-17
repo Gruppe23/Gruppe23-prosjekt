@@ -75,4 +75,14 @@ class SelectRoleTemplate extends React.Component<{}> {
   }
 }
 
+
+function eventObject(){
+  //Oppretter objektet vi bruker til å lagre eventcreation mellom visninger, queries og opprettelse av arrangementer.
+  let object = {roles: [],
+                  event: {id: "", start: "", end: "", contact_id: "", prep: "", adress: "", gmaps: "", postal: "", title: "", extContact: "", details: "", hostname: ""}
+                                }
+  localStorage.setItem("eventFile", JSON.stringify(object))
+return object
+}
+
 export {SelectRoleTemplate}
