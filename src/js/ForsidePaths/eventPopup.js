@@ -51,7 +51,7 @@ class EventPopup extends React.Component<{}> {
     console.log(user)
     console.log(item)
     if (item.employee_id == null && user.user_type != 2){
-      signup = <button> Vis interesse! </button>
+      signup = <button onClick={()=> this.showInterest(user.user_id, item.id)}> Vis interesse! </button>
     } else {
       if (user.user_type == 2) {
         admin = <AdminContent shift_id={item.id} />
@@ -92,6 +92,11 @@ class EventPopup extends React.Component<{}> {
     )
   }
 
+  showInterest(user, shift_id){
+    employee.setInterest(user, shift_id)
+
+  }
+
 
   componentDidMount(props){
     new Promise((resolve,reject) =>{
@@ -115,6 +120,7 @@ class EventPopup extends React.Component<{}> {
             this.refs.contactNumber.textContent = "TLF: " + event.ec_tlf
             this.refs.RKC_name.textContent = "Navn: " + event.contact_first_name + " " + event.contact_last_name
             this.refs.RKC_tlf.textContent = "TLF: " + event.contact_tlf
+
           } else if(event.employee_id == null){
             console.log(event)
             let start = new Date(event.start)

@@ -128,14 +128,19 @@ componentWillUnmount(){
       employee.getUserPassiveDays(user.user_id).then((passiveDays)=>{
         console.log(passiveDays)
         employee.getShifts(user.user_id).then((shifts) => {
+          employee.getShiftsMatchingUserRoles(user.user_id).then((matchedShifts)=> {
+            console.log(matchedShifts)
+
           eventz = []
           signUpEvents = []
           let passiveEvents = []
 
           let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
-            for(let x in shifts){
-              signUpEvents.push({interest: shifts[x].interest, isshift: true, id: shifts[x].shift_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id, title: shifts[x].shift_name, address: shifts[x].address, contact_first_name: shifts[x].contact_first_name, contact_last_name: shifts[x].contact_last_name, contact_tlf: shifts[x].contact_tlf, ext_contact_name: shifts[x].ec_first_name, ec_last_name: shifts[x].ec_last_name, ec_tlf: shifts[x].ec_tlf })
+          //Setter opp hvilke eventer brukeren kan vise interesse i basert på hvilke roller de har. Hvis de er admin kan de se alle eventer.
+            for(let x in matchedShifts){
+              signUpEvents.push({interest: matchedShifts[x].interest, isshift: true, id: matchedShifts[x].shift_id, start: matchedShifts[x].start, end: matchedShifts[x].end, employee_id: matchedShifts[x].employee_id, rolle: matchedShifts[x].role_id, title: matchedShifts[x].shift_name, address: matchedShifts[x].address, contact_first_name: matchedShifts[x].contact_first_name, contact_last_name: matchedShifts[x].contact_last_name, contact_tlf: matchedShifts[x].contact_tlf, ext_contact_name: matchedShifts[x].ec_first_name, ec_last_name: matchedShifts[x].ec_last_name, ec_tlf: matchedShifts[x].ec_tlf })
             }
+            //Setter opp eventvariablen for kalenderen som viser passive dagene til brukeren.
             for(let x in passiveDays){
               passiveEvents.push({ispassive: true, passiveId:passiveDays[x].passive_id, id:passiveDays[x].employee_id, title: passiveDays[x].title, start: passiveDays[x].from_date, end: passiveDays[x].to_date})
             }
@@ -143,6 +148,7 @@ componentWillUnmount(){
               if(user.user_type == 2){
               for(let x in shifts){
                 eventz.push({interest: shifts[x].interest, isshift: true, id: shifts[x].shift_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id, title: shifts[x].shift_name, address: shifts[x].address, contact_first_name: shifts[x].contact_first_name, contact_last_name: shifts[x].contact_last_name, contact_tlf: shifts[x].contact_tlf, ext_contact_name: shifts[x].ec_first_name, ec_last_name: shifts[x].ec_last_name, ec_tlf: shifts[x].ec_tlf })
+
             }} else {
               for(let x in shifts){
                 if(shifts[x].employee_id == user.user_id){
@@ -226,9 +232,10 @@ componentWillUnmount(){
               onSelectEvent={event => {this.togglePopup(event)}}
             />
           })
+        })
       })
     })
-})
+  })
 })
 }
 

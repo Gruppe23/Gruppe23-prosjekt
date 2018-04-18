@@ -280,6 +280,42 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     })
   }
 
+    getShiftsMatchingUserRoles(id: number): Promise<shift[]> {
+      return new Promise((resolve, reject) => {
+        connection.query('SELECT s.start, s.shift_id, (SELECT case when employee_id is not null then true else false end from interest where shift_id = s.shift_id AND employee_id = ?) AS interest, s.end, e.id, s.employee_id, s.role_id, s.shift_name, e.title, e.address, e.hostname, e.postal, e.ext_contact_id, e.contact_id, em.first_name AS contact_first_name, em.surname AS contact_last_name, em.tlf AS contact_tlf, ec.first_name AS ec_first_name, ec.last_name AS ec_last_name, ec.phone_number AS ec_tlf FROM shift s INNER JOIN ( employee em inner join ( events e INNER JOIN external_contact ec ON e.ext_contact_id = ec.contact_id ) on e.contact_id = em.user_id ) on s.event_id = e.id where exists (select ra.role_id, ra.role_name, rec.employee_id, first_name, surname from ( select rc.role_id, r.role_name, count(*) as antall from role_certificate rc INNER JOIN role r on rc.role_id = r.role_id group by rc.role_id ) ra INNER JOIN ( select eec.first_name, eec.surname, rc.role_id, employee_id, count(*) as antall from ( SELECT * FROM employee_certificate ec INNER JOIN employee e ON ec.employee_id = e.user_id having ec.confirmed = 1 ) eec INNER JOIN role_certificate rc ON rc.certificate_id = eec.certificate_id group by role_id, employee_id ) rec ON ra.role_id = rec.role_id where ra.antall = rec.antall and ra.role_id = s.role_id AND rec.employee_id=?)', [id, id], (error, result) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve(result);
+        })
+      })
+    }
+
+    setInterest(employee_id, shift_id){
+      return new Promise((resolve, reject) => {
+        connection.query('INSERT INTO interest (employee_id, shift_id) VALUES (?, ?)', [employee_id, shift_id], (error, result) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve(result);
+        })
+      })
+    }
+
+    removeInterest(employee_id, shift_id){
+      return new Promise((resolve, reject) => {
+        connection.query('DELETE FROM interest where employee_id = ? AND shift_id = ?', [employee_id, shift_id], (error, result) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve(result);
+        })
+      })
+    }
+
   getRolesNotInEvent(id : number): Promise<userRoles[]> {
     return new Promise((resolve, reject) => {
       connection.query("SELECT * FROM role WHERE role_id NOT IN (SELECT role_id from shift where event_id = 1)", [id], (error, result) => {
@@ -558,17 +594,6 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     });
   }
 
-setInterest(id, shift_id){
-  return new Promise((resolve, reject) => {
-    connection.query('INSERT INTO passive(employee_id, from_date,to_date) VALUES( ?, ?, ? )', [id, shift_id], (error, result) => {
-      if(error) {
-        reject(error);
-        return;
-      }
-      resolve(result);
-    });
-  });
-}
   setPassive(id: number, from_date, to_date): Promise< ?Object> {
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO passive(employee_id, from_date,to_date) VALUES( ?, ?, ? )', [id, from_date, to_date], (error, result) => {
