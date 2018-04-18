@@ -270,6 +270,7 @@ html, body, .app {
   margin: auto;
   background: white;
   display: block;
+  z-index: 1001;
 }
 
 .kalender {

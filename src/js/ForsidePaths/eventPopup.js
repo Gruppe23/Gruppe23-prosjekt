@@ -5,7 +5,10 @@ import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { employee } from "../services"
 import { Map, InfoWindow, Marker, Listing, GoogleApiWrapper } from 'google-maps-react';
-
+import { kalender } from "./kalender.js"
+import {SelectRoleTemplate} from './createeventpopup/RoleTemplatePopup';
+import onClickOutside from "react-onclickoutside";
+import SelectSearch from 'react-select-search'
 export class MapContainer extends React.Component<{}> {
 
 
@@ -27,19 +30,23 @@ export class MapContainer extends React.Component<{}> {
     );
   }
 
-  componentDidMount() {
+  componentDidMount(){
   console.log('bleh');
   }
 }
 
-export default GoogleApiWrapper({
-  apiKey: ('AIzaSyBBamUPCSbygOz1eTYvLkIWPpajzV8zi38')
-})(MapContainer)
 
 
-class EventPopup extends React.Component<{}> {
-  constructor(){
-    super();
+
+class EventPopup2 extends React.Component<{}> {
+  constructor(props){
+    super(props);
+    this.handleClickOutside = this.handleClickOutside.bind(this)
+  }
+
+  handleClickOutside(props){
+    this.props.closePopup()
+    console.log("OUTSIDEEE")
   }
 
   render(){
@@ -50,11 +57,12 @@ class EventPopup extends React.Component<{}> {
     let user = employee.getSignedInUser2()
     console.log(user)
     console.log(item)
-    if (item.employee_id == null && user.user_type != 2){
-      signup = <button onClick={()=> this.showInterest(user.user_id, item.id)}> Vis interesse! </button>
+    if (item.employee_id == null && user.user_type != 2 && item.isshift){
+      signup = <button onClick={()=> {this.showInterest(user.user_id, item.id)
+                                      kalender.RenderCalendar()}}> Vis interesse! </button>
     } else {
       if (user.user_type == 2) {
-        admin = <AdminContent shift_id={item.id} />
+        admin = <AdminContent shift={item}/>
       }
       signup = ""
     }
@@ -94,7 +102,6 @@ class EventPopup extends React.Component<{}> {
 
   showInterest(user, shift_id){
     employee.setInterest(user, shift_id)
-
   }
 
 
@@ -138,15 +145,21 @@ class EventPopup extends React.Component<{}> {
             this.refs.RKC_tlf.textContent = "TLF: " + event.contact_tlf
           }
         } else {
-          employee.getExtContact(event.contact_id).then((contact) => {
-            console.log(event);
-            console.log(contact);
-            this.refs.eventName.textContent = event.title
-            this.refs.eventLocation.textContent = "Adresse: " + event.address
-            this.refs.contactName.textContent = "Navn: " + contact.first_name + ' ' + contact.last_name
-            this.refs.contactNumber.textContent = "tlf: " + contact.phone_number
+            console.log(event)
+            let start = new Date(event.start)
+            let end = new Date(event.end)
+            let txtStart = String(start.toTimeString()).split(":")
+            let txtEnd = String(end.toTimeString()).split(":")
+            console.log(start)
+            this.refs.eventName.textContent = "Shifttittel: " + event.title;
+            this.refs.eventLocation.textContent  = "Adresse: " + event.address;
+            this.refs.startTime.textContent = "Starttid: " + txtStart[0] + ":" +  txtStart[1]
+            this.refs.endTime.textContent = "Sluttid: " + txtEnd[0] + ":" + txtEnd[1]
+            this.refs.contactName.textContent = "Navn: " + event.ext_contact_name + ' ' + event.contact_last_name
+            this.refs.contactNumber.textContent = "TLF: " + event.ec_tlf
+            this.refs.RKC_name.textContent = "Navn: " + event.contact_first_name + " " + event.contact_last_name
+            this.refs.RKC_tlf.textContent = "TLF: " + event.contact_tlf
 
-            })
           }
     })
   })
@@ -156,18 +169,44 @@ class EventPopup extends React.Component<{}> {
 class AdminContent extends React.Component {
   constructor(props){
     super(props);
-    console.log(this.props.shift_id)
+    this.state = {employees: []}
   }
 
   render(props){
+    console.log(this.props.shift)
     return(
     <div className="AdminContentWrap">
-      <span>urmom is nr</span> {this.props.shift_id}
+      <span>Velg blant tilgjengelige ansatte som kvalifiserer til skiftet: </span>
+      <SelectSearch ref="userforRole" name="language" options={this.state.employees} search={true} placeholder="Tildel skift"
+        mode="input"
+        onBlur={(value)=> {if(value != undefined){this.assignShift(value, this.props.shift.id)}}}
+        onChange={(value)=> {if(value != undefined){this.assignShift(value, this.props.shift.id)}}}
+       />
     </div>
   )
   }
+
+assignShift(value, shift_id){
+  console.log(value.value, shift_id)
+  employee.setShiftEmployee(value.value, shift_id).then((x)=>{
+    console.log(x)
+    kalender.RenderCalendar()
+    console.log("Success!")
+  })
+}
+  componentDidMount(){
+    employee.getShift(this.props.shift.id).then((shift) => {
+      console.log(shift)
+      employee.getAvailableUsersWithRole(shift.start, this.props.shift.rolle).then((employees)=>{
+        console.log(employees)
+        employees.map((x)=>{this.state.employees.push({name: (x.first_name + " " + x.surname), value: x.user_id})})
+      })
+    })
+  }
+  componentWillUnmount(){
+    this.setState({employees: []})
+  }
 }
 
-
-
-export { EventPopup }
+let EventPopup = onClickOutside(EventPopup2)
+export {EventPopup}
