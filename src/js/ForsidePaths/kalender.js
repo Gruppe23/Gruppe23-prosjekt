@@ -14,10 +14,11 @@ BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 
 
 
-
-class Kalender extends React.Component<{}> {
+let kalender;
+export class Kalender extends React.Component<{}> {
   constructor(props){
-    super(props)
+    super(props);
+    kalender=this;
     this.state = {
       kalender1: "",
       kalender2: "",
@@ -247,6 +248,6 @@ componentWillUnmount(){
   }
 }
 
-export default Kalender;
 
-export { Kalender }
+
+export { kalender }

@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { employee } from "../services"
 import { Map, InfoWindow, Marker, Listing, GoogleApiWrapper } from 'google-maps-react';
-
+import { kalender } from './kalender';
 export class MapContainer extends React.Component<{}> {
 
 
@@ -15,6 +15,7 @@ export class MapContainer extends React.Component<{}> {
       height: '30vh'
     }
     return (
+      <div ref="mapContent">
         <Map
           style={{width: '30vw', height: '30vh'}}
           google={this.props.google}
@@ -24,11 +25,11 @@ export class MapContainer extends React.Component<{}> {
           }}
           zoom={30}>
         </Map>
+      </div>
     );
   }
 
   componentDidMount() {
-  console.log('bleh');
   }
 }
 
@@ -94,7 +95,7 @@ class EventPopup extends React.Component<{}> {
 
   showInterest(user, shift_id){
     employee.setInterest(user, shift_id)
-
+    kalender.RenderCalendar();
   }
 
 
@@ -153,7 +154,7 @@ class EventPopup extends React.Component<{}> {
   }
 }
 
-class AdminContent extends React.Component {
+class AdminContent extends React.Component<{}> {
   constructor(props){
     super(props);
     console.log(this.props.shift_id)
