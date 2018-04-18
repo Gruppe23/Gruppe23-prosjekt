@@ -26,7 +26,7 @@ class LoginWindow extends React.Component<{}> {
       <div className="login">
             <div className="loginelements">
                 <span>Login<p></p></span>
-                <input type="text" ref="loginMail"></input><p></p>
+                <input type="text" ref="loginUsername"></input><p></p>
                 <span>Password<p></p></span>
                 <input type="password" ref="loginPassword"></input><p></p>
                 <button ref="login" onClick= {() => {this.login()}}>Login</button>
@@ -37,9 +37,9 @@ class LoginWindow extends React.Component<{}> {
     );
   }
  login(){
-     let mail: string = this.refs.loginMail.value
+     let username: string = this.refs.loginUsername.value
      let pass: string = this.refs.loginPassword.value
-     employee.getLogin(mail).then((notes: User) => {
+     employee.getLogin(username).then((notes: User) => {
        console.log(notes)
        if (passwordHash.verify(pass, notes.password) == true && notes.status == 1)  {
          alert("password match")

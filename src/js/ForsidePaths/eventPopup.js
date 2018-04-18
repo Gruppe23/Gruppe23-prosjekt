@@ -6,39 +6,15 @@ import { Link, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { employee } from "../services"
 import { Map, InfoWindow, Marker, Listing, GoogleApiWrapper } from 'google-maps-react';
 import { kalender } from './kalender';
-export class MapContainer extends React.Component<{}> {
 
 
-  render() {
-    const style = {
-      width: '30vw',
-      height: '30vh'
-    }
-    return (
-      <div ref="mapContent">
-        <Map
-          style={{width: '30vw', height: '30vh'}}
-          google={this.props.google}
-          initialCenter={{
-            lat: 40.854885,
-            lng: -88.081807
-          }}
-          zoom={30}>
-        </Map>
-      </div>
-    );
-  }
 
-  componentDidMount() {
-  }
-}
-
-export default GoogleApiWrapper({
-  apiKey: ('AIzaSyBBamUPCSbygOz1eTYvLkIWPpajzV8zi38')
-})(MapContainer)
+// export default GoogleApiWrapper({
+//   apiKey: ('AIzaSyBBamUPCSbygOz1eTYvLkIWPpajzV8zi38')
+// })(MapContainer)
 
 
-class EventPopup extends React.Component<{}> {
+export class EventPopup extends React.Component<{}> {
   constructor(){
     super();
   }
@@ -79,8 +55,8 @@ class EventPopup extends React.Component<{}> {
           <div ref="contactNumber"></div>
           <div id="map_canvas"></div>
           {signup}
-          <div>
-              <MapContainer/>
+          <div ref="mapGoesHere">
+
           </div>
         </div>
         <div>
@@ -168,7 +144,3 @@ class AdminContent extends React.Component<{}> {
   )
   }
 }
-
-
-
-export { EventPopup }
