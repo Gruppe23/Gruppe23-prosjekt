@@ -1,0 +1,76 @@
+.SCPPopup {
+  overflow: hidden;
+  position: absolute;
+  width: 900px !important;
+}
+
+.SCPRow1 {
+  position: relative;
+  float: left;
+  height: 450px;
+  width: 200px;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.SCPRow1 > input {
+  width: 100%;
+}
+
+.SCPRow1 > span {
+  float: left;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.SCPRow1 > span > input {
+  width: 100%;
+}
+
+#SelectSearchContainer{
+  width: 300px !important;
+}
+
+
+.SCPRow2 {
+  position: relative;
+  width: 450px;
+  height: 450px;
+  margin-left: 15px;
+  margin-top: 10px;
+  float: left;
+}
+
+.SCPRow2 > span {
+  margin-top: 10px;
+  float: left;
+}
+
+.SCPLuck{
+position: absolute;
+bottom: 5px;
+right: 5px;
+}
+
+.SCPROleAddMenu {
+  margin-top: 10px !important;
+}
+.SCPRoleAddMenu > span > *{
+  float: left;
+}
+
+.SCPRoleAddMenu > span > button, input {
+margin-top: 10px;
+}
+
+.SCPRoleAddMenu > span > input {
+  width: 50px;
+  height: 30px;
+}
+
+
+.SCPRow2RolePresent{
+  height: 100px;
+  float: left;
+  width: 441.5px;
+}
