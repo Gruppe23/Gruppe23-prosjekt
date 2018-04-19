@@ -281,6 +281,15 @@ html, body, .app {
   background-color: rgba(0,0,0, 0.5);
   z-index: 1000;
 }
+
+.popupClose{
+  top: 5px;
+  right: 5px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  position: absolute;
+  outline: none;
+}
 .popup_inner {
   border: 1px solid #ccc;
   position: absolute;
@@ -409,12 +418,20 @@ html, body, .app {
   display: inline-block;
   border-bottom: 1px dotted black;
 }
+
 .tooltipxx:hover {
   color:red !important;
 }
 .tooltipxx:focus {
   color: red !important;
 }
+
+
+.floatRight{
+  float: right !important;
+}
+
+
 .noOutline{
   outline: 0 solid transparent;
 }
@@ -460,16 +477,17 @@ a.hover span {
   height: 700px;
   overflow: show;
   float: left;
+  margin-top: 5px;
   margin-right: 25px;
   margin-left: 5px;
 }
 
 .ce_Row2 {
-  width: 540px;
+  width: 500px;
   height: 700px;
   overflow: show;
   float: left;
-  overflow: scroll;
+  overflow-y: auto;
   position:relative;
 }
 
@@ -479,7 +497,8 @@ a.hover span {
   height: 700px;
   overflow: hidden;
   float: left;
-  margin-top: 19px;
+  margin-top: 24px;
+  margin-left: 15px;
   position: relative;
 }
 
@@ -771,6 +790,7 @@ right: 5px;
 .AdminContentWrap {
   float: left;
 }
+
 img{
  max-width:100%;
 }
@@ -792,4 +812,17 @@ img{
 }
 .delButton:hover {
   color: red;
+
+
+.popupContent{
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
+.editTime {
+  margin-top: 10px;
+}
+.editTime > * {
+  height: 25px;
+float: left;
 }

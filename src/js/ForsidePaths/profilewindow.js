@@ -42,7 +42,6 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
       Qualifications: "",
       admin: ""
     }
-
     let profil_id = this.props.profil_id //profil_id må inkluderes når react-classen blir referert.
     profileDetailsRef = this
   }
