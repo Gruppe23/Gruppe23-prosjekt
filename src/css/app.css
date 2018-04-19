@@ -42,6 +42,7 @@ margin: auto;
   height: calc(99% - 2px);
   width: calc(100% - 2px);
   position: absolute;
+  background-color: lightgrey;
 
 }
 
@@ -252,12 +253,11 @@ html, body, .app {
   height: 100vh;
 }
 .TopRight {
-  position: fixed;
+  position: absolute;
   width: 40px;
   height: 40px;
-  top:63px;
-  right:0px;
-  background-color: red;
+  bottom:0px;
+  right:15px;
   border: none; /* Remove borders */
   color: white; /* White text */
   font-size: 20px; /* Set a font size */
@@ -265,7 +265,6 @@ html, body, .app {
 }
 /* Darker background on mouse-over */
 .TopRight:hover {
-    background-color: DarkRed;
 }
 .red {
   color: red !important;
@@ -306,7 +305,7 @@ html, body, .app {
 .forsideContent{
   height: 100%;
   margin-top: 70px;
-  overflow: scroll;
+  overflow: hidden;
 }
 
 #AcceptUsersBox {
@@ -332,7 +331,8 @@ html, body, .app {
   width:300px;
   margin-right: 10px;
   float: left;
-  border: 1px solid black;
+  border: 1px solid white;
+  background-color: #f6f6f6;
 }
 
 #UserInfoBox {
@@ -346,8 +346,9 @@ html, body, .app {
 
 #UserInfoBoxBTNS {
   position: absolute;
-  float: 0;
-  bottom:0;
+  float: left;
+  padding:5px;
+  bottom:20px;
 }
 
 .regSearch {
@@ -408,7 +409,12 @@ html, body, .app {
   display: inline-block;
   border-bottom: 1px dotted black;
 }
-
+.tooltipxx:hover {
+  color:red !important;
+}
+.tooltipxx:focus {
+  color: red !important;
+}
 .noOutline{
   outline: 0 solid transparent;
 }
@@ -764,4 +770,26 @@ right: 5px;
 
 .AdminContentWrap {
   float: left;
+}
+img{
+ max-width:100%;
+}
+
+.profilePage {
+    position:relative;
+    height: 70%;
+    width: 50%;
+    background-color: #696969;
+    padding: 15px;
+    float:left;
+}
+.pWinUserInfo {
+  text-align: left;
+}
+
+.delButton {
+  color:#696969;
+}
+.delButton:hover {
+  color: red;
 }

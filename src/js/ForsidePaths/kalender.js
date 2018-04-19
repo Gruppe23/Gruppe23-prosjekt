@@ -241,7 +241,7 @@ componentWillUnmount(){
                     } else {
                       new Promise((resolve, reject) => {
                         let inpdato = new Date(localStorage.getItem('startTime'))
-                        slotInfo.end.setHours(slotInfo.end.getHours() + 1)
+                        slotInfo.end.setHours(slotInfo.end.getHours() + 24)
                         let c = confirm('Valgt tidsramme er fra \n' +inpdato+ '\nTil \n'+ slotInfo.end+ '\nØnsker du å sette deg opp som utilgjengelig disse dagene?')
                         if(c == true){
                         employee.setPassive(user.user_id, inpdato, slotInfo.end )

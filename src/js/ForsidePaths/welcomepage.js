@@ -23,7 +23,8 @@ const topLeftContainer = {
 const topLeftInner1 = {
  inline: "block",
  height: "50%",
- padding: "15px"
+ padding: "15px",
+ maxHeight: "50%"
 }
 
 const topleftInner2 = {
@@ -58,7 +59,13 @@ const kalenderShow = {
 
 class WelcomePage extends React.Component<{}> {
   render(){
+    let user = employee.getSignedInUser2()
+    let panes
+    if (user.user_type == 2) {
 
+    }else{
+
+    }
 
     return (
   <div className="full" style={divStyle}>
