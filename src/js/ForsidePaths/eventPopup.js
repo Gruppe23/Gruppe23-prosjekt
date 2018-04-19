@@ -5,35 +5,19 @@ import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { employee } from "../services"
 import { Map, InfoWindow, Marker, Listing, GoogleApiWrapper } from 'google-maps-react';
-import { kalender } from "./kalender.js"
+import { kalender } from './kalender';
 import {SelectRoleTemplate} from './createeventpopup/RoleTemplatePopup';
 import onClickOutside from "react-onclickoutside";
 import SelectSearch from 'react-select-search'
-export class MapContainer extends React.Component<{}> {
 
 
-  render() {
-    const style = {
-      width: '30vw',
-      height: '30vh'
-    }
-    return (
-        <Map
-          style={{width: '30vw', height: '30vh'}}
-          google={this.props.google}
-          initialCenter={{
-            lat: 40.854885,
-            lng: -88.081807
-          }}
-          zoom={30}>
-        </Map>
-    );
-  }
 
-  componentDidMount(){
-  console.log('bleh');
-  }
-}
+// export default GoogleApiWrapper({
+//   apiKey: ('AIzaSyBBamUPCSbygOz1eTYvLkIWPpajzV8zi38')
+// })(MapContainer)
+
+
+
 
 
 
@@ -86,8 +70,8 @@ class EventPopup2 extends React.Component<{}> {
           <div ref="contactNumber"></div>
           <div id="map_canvas"></div>
           {signup}
-          <div>
-              <MapContainer/>
+          <div ref="mapGoesHere">
+
           </div>
         </div>
         <div>
@@ -102,6 +86,7 @@ class EventPopup2 extends React.Component<{}> {
 
   showInterest(user, shift_id){
     employee.setInterest(user, shift_id)
+    kalender.RenderCalendar();
   }
 
 
@@ -166,7 +151,7 @@ class EventPopup2 extends React.Component<{}> {
   }
 }
 
-class AdminContent extends React.Component {
+class AdminContent extends React.Component<{}> {
   constructor(props){
     super(props);
     this.state = {employees: []}

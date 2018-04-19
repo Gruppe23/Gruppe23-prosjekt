@@ -101,7 +101,7 @@ register(props){
     if (userCreateRef.refs.pwd.value == userCreateRef.refs.confirmpwd.value && userCreateRef.refs.email.value == userCreateRef.refs.confirmemail.value){
       if(userCreateRef.refs.pwd.value != "" || userCreateRef.refs.email.value != "" || userCreateRef.refs.adress.value != "" ){
         let hashedPassword = passwordHash.generate(userCreateRef.refs.pwd.value);
-        employee.signUp(userCreateRef.refs.firstname.value, userCreateRef.refs.surname.value, userCreateRef.refs.email.value, userCreateRef.refs.adress.value, userCreateRef.refs.zipcode.value, hashedPassword, userCreateRef.refs.adress.value, userCreateRef.refs.tlf.value).then(() => {
+        employee.signUp(userCreateRef.refs.firstname.value, userCreateRef.refs.surname.value, userCreateRef.refs.email.value, userCreateRef.refs.adress.value, userCreateRef.refs.zipcode.value, hashedPassword, userCreateRef.refs.username.value, userCreateRef.refs.tlf.value).then(() => {
           userCreateRef.refs.response.textContent = "Brukerkonto for " + userCreateRef.refs.firstname.value + " " + userCreateRef.refs.surname.value + " har blitt opprettet."
           userCreateRef.refs.response.style.color = "green"
           userCreateRef.refs.firstname.value = ""
