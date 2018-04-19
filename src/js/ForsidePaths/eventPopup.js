@@ -55,6 +55,7 @@ class EventPopup2 extends React.Component<{}> {
     return(
     <div className="popup">
       <div className="popup_inner">
+        <div className="full popupContent">
         <div className="event">
           <div ref="eventName"></div>
           <div ref="eventDescription"></div>
@@ -75,10 +76,10 @@ class EventPopup2 extends React.Component<{}> {
           </div>
         </div>
         <div>
-            <button onClick={this.props.closePopup}> Lukk </button>
+            <button className="popupClose" onClick={this.props.closePopup}> Lukk </button>
         </div>
-
-      {admin}
+        {admin}
+        </div>
       </div>
     </div>
     )
@@ -167,6 +168,9 @@ class AdminContent extends React.Component<{}> {
         onBlur={(value)=> {if(value != undefined){this.assignShift(value, this.props.shift.id)}}}
         onChange={(value)=> {if(value != undefined){this.assignShift(value, this.props.shift.id)}}}
        />
+       <div className="editTime">
+       <span>Endre starttid: </span><input ref="startEdit" type="time"/><span> Endre sluttid: </span><input ref="sluttEdit" type="time"/><button ref="setNyTid">Endre Tid</button>
+       </div>
     </div>
   )
   }
