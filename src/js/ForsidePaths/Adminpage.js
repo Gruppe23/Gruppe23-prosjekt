@@ -241,7 +241,7 @@ class AdminPage extends React.Component < {} > {
           <div ref="UIBAdress"></div>
           <div id="UserInfoBoxBTNS">
             <button ref="AcceptBTN">Aksepter</button>
-            <button ref="DeclineBTN>">Avvis</button>
+            {/* <button ref="DeclineBTN>">Avvis</button> */}
           </div>
         </div>
         ) } componentDidMount(){

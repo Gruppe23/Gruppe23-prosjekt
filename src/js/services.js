@@ -607,6 +607,18 @@ setShiftEmployee(employee_id, shift_id){
     })
   }
 
+  getFrontPageShifts(id: number){
+    return new Promise((resolve, reject) => {
+      connection.query('select * from shift where employee_id = ?', [id], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result)
+      })
+    })
+  }
+
 
   getTemplateRoles(id: number): Promise<Object[]>{
     return new Promise((resolve, reject) => {

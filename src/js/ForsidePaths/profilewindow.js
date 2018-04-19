@@ -47,25 +47,42 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
   }
 
   render() {
-    return (<div className="profilside">
-      <h4>
-        <div ref="name"></div>
-      </h4><p/>
-      <div ref="adress"></div><p/>
-      <div ref="email"></div><p/>
-      <div ref="usertype"></div><p/>
-      <p/>
-      <h4>Kvalifikasjoner:
-      </h4>
-      {this.state.Qualifications}
-      <h4>
-        <p></p>Roller:
-      </h4>
-      {this.state.Roles}
-      <div>
-        <p/> {this.state.admin}
+    return (
+      <div className="profilside">
+        <div className="profilePage">
+          <div className="row">
+            <div className="col-md-12 pWinUserInfo">
+              <h4>
+              <div ref="name"></div>
+              </h4><p/>
+              <div ref="adress"></div><p/>
+              <div ref="email"></div><p/>
+              <div ref="usertype"></div><p/>
+              <p/>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-6">
+              <h4>
+                Kvalifikasjoner:
+              </h4>
+              {this.state.Qualifications}
+            </div>
+            <div className="col-md-6">
+              <h4>
+                <p></p>Roller:
+              </h4>
+              {this.state.Roles}
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-12">
+              <p/> {this.state.admin}
+            </div>
+          </div>
+        </div>
       </div>
-    </div>)
+    )
   }
   componentDidMount(props) {
     this.loadProfileInfo()
@@ -80,7 +97,7 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
             this.refs.name.textContent = user_profile.first_name + " " + user_profile.surname
             this.refs.adress.textContent = "Adresse: " + user_profile.adress;
             this.refs.email.textContent = "Email: " + user_profile.email;
-            if (user_profile.user_type == 1) {
+            if (user_profile.user_type == 2) {
               this.refs.usertype.textContent = "Brukertype: Administrator"
             } else {
               this.refs.usertype.textContent = "Brukertype: Bemanning"
@@ -180,7 +197,7 @@ class AdminEditing extends React.Component < {} > {
       <button className="TopRight" ref="disableAccount" onClick={() => {
           this.disableAccount()
         }}>
-        <i className="fa fa-close"></i>
+        <a className="delButton"><i className="fa fa-user-times"></i></a>
       </button>
       <h4>
         <div>Administratorverktøy</div>
