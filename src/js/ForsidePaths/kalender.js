@@ -69,6 +69,8 @@ let user = employee.getSignedInUser2()
         if(user.user_type == 2 && event.empty_shifts > 0) {
           style.backgroundColor = "#b2262e"
         }
+      }else{
+        style.backgroundColor = "#3174ad"
       }
     }
     return {
