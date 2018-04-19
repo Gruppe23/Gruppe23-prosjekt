@@ -133,9 +133,6 @@ class UserAdding extends React.Component < {} > {
   }
   render() {
     return (<div className="full">
-      <button className="TopRight" ref="disableAccount" onClick={() => {
-          this.disableAccount()
-        }}>x</button>
       <h4>
         <div>Brukerverktøy</div>
       </h4>

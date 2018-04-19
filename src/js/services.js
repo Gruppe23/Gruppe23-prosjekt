@@ -328,10 +328,10 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     })
   }
 
-  getUsersWithRole(id : number, count : number): Promise<Object[]> {
+  getAvailableUsersWithRole(shift_date, id : number): Promise<Object[]> {
     return new Promise((resolve, reject) => {
-      connection.query("Select count(*) as CertCount, rc.role_id, e.user_id from employee e inner Join (employee_certificate ec INNER JOIN role_certificate rc on rc.certificate_id = ec.certificate_id) on e.user_id = ec.employee_id where rc.role_id = ? GROUP BY e.user_id HAVINg CertCount = (Select count(*) from role_certificate where role_id=? group by rc.role_id)", [
-        id, id
+      connection.query("SELECT COUNT(*) AS CertCount, rc.role_id, e.first_name, e.surname, e.user_id FROM employee e INNER JOIN ( employee_certificate ec INNER JOIN role_certificate rc ON rc.certificate_id = ec.certificate_id ) ON e.user_id = ec.employee_id AND rc.role_id = ? WHERE not EXISTS ( SELECT * FROM passive p WHERE (? BETWEEN p.from_date AND p.to_date) AND (p.employee_id = e.user_id) AND (p.employee_id=ec.employee_id)) AND e.status = 1 GROUP BY e.user_id HAVING CertCount =( SELECT COUNT(*) FROM role_certificate WHERE role_id = ? GROUP BY rc.role_id )", [
+         id, shift_date, id
       ], (error, result) => {
         if (error) {
           reject(error);
@@ -341,6 +341,19 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       })
     })
   }
+
+setShiftEmployee(employee_id, shift_id){
+  console.log()
+  return new Promise((resolve, reject) => {
+    connection.query('UPDATE shift SET employee_id = ? where shift_id = ?', [employee_id, shift_id], (error, result) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(result);
+    })
+  })
+}
 
   getCertificates(): Promise<userCertificates[]> {
      return new Promise((resolve, reject) => {
@@ -576,6 +589,19 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
         }
         console.log(result)
         resolve(result)
+      })
+    })
+  }
+
+  getShift(id: number){
+    return new Promise((resolve, reject) => {
+      connection.query('select * from shift where shift_id = ?', [id], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        console.log(result[0])
+        resolve(result[0])
       })
     })
   }
