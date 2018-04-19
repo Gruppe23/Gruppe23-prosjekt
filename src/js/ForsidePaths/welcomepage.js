@@ -24,7 +24,7 @@ const topLeftContainer = {
 }
 
 const topLeftInner1 = {
-
+ inline: "block",
 }
 
 const topleftInner2 = {
@@ -39,7 +39,8 @@ class WelcomePage extends React.Component<{}> {
     return (
   <div className="full" style={divStyle}>
     <div className="container-fluid" style={topContainer}>
-      <div className="container" style={topLeftContainer}>
+      <div className="row">
+      <div className="col-md-6" style={topLeftContainer}>
         <div className="container" style={topLeftInner1}>
       <span> Velkommen til Røde Kors appen! </span>
       </div>
@@ -47,9 +48,10 @@ class WelcomePage extends React.Component<{}> {
         <span>Hvis vi får tid</span>
       </div>
       </div>
-      <div className="container" style={topRightContainer}>
+      <div className="col-md-6" style={topRightContainer}>
         <span>Her skal meldinger være</span>
       </div>
+    </div>
     </div>
       <div className="container-fluid" style={kalenderShow}>
         <div className="col-sm-12">
