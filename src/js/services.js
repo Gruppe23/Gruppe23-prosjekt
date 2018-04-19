@@ -83,7 +83,7 @@ class roleCertificates {
 
 // Class that performs database queries related to notes
 class getEmployee {
-
+//Gettign employee name, id etc..
   getEmployees(): Promise<User> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT username, user_id, first_name, surname, adress, zipcode, status FROM employee', (error, result) => {
@@ -95,7 +95,7 @@ class getEmployee {
       });
     });
   }
-
+//Getting employee mail and number from database
   getEmployee(mail : number): Promise<User> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM employee WHERE user_id=?', [mail], (error, result) => {
@@ -108,6 +108,7 @@ class getEmployee {
       });
     });
   }
+  //Getting employee query that gets first_name & surname
   getEmployeeByName(fname: string, lname: string): Promise<User> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM employee WHERE first_name=? AND surname=?', [fname, lname], (error, result) => {
@@ -120,7 +121,7 @@ class getEmployee {
       });
     });
   }
-
+//Query for gettingexternal contacts
   getExternalContacts(): Promise<ExtContact>{
     return new Promise((resolve, reject) => {
       connection.query("SELECT * FROM external_contact", (error, result) => {
@@ -132,7 +133,7 @@ class getEmployee {
       })
     })
   }
-
+//Query for getting a external_contact by id
   getExternalContact(id): Promise<ExtContact>{
     return new Promise((resolve, reject) => {
       connection.query("SELECT * FROM external_contact WHERE contact_id=?", [id], (error, result) => {
@@ -145,7 +146,7 @@ class getEmployee {
       })
     })
   }
-
+//Add new ext. contact query
 newExtContact(first_name: string, last_name: string, phone_number: number) {
   return new Promise((resolve, reject) => {
     let date = new Date()
@@ -160,7 +161,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     });
   });
 }
-
+//Get availeable employees when you create a new event...
   getAvailableEmployeesEventCreation(prepDate: Date, endDate: Date): Promise<User[]>{
     return new Promise((resolve, reject) => {
       connection.query("SELECT * FROM employee e WHERE NOT EXISTS (SELECT * FROM passive p WHERE from_date BETWEEN ? AND ? AND p.employee_id = e.user_id)", [prepDate, endDate], (error, result) => {
@@ -172,7 +173,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       })
     })
   }
-
+//Get new user that has signed up for approval
   getNewUsers(): Promise<User[]> {
     let nada = 0;
     return new Promise((resolve, reject) => {
@@ -185,7 +186,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       });
     });
   }
-
+//Accept users that waits for approval
   acceptNewUser(id : number): Promise<void> {
     return new Promise((resolve, reject) => {
       connection.query('UPDATE employee SET status = 1 WHERE user_id = ?', [id], (error, result) => {
@@ -197,7 +198,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       });
     });
   }
-
+//Deactivate account query
   deactivateAccount(employeeid : number): Promise<void> {
     return new Promise((resolve, reject) => {
       connection.query('UPDATE employee SET status = 0 WHERE user_id = ?', [employeeid], (error, result) => {
@@ -228,7 +229,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
   }
 
 
-
+//Get relevant roles base on certificate etc....
   getRoles(): Promise<roleCertificates[]> {
     return new Promise((resolve, reject) => {
       connection.query('select role.role_id, rc.certificate_id, c.certificate_name, role.role_name from (role_certificate rc inner join certificate c on c.certificate_id = rc.certificate_id) INNER JOIN role on role.role_id = rc.role_id', (error, result) => {
@@ -240,7 +241,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       });
     });
   }
-
+//Getting specific roles
   getRole(id): Promise<roleCertificates[]> {
     let nada = 0;
      return new Promise((resolve, reject) => {
@@ -254,7 +255,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     });
   }
 
-
+  //Getting distinct roles...
   getDistinctRoles(): Promise<roleCertificates[]> {
     let nada = 0;
      return new Promise((resolve, reject) => {
@@ -267,7 +268,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       });
     });
   }
-
+//Another solution for getting role for a spesific user
   getUserRoles2(id : number): Promise<userRoles[]> {
     return new Promise((resolve, reject) => {
       connection.query("select ra.role_id, ra.role_name, rec.employee_id, first_name, surname from ( select rc.role_id, r.role_name, count(*) as antall from role_certificate rc INNER JOIN role r on rc.role_id = r.role_id group by role_id ) ra INNER JOIN ( select eec.first_name, eec.surname, rc.role_id, employee_id, count(*) as antall from ( SELECT * FROM employee_certificate ec INNER JOIN employee e ON ec.employee_id = e.user_id having ec.confirmed = 1 ) eec INNER JOIN role_certificate rc ON rc.certificate_id = eec.certificate_id group by role_id, employee_id ) rec ON ra.role_id = rec.role_id where ra.antall = rec.antall AND rec.employee_id = ?", [id], (error, result) => {
@@ -279,7 +280,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       })
     })
   }
-
+//Bigass query for getting shifts that match the roles needed
     getShiftsMatchingUserRoles(id: number): Promise<shift[]> {
       return new Promise((resolve, reject) => {
         connection.query('SELECT s.start, s.shift_id, (SELECT case when employee_id is not null then true else false end from interest where shift_id = s.shift_id AND employee_id = ?) AS interest, s.end, e.id, s.employee_id, s.role_id, s.shift_name, e.title, e.address, e.hostname, e.postal, e.ext_contact_id, e.contact_id, em.first_name AS contact_first_name, em.surname AS contact_last_name, em.tlf AS contact_tlf, ec.first_name AS ec_first_name, ec.last_name AS ec_last_name, ec.phone_number AS ec_tlf FROM shift s INNER JOIN ( employee em inner join ( events e INNER JOIN external_contact ec ON e.ext_contact_id = ec.contact_id ) on e.contact_id = em.user_id ) on s.event_id = e.id where exists (select ra.role_id, ra.role_name, rec.employee_id, first_name, surname from ( select rc.role_id, r.role_name, count(*) as antall from role_certificate rc INNER JOIN role r on rc.role_id = r.role_id group by rc.role_id ) ra INNER JOIN ( select eec.first_name, eec.surname, rc.role_id, employee_id, count(*) as antall from ( SELECT * FROM employee_certificate ec INNER JOIN employee e ON ec.employee_id = e.user_id having ec.confirmed = 1 ) eec INNER JOIN role_certificate rc ON rc.certificate_id = eec.certificate_id group by role_id, employee_id ) rec ON ra.role_id = rec.role_id where ra.antall = rec.antall and ra.role_id = s.role_id AND rec.employee_id=?)', [id, id], (error, result) => {
@@ -291,7 +292,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
         })
       })
     }
-
+//Query for setting up interest in a shift/event
     setInterest(employee_id, shift_id){
       return new Promise((resolve, reject) => {
         connection.query('INSERT INTO interest (employee_id, shift_id) VALUES (?, ?)', [employee_id, shift_id], (error, result) => {
@@ -303,7 +304,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
         })
       })
     }
-
+//For removing interest in shift/event
     removeInterest(employee_id, shift_id){
       return new Promise((resolve, reject) => {
         connection.query('DELETE FROM interest where employee_id = ? AND shift_id = ?', [employee_id, shift_id], (error, result) => {
@@ -315,7 +316,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
         })
       })
     }
-
+//Get roles that is not in a spesific event
   getRolesNotInEvent(id : number): Promise<userRoles[]> {
     return new Promise((resolve, reject) => {
       connection.query("SELECT * FROM role WHERE role_id NOT IN (SELECT role_id from shift where event_id = 1)", [id], (error, result) => {
@@ -327,7 +328,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       })
     })
   }
-
+//Getting user with a spesific role
   getAvailableUsersWithRole(shift_date, id : number): Promise<Object[]> {
     return new Promise((resolve, reject) => {
       connection.query("SELECT COUNT(*) AS CertCount, rc.role_id, e.first_name, e.surname, e.user_id FROM employee e INNER JOIN ( employee_certificate ec INNER JOIN role_certificate rc ON rc.certificate_id = ec.certificate_id ) ON e.user_id = ec.employee_id AND rc.role_id = ? WHERE not EXISTS ( SELECT * FROM passive p WHERE (? BETWEEN p.from_date AND p.to_date) AND (p.employee_id = e.user_id) AND (p.employee_id=ec.employee_id)) AND e.status = 1 GROUP BY e.user_id HAVING CertCount =( SELECT COUNT(*) FROM role_certificate WHERE role_id = ? GROUP BY rc.role_id )", [
@@ -341,7 +342,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       })
     })
   }
-
+//Updating
 setShiftEmployee(employee_id, shift_id){
   console.log()
   return new Promise((resolve, reject) => {
@@ -354,7 +355,7 @@ setShiftEmployee(employee_id, shift_id){
     })
   })
 }
-
+//Query for getting sertificats
   getCertificates(): Promise<userCertificates[]> {
      return new Promise((resolve, reject) => {
       connection.query('select * from certificate', (error, result) => {
@@ -366,7 +367,7 @@ setShiftEmployee(employee_id, shift_id){
       });
     });
   }
-
+//For adding certificates
   addCertificate(user_id : number, certificate_id : number, confirmed: number): Promise<string> {
     return new Promise((resolve, reject) => {
       let date = new Date()
@@ -381,7 +382,7 @@ setShiftEmployee(employee_id, shift_id){
       });
     });
   }
-
+//For accepting new certificates added
   acceptCertificate(employeeid : number, certificateid : number): Promise<void> {
     return new Promise((resolve, reject) => {
       connection.query('UPDATE employee_certificate SET confirmed = 1 WHERE employee_id = ? AND certificate_id = ?', [
@@ -395,7 +396,7 @@ setShiftEmployee(employee_id, shift_id){
       })
     })
   }
-
+//certificates stil not confirmed
   getUnconfirmedCertificates(): Promise<userCertificates[]> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT employee.username, certificate.certificate_id, employee.first_name, employee.email, employee.adress, employee.surname, employee.user_id, certificate.certificate_name FROM ((employee INNER JOIN employee_certificate ON employee.user_id = employee_certificate.employee_id) INNER JOIN certificate ON certificate.certificate_id = employee_certificate.certificate_id) WHERE employee_certificate.confirmed = 0 ORDER BY surname', (error, result) => {
@@ -407,7 +408,7 @@ setShiftEmployee(employee_id, shift_id){
       })
     })
   }
-
+//Get certification for specific user
   getUserCertifications(id : number): Promise<userCertificates[]> {
     return new Promise((resolve, reject) => {
       connection.query("select * from employee_certificate ec inner join certificate c on c.certificate_id = ec.certificate_id where employee_id = ?", [id], (error, result) => {
@@ -419,6 +420,7 @@ setShiftEmployee(employee_id, shift_id){
       });
     });
   }
+//...
   getUnobtainedUserCertifications(id : number): Promise<userCertificates[]> {
     return new Promise((resolve, reject) => {
       connection.query("SELECT * From certificate WHERE certificate_id NOT IN (SELECT certificate_id FROM employee_certificate WHERE employee_id = ?)", [id], (error, result) => {
@@ -430,7 +432,7 @@ setShiftEmployee(employee_id, shift_id){
       });
     });
   }
-
+//Confirmed by admin and is OK
   getConfirmedUserCertifications(id : number): Promise<userCertificates[]> {
     return new Promise((resolve, reject) => {
       connection.query("Select ec.certificate_id, c.certificate_name From (employee_certificate ec inner join employee e on ec.employee_id = e.user_id) INNER JOIN certificate c ON ec.certificate_id = c.certificate_id WHERE ec.confirmed = 1 AND ec.employee_id = ?", [id], (error, result) => {
@@ -442,7 +444,7 @@ setShiftEmployee(employee_id, shift_id){
       });
     });
   }
-
+// Creating new events
   createEvent(start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id){
     return new Promise((resolve, reject) => {
       let date = new Date()
@@ -457,7 +459,7 @@ setShiftEmployee(employee_id, shift_id){
       });
     });
   }
-
+//Creating shifts in events
   createShift(id, role_id, start, end, shift_name){
     return new Promise((resolve, reject) => {
       let date = new Date()
@@ -473,7 +475,7 @@ setShiftEmployee(employee_id, shift_id){
     });
   }
 
-
+//Gettin login infor from users
   getLogin(mail: string): Promise<User> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM employee WHERE username=?', [mail], (error, result) => {
@@ -485,7 +487,7 @@ setShiftEmployee(employee_id, shift_id){
       });
     });
   }
-
+//Sign out query
   signOut() {
     localStorage.removeItem('signedInUser')
     programRender.forceUpdate()
@@ -514,7 +516,7 @@ setShiftEmployee(employee_id, shift_id){
     });
   }
 
-
+//get events
   getEvents(): Promise< ?Object> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT id, start, end, prep, address, postal, gmaps, title, contact_id, ext_contact_id, description, hostname, allDay, (select count(*) from shift where event_id=id and employee_id IS NULL) AS empty_shifts from events', (error, result) => {
@@ -526,7 +528,7 @@ setShiftEmployee(employee_id, shift_id){
       })
     })
 }
-
+//Creating templates for event
   createTemplate(name: string, description: string): Promise<Object[]>{
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO shift_template (template_name, description) VALUES (?, ?)', [
@@ -541,7 +543,7 @@ setShiftEmployee(employee_id, shift_id){
     });
   }
 
-
+//Get event by id
   getEvent(id: number): Promise< ?Object> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM events WHERE id=?', [id], (error, result) => {
@@ -553,7 +555,7 @@ setShiftEmployee(employee_id, shift_id){
       });
     });
   }
-
+// Gettin external contact for event
   getExtContact(id: number): Promise< ?Object> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM external_contact WHERE contact_id=?', [id], (error, result) => {
@@ -565,7 +567,7 @@ setShiftEmployee(employee_id, shift_id){
       })
     })
 }
-
+//Adding roles to event templates
   addRolesToTemplate(template_id: string, role_id: number, amount: number): Promise<void>{
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO shift_template_roles (template_id, role_id, amount) VALUES (?, ?, ?)', [template_id, role_id, amount], (error, result) => {
@@ -579,7 +581,7 @@ setShiftEmployee(employee_id, shift_id){
     });
   }
 
-
+// Get shifts query
   getShifts(id: number): Promise< ?Object> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT s.start, s.shift_id, (SELECT case when employee_id is not null then true else false end from interest where shift_id = s.shift_id AND employee_id = ?) AS interest, s.end, e.id, s.employee_id, s.role_id, s.shift_name, e.title, e.address, e.hostname, e.postal, e.ext_contact_id, e.contact_id, em.first_name AS contact_first_name, em.surname AS contact_last_name, em.tlf AS contact_tlf, ec.first_name AS ec_first_name, ec.last_name AS ec_last_name, ec.phone_number AS ec_tlf FROM shift s INNER JOIN ( employee em inner join ( events e INNER JOIN external_contact ec ON e.ext_contact_id = ec.contact_id ) on e.contact_id = em.user_id ) on s.event_id = e.id group by shift_id', [id], (error, result) => {
@@ -592,7 +594,7 @@ setShiftEmployee(employee_id, shift_id){
       })
     })
   }
-
+//Get single shifts
   getShift(id: number){
     return new Promise((resolve, reject) => {
       connection.query('select * from shift where shift_id = ?', [id], (error, result) => {
@@ -606,7 +608,7 @@ setShiftEmployee(employee_id, shift_id){
     })
   }
 
-
+// Get roles from templates
   getTemplateRoles(id: number): Promise<Object[]>{
     return new Promise((resolve, reject) => {
       connection.query('SELECT * from shift_template_roles st INNER JOIN role r ON st.role_id = r.role_id where template_id = ?', [id], (error, result) => {
@@ -619,7 +621,7 @@ setShiftEmployee(employee_id, shift_id){
       });
     });
   }
-
+// Set user to passive if they don't want the shift
   setPassive(id: number, from_date, to_date): Promise< ?Object> {
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO passive(employee_id, from_date,to_date) VALUES( ?, ?, ? )', [id, from_date, to_date], (error, result) => {
@@ -635,7 +637,7 @@ setShiftEmployee(employee_id, shift_id){
 
 
 
-
+// Get the made templates from database
 getTemplates(): Promise<Object[]>{
   return new Promise((resolve, reject) => {
    connection.query('select * from shift_template', (error: Error, result) => {
@@ -648,7 +650,7 @@ getTemplates(): Promise<Object[]>{
  });
 
 }
-
+// Remove template from database
 removeTemplate(id: number): Promise<void>{
   return new Promise((resolve, reject) => {
     connection.query('DELETE FROM shift_template_roles where template_id=?', [id], (error, result)=> {
@@ -666,7 +668,7 @@ removeTemplate(id: number): Promise<void>{
    });
  });
 }
-
+// Get the passive days from users
 getUserPassiveDays(id: number): Promise< ?Object> {
   return new Promise((resolve, reject) => {
     connection.query('SELECT * FROM passive WHERE employee_id=?', [id], (error, result) => {
@@ -678,7 +680,7 @@ getUserPassiveDays(id: number): Promise< ?Object> {
     });
   });
 }
-
+//Remove passive events from where passive is set ut
 removePassiveEvent(id: number): Promise< ?Object> {
   return new Promise((resolve, reject) => {
     connection.query('DELETE FROM passive WHERE passive_id=?', [id], (error, result) => {
