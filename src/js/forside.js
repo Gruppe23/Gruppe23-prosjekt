@@ -13,6 +13,9 @@ import {createevents } from "./ForsidePaths/createevents.js"
 import { UserSearch } from './ForsidePaths/user_search';
 import createHashHistory from 'history/createHashHistory';
 const history = createHashHistory();
+const remote = require('electron').remote;
+
+
 
 
 if (localStorage.getItem("signedInUser") == true){
@@ -55,10 +58,12 @@ class Forside2 extends React.Component<{}> {
                     <li><Link className="tooltipxx" to='/profiler'><span className="tooltiptextxx">Brukeroversikt</span><i className="fa fa-users"></i></Link></li>
                   </ul>
                   {admin}
-                  <ul className="nav navbar-nav ml-auto">
-
-                    <li className="logout"><Link className="tooltipxx" ref="/logout" to="/logout"><span className="tooltiptextxx">Log ut</span><i className="fa fa-sign-out-alt"></i></Link></li>
-                  </ul>
+<ul className="nav floatRight navbar-nav">
+                  <li className="logout"><Link className="tooltipxx" ref="/logout" to="/logout"><span className="tooltiptextxx">Log ut</span><i className="fa fa-sign-out-alt"></i></Link></li>
+                    <li id="Minimize" className="tooltipxx"><a><i className="fa fa-window-minimize"></i></a></li>
+                      <li id="Maximize" className="tooltipxx"><a><i className="fa fa-window-maximize"></i></a></li>
+                        <li id="Close" className="tooltipxx"><a><i className="fa fa-window-close"></i></a></li>
+</ul>
                 </div>
               </nav>
               <div className="forsideContent">
@@ -80,6 +85,20 @@ class Forside2 extends React.Component<{}> {
   }
   componentDidMount(){
     history.push("/forside")
+    document.getElementById("Minimize").addEventListener("click", function (e) {
+      const window = remote.getCurrentWindow();
+      window.minimize();
+    })
+
+    document.getElementById("Maximize").addEventListener("click", function (e) {
+      const window = remote.getCurrentWindow();
+      window.maximize();
+    })
+
+    document.getElementById("Close").addEventListener("click", function (e) {
+      const window = remote.getCurrentWindow();
+      window.close();
+    })
 }
 }
 class Logout extends React.Component<{}> {

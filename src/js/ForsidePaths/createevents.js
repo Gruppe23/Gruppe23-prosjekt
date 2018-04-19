@@ -217,8 +217,6 @@ class createevents extends React.Component<{}> {
     this.refs.end.value = ""
     this.refs.prep.value = ""
     this.refs.zip.value = ""
-    this.refs.ExtContactName.value = ""
-    this.refs.RKContactPerson.value = ""
     this.refs.details.value = ""
     this.renderRoles()
   }

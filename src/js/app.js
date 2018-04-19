@@ -9,6 +9,7 @@ if (typeof localStorage === "undefined" || localStorage === null) {
   var LocalStorage = require('node-localstorage').LocalStorage;
   localStorage = new LocalStorage('./scratch');
 }
+const remote = require('electron').remote;
 import { Forside2, forside2 } from "./forside.js"
 import { LoginWindow } from "./loginwindow.js"
 import { RegisterWindow } from "./registerwindow.js"
@@ -54,6 +55,18 @@ class ProgramRender extends React.Component<{}> {
       }else{
         return(
           <div id="full">
+          <nav className="navbar navbar-inverse navbar-fixed-top drag">
+            <div className="container-fluid full">
+              <div className="navbar-header">
+                <img className="RCIcon" src="src\pictures\Red_Cross.png"/>
+              </div>
+              <ul className="nav floatRight navbar-nav">
+                <li id="Minimize" className="tooltipxx"><a><i className="fa fa-window-minimize"></i></a></li>
+                  <li id="Maximize" className="tooltipxx"><a><i className="fa fa-window-maximize"></i></a></li>
+                    <li id="Close" className="tooltipxx"><a><i className="fa fa-window-close"></i></a></li>
+            </ul>
+            </div>
+          </nav>
           <div className="loginContent" id="loginContent">
           <HashRouter>
             <div>
@@ -69,6 +82,20 @@ class ProgramRender extends React.Component<{}> {
       }
       }
       componentDidMount(){
+        document.getElementById("Minimize").addEventListener("click", function (e) {
+          const window = remote.getCurrentWindow();
+          window.minimize();
+        })
+
+        document.getElementById("Maximize").addEventListener("click", function (e) {
+          const window = remote.getCurrentWindow();
+          window.maximize();
+        })
+
+        document.getElementById("Close").addEventListener("click", function (e) {
+          const window = remote.getCurrentWindow();
+          window.close();
+        })
         history.push("/page1")
         programRender = this
       }
