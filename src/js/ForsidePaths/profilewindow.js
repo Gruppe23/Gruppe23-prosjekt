@@ -72,6 +72,7 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
     this.loadProfileInfo()
     profileDetailsRef = this
   }
+
   loadProfileInfo(props) {
     employee.getSignedInUser().then((user : User) => { // VI henter inn profilen som er signet inn, slik at vi kan sammenligne det med profilsiden vi faktisk er på.
       employee.getUserRoles2(this.props.profil_id).then((user_roles) => {
@@ -132,9 +133,6 @@ class UserAdding extends React.Component < {} > {
   }
   render() {
     return (<div className="full">
-      <button className="TopRight" ref="disableAccount" onClick={() => {
-          this.disableAccount()
-        }}>x</button>
       <h4>
         <div>Brukerverktøy</div>
       </h4>

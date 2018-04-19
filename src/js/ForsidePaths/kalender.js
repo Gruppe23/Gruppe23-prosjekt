@@ -8,13 +8,14 @@ import moment from 'moment';
 import { employee } from '../services';
 import {  Button, Container, Divider, Dropdown, Header, Message, Segment, Menu, Icon, Sidebar, Tab, Label } from 'semantic-ui-react';
 import { EventPopup } from "./eventPopup.js";
-
+import SelectSearch from 'react-select-search'
+import onClickOutside from "react-onclickoutside";
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 
 
 
 
-
+let kalender;
 class Kalender extends React.Component<{}> {
   constructor(props){
     super(props)
@@ -26,6 +27,7 @@ class Kalender extends React.Component<{}> {
       showPopup: false,
       firstSlotSelected: false
     }
+    kalender = this;
   }
 
 
@@ -33,6 +35,8 @@ class Kalender extends React.Component<{}> {
 
 
 eventStyleGetter(event, start, end, isSelected) {
+let user = employee.getSignedInUser2()
+
     var backgroundColor = '#' + event.hexColor;
     var style = {
         backgroundColor: backgroundColor
@@ -45,17 +49,24 @@ eventStyleGetter(event, start, end, isSelected) {
       style.backgroundColor = "#a59e9e"
     } else if (event.employee_id != null || event.interest == 1) {
       if(event.employee_id != null) {
-        style.backgroundColor= "#9CEC9C"
+        if(event.employee_id == user.user_id){
+          style.backgroundColor= "#00ce00"
+        } else {
+          if (user.user_type == 2){
+            style.backgroundColor = "#00ce00"
+          }else{
+            style.backgroundColor = "black"
+          }
+        }
       } else if(event.interest == 1){
           style.backgroundColor ="#D3C960"
         }
-
     }
-
       if(event.empty_shifts > 0 && event.empty_shifts){
-        style.backgroundColor = "#b2262e"
+        if(user.user_type == 2 && event.empty_shifts > 0) {
+          style.backgroundColor = "#b2262e"
+        }
       }
-
     }
     return {
         style: style
@@ -63,20 +74,37 @@ eventStyleGetter(event, start, end, isSelected) {
 }
 
   render() {
-    let panes = [
-  {
-    menuItem: { key: 'st_kalender', content: 'Kalender' },
-    render: () => <Tab.Pane Loading>{this.state.kalender1}</Tab.Pane>,
-  },
-  {
-    menuItem: <Menu.Item key='passive'>Velg utilgjendelige dager</Menu.Item>,
-    render: () => <Tab.Pane Loading>{this.state.kalender2}</Tab.Pane>,
-  },
-  {
-    menuItem: <Menu.Item key='signup'>Vis interesse for arrangementer</Menu.Item>,
-    render: () => <Tab.Pane Loading>{this.state.kalender3}</Tab.Pane>,
-  },
-]
+
+    let user = employee.getSignedInUser2()
+    let panes
+    if (user.user_type == 2) {
+      panes = [
+    {
+      menuItem: { key: 'st_kalender', content: 'Kalender' },
+      render: () => <Tab.Pane Loading>{this.state.kalender1}</Tab.Pane>,
+    },
+    {
+      menuItem: <Menu.Item key='passive'>Velg utilgjendelige dager</Menu.Item>,
+      render: () => <Tab.Pane Loading>{this.state.kalender2}</Tab.Pane>,
+    }
+  ]
+    }else {
+      panes = [
+    {
+      menuItem: { key: 'st_kalender', content: 'Kalender' },
+      render: () => <Tab.Pane Loading>{this.state.kalender1}</Tab.Pane>,
+    },
+    {
+      menuItem: <Menu.Item key='passive'>Velg utilgjendelige dager</Menu.Item>,
+      render: () => <Tab.Pane Loading>{this.state.kalender2}</Tab.Pane>,
+    },
+    {
+      menuItem: <Menu.Item key='signup'>Vis interesse for arrangementer</Menu.Item>,
+      render: () => <Tab.Pane Loading>{this.state.kalender3}</Tab.Pane>,
+    },
+  ]
+    }
+
     return(
       <div className="full">
         <div className="full">
@@ -128,14 +156,19 @@ componentWillUnmount(){
       employee.getUserPassiveDays(user.user_id).then((passiveDays)=>{
         console.log(passiveDays)
         employee.getShifts(user.user_id).then((shifts) => {
+          employee.getShiftsMatchingUserRoles(user.user_id).then((matchedShifts)=> {
+            console.log(matchedShifts)
+
           eventz = []
           signUpEvents = []
           let passiveEvents = []
 
           let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
-            for(let x in shifts){
-              signUpEvents.push({interest: shifts[x].interest, isshift: true, id: shifts[x].shift_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id, title: shifts[x].shift_name, address: shifts[x].address, contact_first_name: shifts[x].contact_first_name, contact_last_name: shifts[x].contact_last_name, contact_tlf: shifts[x].contact_tlf, ext_contact_name: shifts[x].ec_first_name, ec_last_name: shifts[x].ec_last_name, ec_tlf: shifts[x].ec_tlf })
+          //Setter opp hvilke eventer brukeren kan vise interesse i basert på hvilke roller de har. Hvis de er admin kan de se alle eventer.
+            for(let x in matchedShifts){
+              signUpEvents.push({interest: matchedShifts[x].interest, isshift: true, id: matchedShifts[x].shift_id, start: matchedShifts[x].start, end: matchedShifts[x].end, employee_id: matchedShifts[x].employee_id, rolle: matchedShifts[x].role_id, title: matchedShifts[x].shift_name, address: matchedShifts[x].address, contact_first_name: matchedShifts[x].contact_first_name, contact_last_name: matchedShifts[x].contact_last_name, contact_tlf: matchedShifts[x].contact_tlf, ext_contact_name: matchedShifts[x].ec_first_name, ec_last_name: matchedShifts[x].ec_last_name, ec_tlf: matchedShifts[x].ec_tlf })
             }
+            //Setter opp eventvariablen for kalenderen som viser passive dagene til brukeren.
             for(let x in passiveDays){
               passiveEvents.push({ispassive: true, passiveId:passiveDays[x].passive_id, id:passiveDays[x].employee_id, title: passiveDays[x].title, start: passiveDays[x].from_date, end: passiveDays[x].to_date})
             }
@@ -143,6 +176,7 @@ componentWillUnmount(){
               if(user.user_type == 2){
               for(let x in shifts){
                 eventz.push({interest: shifts[x].interest, isshift: true, id: shifts[x].shift_id, start: shifts[x].start, end: shifts[x].end, employee_id: shifts[x].employee_id, rolle: shifts[x].role_id, title: shifts[x].shift_name, address: shifts[x].address, contact_first_name: shifts[x].contact_first_name, contact_last_name: shifts[x].contact_last_name, contact_tlf: shifts[x].contact_tlf, ext_contact_name: shifts[x].ec_first_name, ec_last_name: shifts[x].ec_last_name, ec_tlf: shifts[x].ec_tlf })
+
             }} else {
               for(let x in shifts){
                 if(shifts[x].employee_id == user.user_id){
@@ -226,9 +260,10 @@ componentWillUnmount(){
               onSelectEvent={event => {this.togglePopup(event)}}
             />
           })
+        })
       })
     })
-})
+  })
 })
 }
 
@@ -242,4 +277,4 @@ componentWillUnmount(){
 
 export default Kalender;
 
-export { Kalender }
+export { Kalender, kalender }

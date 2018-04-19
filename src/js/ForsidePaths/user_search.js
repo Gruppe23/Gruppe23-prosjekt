@@ -4,7 +4,8 @@ import { Link, HashRouter, Switch, Route } from 'react-router-dom';
 import { employee, User } from '../services';
 import {ProfileDetails} from './profilewindow';
 import { history } from '../forside';
-
+import {SelectRoleTemplate} from './createeventpopup/RoleTemplatePopup';
+import onClickOutside from "react-onclickoutside";
 
 
 class UserSearch extends React.Component<{}> {
