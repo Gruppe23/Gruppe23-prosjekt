@@ -46,7 +46,7 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
     let profil_id = this.props.profil_id //profil_id må inkluderes når react-classen blir referert.
     profileDetailsRef = this
   }
-
+//Elements for profilepage
   render() {
     return (<div className="profilside">
       <h4>
@@ -72,7 +72,7 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
     this.loadProfileInfo()
     profileDetailsRef = this
   }
-
+//Info for getting relevant information from user when using profilepage
   loadProfileInfo(props) {
     employee.getSignedInUser().then((user : User) => { // VI henter inn profilen som er signet inn, slik at vi kan sammenligne det med profilsiden vi faktisk er på.
       employee.getUserRoles2(this.props.profil_id).then((user_roles) => {
@@ -143,7 +143,7 @@ class UserAdding extends React.Component < {} > {
       <button ref="addselect" onClick={ () => {this.addQualification()} }>Legg til kompetanse</button>
     </div>)
   }
-
+//Popup alert for checking info
   addQualification(props) {
     if (confirm('Er du sikker på at du vil søke om å legge til dette sertifikatet?')) {
       employee.addCertificate(this.props.user_id, this.refs.certselect.value, 0).then((check) => {
@@ -164,7 +164,7 @@ class UserAdding extends React.Component < {} > {
 
   }
 }
-
+//Class for admin options in profilewindow
 class AdminEditing extends React.Component < {} > {
   refs: {
     certselect: HTMLInputElement;
@@ -193,7 +193,7 @@ class AdminEditing extends React.Component < {} > {
       <button ref="addselect" onClick={()=> {this.addQualification()}}>Legg til kompetanse</button>
     </div>)
   }
-
+//explains itself
   addQualification(props) {
     if (confirm('Er du sikker på at du vil legge til dette sertifikatet hos brukeren?')) {
       employee.addCertificate(this.props.user_id, this.refs.certselect.value, 1).then((check) => {
@@ -205,7 +205,7 @@ class AdminEditing extends React.Component < {} > {
     }
 
   }
-
+//for disableing accont. Popup will appear and ask if you want to delete + mail 
   disableAccount(props) {
     if (confirm('Are you sure you want to deactivate this account?')) {
       employee.deactivateAccount(this.props.user_id).then(() => {
@@ -217,7 +217,7 @@ class AdminEditing extends React.Component < {} > {
             subject: 'Brukerkonto deaktivert', // Subject line
             html: mailMessage // plain text body
           };
-
+//Transporter for sending out mail
           transporter.sendMail(mailOptions, function(err, info) {
             if (err) {
               console.log(err)
