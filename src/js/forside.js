@@ -34,7 +34,7 @@ class Forside2 extends React.Component<{}> {
     let adminpath: reactComponent;
     if(userInfo){
       if(userInfo.user_type == 2){
-        admin = <ul><li><Link className="tooltipxx" to='/AdminPage'><span className="tooltiptextxx">Administratorverktøy</span><i className="fa fa-wrench"></i></Link></li><li><Link className="tooltipxx" to='/opprettevent'><span className="tooltiptextxx">Opprett Arrangement</span><i className="fa fa-calendar-plus-o"></i></Link></li></ul>
+        admin = <ul className="nav navbar-nav"><li><Link className="tooltipxx" to='/AdminPage'><span className="tooltiptextxx">Administratorverktøy</span><i className="fa fa-wrench"></i></Link></li><li><Link className="tooltipxx" to='/opprettevent'><span className="tooltiptextxx">Opprett Arrangement</span><i className="fa fa-calendar-plus"></i></Link></li></ul>
         adminpath = <Route exact path="/AdminPage" component={AdminPage} />
       } else {
         admin = <span> Velkommen til Røde Kors appen!</span>;
@@ -43,20 +43,21 @@ class Forside2 extends React.Component<{}> {
     return(
           <HashRouter>
             <div className="full">
-              <nav className="navbar navbar-inverse navbar-fixed-top">
+              <nav className="navbar navbar-inverse navbar-fixed-top drag">
                 <div className="container-fluid full">
                   <div className="navbar-header">
-                    <a className="navbar-brand">Røde Kors</a>
+                    <img className="RCIcon" src="src\pictures\Red_Cross.png"/>
                   </div>
                   <ul className="nav navbar-nav">
-                    <li ><Link className="tooltipxx" to='/forside'><span className="tooltiptextxx">Forside</span><i className="fa fa-home"></i></Link></li>
-                    <li><Link className="tooltipxx" to='/kalender'><span className="tooltiptextxx">Kalender</span><i className="fa fa-calendar"></i></Link></li>
+                    <li tabIndex="-1" className="noOutline" ><Link className="tooltipxx" to='/forside'><span className="tooltiptextxx">Forside</span><i className="fa fa-home"></i></Link></li>
+                    <li><Link className="tooltipxx" to='/kalender'><span className="tooltiptextxx">Kalender</span><i className="fa fa-calendar-alt"></i></Link></li>
                     <li><Link className="tooltipxx"  to={'/profil/' + userInfo.user_id}><span className="tooltiptextxx">Profilside</span><i className="fa fa-user"></i></Link></li>
                     <li><Link className="tooltipxx" to='/profiler'><span className="tooltiptextxx">Brukeroversikt</span><i className="fa fa-users"></i></Link></li>
                   </ul>
+                  {admin}
                   <ul className="nav navbar-nav ml-auto">
-                    {admin}
-                    <li className="logout"><Link className="tooltipxx" ref="/logout" to="/logout"><span className="tooltiptextxx">Log ut</span><i className="fa fa-sign-out"></i></Link></li>
+
+                    <li className="logout"><Link className="tooltipxx" ref="/logout" to="/logout"><span className="tooltiptextxx">Log ut</span><i className="fa fa-sign-out-alt"></i></Link></li>
                   </ul>
                 </div>
               </nav>

@@ -6,6 +6,31 @@ html, body {
   max-width: 1920px;
 }
 
+body {
+    -ms-overflow-style: scrollbar;
+}
+
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+input[type="text"],
+input[type="a"],
+input[type="li"],
+input[type="ul"]
+input[type="div"]
+div,
+button,
+li,
+a,
+ul,
+textarea {
+	-webkit-app-region: no-drag;
+}
+
+.drag {
+  -webkit-app-region:drag;
+}
+
 .profilside {
   margin-top:10px;
 }
@@ -373,13 +398,32 @@ html, body, .app {
     background-color: #eee; /* Add a hover effect to all links, except for headers */
 }
 
+.nav:focus {
+  outline: 0 solid transparent;
+}
+
 .tooltipxx {
   position: relative;
+  outline: 0 solid transparent;
   display: inline-block;
   border-bottom: 1px dotted black;
 }
 
+.noOutline{
+  outline: 0 solid transparent;
+}
+
+ .RCIcon{
+   height: 40px;
+   width: 40px;
+   margin-top: 10px;
+   margin-right: 25px;
+ }
+ .tooltipxx .tooltiptextxx: focus{
+   outline: 0 solid transparent;
+ }
 .tooltipxx .tooltiptextxx {
+  outline: 0 solid transparent;
   visibility: hidden;
   background-color: black;
   color: #fff;
@@ -423,9 +467,6 @@ a.hover span {
   position:relative;
 }
 
-::-webkit-scrollbar {
-  width: 15px;
-}
 
 .ce_Row3 {
   width: 300px;
