@@ -294,6 +294,18 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       })
     }
 
+    updateShiftTime(start, end, id){
+      return new Promise((resolve, reject) => {
+        connection.query('UPDATE shift SET start = ?, end = ? WHERE shift_id = ?', [start, end, id], (error, result) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve();
+        });
+      });
+    }
+
     setInterest(employee_id, shift_id){
       return new Promise((resolve, reject) => {
         connection.query('INSERT INTO interest (employee_id, shift_id) VALUES (?, ?)', [employee_id, shift_id], (error, result) => {
@@ -477,6 +489,22 @@ setShiftEmployee(employee_id, shift_id){
     });
   }
 
+  createEventlessShift(id, role_id, start, end, shift_name){
+    return new Promise((resolve, reject) => {
+      let date = new Date()
+      connection.query('INSERT INTO shift (role_id, start, end, shift_name) VALUES (?, ?, ?, ?)', [
+        id, role_id, start, end, shift_name
+      ], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        console.log(result)
+        resolve(result);
+      });
+    });
+  }
+
 
   getLogin(mail: string): Promise<User> {
     return new Promise((resolve, reject) => {
@@ -603,7 +631,7 @@ getEventsAvailable(date): Promise< ?Object> {
 
   getShifts(id: number): Promise< ?Object> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT s.start, s.shift_id, (SELECT case when employee_id is not null then true else false end from interest where shift_id = s.shift_id AND employee_id = ?) AS interest, s.end, e.id, s.employee_id, s.role_id, s.shift_name, e.title, e.address, e.hostname, e.postal, e.ext_contact_id, e.contact_id, em.first_name AS contact_first_name, em.surname AS contact_last_name, em.tlf AS contact_tlf, ec.first_name AS ec_first_name, ec.last_name AS ec_last_name, ec.phone_number AS ec_tlf FROM shift s INNER JOIN ( employee em inner join ( events e INNER JOIN external_contact ec ON e.ext_contact_id = ec.contact_id ) on e.contact_id = em.user_id ) on s.event_id = e.id group by shift_id', [id], (error, result) => {
+      connection.query('SELECT s.start, s.shift_id, (SELECT case when employee_id is not null then true else false end from interest where shift_id = s.shift_id AND employee_id = ?) AS interest, s.end, e.id, s.employee_id, s.role_id, s.shift_name, e.title, e.address, e.hostname, e.postal, e.ext_contact_id, e.contact_id, em.first_name AS contact_first_name, em.surname AS contact_last_name, em.tlf AS contact_tlf, ec.first_name AS ec_first_name, ec.last_name AS ec_last_name, ec.phone_number AS ec_tlf FROM shift s inner JOIN ( employee em inner join ( events e INNER JOIN external_contact ec ON e.ext_contact_id = ec.contact_id ) on e.contact_id = em.user_id ) on s.event_id = e.id group by shift_id', [id], (error, result) => {
         if(error) {
           reject(error);
           return;
@@ -613,6 +641,7 @@ getEventsAvailable(date): Promise< ?Object> {
       })
     })
   }
+
 
   getShift(id: number){
     return new Promise((resolve, reject) => {
@@ -627,6 +656,19 @@ getEventsAvailable(date): Promise< ?Object> {
     })
   }
 
+
+  deleteShift(id){
+      return new Promise((resolve, reject) => {
+        connection.query('DELETE FROM shift where shift_id = ?', [id], (error, result) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve(result);
+        })
+      })
+
+  }
   getFrontPageShifts(id: number){
     return new Promise((resolve, reject) => {
       connection.query('select * from shift where employee_id = ?', [id], (error, result) => {

@@ -136,7 +136,8 @@ width: 40%;
 padding: 75px 0;
 }
 
-.loginelements > input, .loginelements > button {
+.loginelements > input, .loginelements > Link, button {
+  text-decoration: none;
 border: 1px solid black;
 background-color: #E57979;
 }
@@ -554,6 +555,13 @@ button, label {
     padding: 8px 16px;
     transition: 0.3s;
     font-size: 14px;
+}
+.select-search-box__options{
+  overflow-y: scroll !important
+}
+
+.SelectSearchContainer > div > div > ul {
+  max-height: 300px;
 }
 
 .removeShift{

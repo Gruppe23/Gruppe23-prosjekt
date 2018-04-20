@@ -31,7 +31,7 @@ class RegisterWindow extends React.Component<{}> {
 
         <div className="popup_inner">
         <div className="col-sm-6">
-          <form className="form">
+          <div className="form-group">
             <span>Brukerinfo </span>
             <div className="form-group">
                 <label className="control-label col-sm-4" htmlFor="firstname">Fornavn:</label>
@@ -57,17 +57,17 @@ class RegisterWindow extends React.Component<{}> {
             </div>
 
           <div className="form-group-horizontal">
-                  <button ref="signupbtn" className="btn btn-default" onClick={this.register}>Opprett Bruker</button>
-                  <button className="btn btn-default"><Link to='/page1'>Tilbake til login</Link></button>
+                  <button ref="signupbtn" type="button" className="btn btn-default" onClick={this.register}>Opprett Bruker</button>
+                  <Link to='/page1'><button type="button" className="btn btn-default">Tilbake til login</button></Link>
           </div>
           <div ref="response"></div>
 
-      </form>
+      </div>
 
       </div>
       <div className="col-sm-6">
           <span>Kontoinfo</span>
-      <form className="form">
+      <div className="form-group">
       <div className="form-group">
           <label className="control-label col-sm-4">Adresse: </label>
           <input type="text" className="form-control" ref="adress" placeholder="olanordmannsvei 24"/>
@@ -88,7 +88,7 @@ class RegisterWindow extends React.Component<{}> {
           <label className="control-label col-sm-10" htmlFor="confirmpwd">Bekreft Passord: </label>
           <input type="password" className="form-control" ref="confirmpwd" placeholder="Enter password"/>
       </div>
-      </form>
+      </div>
       </div>
       </div>
 

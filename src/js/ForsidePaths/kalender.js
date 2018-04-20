@@ -33,6 +33,7 @@ export class Kalender extends React.Component<{}> {
       showShiftCreation: false,
       firstSlotSelected: false,
       createShiftInfo: "",
+      popupinfo: "",
     }
     kalender = this;
   }
@@ -54,7 +55,15 @@ let user = employee.getSignedInUser2()
     }else{
    if(event.employee_id == null && event.isshift == true && event.interest == null) {
       style.backgroundColor = "#a59e9e"
-    } else if (event.employee_id != null || event.interest == 1) {
+    } else if(event.isshift == false ){
+      if(event.empty_shifts > 0 && event.empty_shifts){
+        if(user.user_type == 2 && event.empty_shifts > 0) {
+          style.backgroundColor = "#b2262e"
+        }
+    }
+} else {
+
+    if (event.employee_id != null || event.interest == 1) {
       if(event.employee_id != null) {
         if(event.employee_id == user.user_id){
           style.backgroundColor= "#00ce00"
@@ -69,14 +78,10 @@ let user = employee.getSignedInUser2()
           style.backgroundColor ="#D3C960"
         }
     }
-      if(event.empty_shifts > 0 && event.empty_shifts){
-        if(user.user_type == 2 && event.empty_shifts > 0) {
-          style.backgroundColor = "#b2262e"
-        }
-      }else{
-        style.backgroundColor = "#3174ad"
+  }
+
       }
-    }
+
     return {
         style: style
     };
@@ -127,6 +132,7 @@ let user = employee.getSignedInUser2()
           <EventPopup
             text="Close Me"
             closePopup={this.closePopup.bind(this)}
+            updateCalendar={this.RenderCalendar.bind(this)}
             />:null
         }
         {
@@ -147,8 +153,7 @@ let user = employee.getSignedInUser2()
 
   togglePopup(event) {
     new Promise((resolve,reject) =>{
-      localStorage.removeItem('event')
-      localStorage.setItem('event', JSON.stringify(event))
+      this.state.popupinfo = event
       resolve()
     }).then(()=>{
       this.setState({
@@ -190,10 +195,8 @@ componentWillUnmount(){
     employee.getSignedInUser().then((user) =>{
       employee.getEvents().then((EventFetch) => {
       employee.getUserPassiveDays(user.user_id).then((passiveDays)=>{
-        console.log(passiveDays)
         employee.getShifts(user.user_id).then((shifts) => {
           employee.getShiftsMatchingUserRoles(user.user_id).then((matchedShifts)=> {
-            console.log(matchedShifts)
 
           eventz = []
           signUpEvents = []
@@ -220,11 +223,14 @@ componentWillUnmount(){
                 }
               }
           }
+          console.log(EventFetch)
           for (let x in EventFetch) {
             signUpEvents.push(EventFetch[x])
             eventz.push(EventFetch[x])
             passiveEvents.push(EventFetch[x])
           }
+          console.log(passiveEvents)
+          console.log(signUpEvents)
           console.log('nice for what');
           this.setState({kalender1:
             <BigCalendar
@@ -245,7 +251,6 @@ componentWillUnmount(){
                   onSelectEvent={
                     event => {
                     if(event.ispassive){
-
                       let c = confirm('Are you sure you wish to remove this passive event?')
                       if(c == true){
                         employee.removePassiveEvent(event.passiveId)
@@ -265,14 +270,12 @@ componentWillUnmount(){
                     }
                     ) => {
                       new Promise((resolve, reject) => {
-
                         console.log(slotInfo)
                         if(slotInfo.end == slotInfo.start) {
                           slotInfo.end.setHours(23:59)
                           slotInfo.start.setHours(0)
                           resolve(true)
                         }else {
-
                         if((slotInfo.end.getDate() - slotInfo.start.getDate()) < 1) {
                           if((slotInfo.end.getHours() - slotInfo.start.getHours()) < 12){
                             alert("Du må sette opp en passiv event på over 12 timer for at den skal opprettes.")
@@ -287,10 +290,7 @@ componentWillUnmount(){
                         if(x == false) {
                         slotInfo.end.setHours(slotInfo.end.getHours() + 1)
                       }
-                        let c = confirm('Valgt tidsramme er fra \n' +slotInfo.start+ '\nTil \n'+ slotInfo.end+ '\nØnsker du å sette deg opp som utilgjengelig disse dagene?')
-                        if(c == true){
                           employee.setPassive(user.user_id, slotInfo.start, slotInfo.end )
-                        }
                         this.RenderCalendar();
                       })
 
@@ -302,7 +302,7 @@ componentWillUnmount(){
                 this.setState({kalender3:
                   <BigCalendar
                     selectable
-                    events={signUpEvents}
+                    events={eventz}
                     defaultDate={new Date()}
                     eventPropGetter={(this.eventStyleGetter)}
                     onSelectEvent={event => {this.togglePopup(event)}}

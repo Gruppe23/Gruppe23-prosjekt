@@ -31,7 +31,7 @@ class LoginWindow extends React.Component<{}> {
                 <input type="password" ref="loginPassword"></input><p></p>
                 <button ref="login" onClick= {() => {this.login()}}>Login</button>
                 <p></p>
-                <button><Link to='/page2'>Til Registrering</Link></button>
+                <Link to='/page2'><button>Til Registrering</button></Link>
             </div>
         </div>
     );

@@ -150,56 +150,22 @@ class createevents extends React.Component<{}> {
                                       onFocus={this.renderAvailableRKContactPersons.bind(this)}
                       />
    </div>
-
-   <div className="ec_inputDiv">
-     <label htmlFor="Adresse" className="inputWidth">Adresse: </label>
-        <input ref="adress" defaultValue={EventFile.event.adress} id="Adresse" className="inputWidth" type="text"  name="Prep"/>
-   </div>
-
-   <div className="ec_inputDiv">
-     <label htmlFor="Postnr" className="inputWidth">Postnummber:: </label>
-        <input ref="zip" id="Postnr" defaultValue={EventFile.event.postal}className="inputWidth" type="text"  name="Postnr"/>
-   </div>
-   <div className="ec_inputDiv">
-     <label className="ce_textAreaLabel">Legg til beskrivelse: </label>
-     <textarea ref="details" defaultValue={EventFile.event.details} className="ce_textArea"></textarea>
-   </div>
-     <button ref="create" onClick={()=>{this.eventCreate()}}className="ec_opprett">Opprett Arrangement</button>
 </div>
-
 <div className="ce_Row2">
-    <div className="ec_addRoles">
-      <div className="ec_inputDiv" className="ec_SelectRole">
-        <label htmlFor="myBrowser" className="inputWidth">
-            Velg roller å legge til arrangementet:</label>
-            <SelectSearch ref="roleadd" name="language" options={this.state.addroles} search={true} placeholder="Velg Kontaktperson"
-               mode="input"
-               onMount={()=> EventFile.event.extContact}
-               onChange={(value)=>{selectedRole = value
-                               console.log(value)}}
-                               onHighlight={onHighlight}
-                               onBlur={(value)=>{selectedRole = value
-                                               console.log(value)}}
-                               onFocus={onFocus}/>
-          </div>
-          <div className="ec_RoleAmount"><label className="inputWidth">Antall:</label><input ref="addRoleAmount" className="inputWidth" type="number"/></div>
-          <div className="ec_RoleAddButtonDiv"><label></label><button onClick={ () => {this.addRoles()}} className="ec_RoleAddButton">Legg til</button></div>
-        </div>
+  <div className="ec_inputDiv">
+    <label htmlFor="Adresse" className="inputWidth">Adresse: </label>
+       <input ref="adress" defaultValue={EventFile.event.adress} id="Adresse" className="inputWidth" type="text"  name="Prep"/>
+  </div>
 
-        <div className="ec_addedRoles">
-          {this.state.addedroles}
-        </div>
-
-      </div>
-
-<div className="ce_Row3">
-  <button ref="cancel" onClick={()=>{this.cancelEventCreation()}} className="Row_3buttons">Avbytt opprettelse</button>
-  <label>Opprett ny template</label>
-  <input type="text" ref="templatename" placeholder="Template Navn" className="Row_3Input"/>
-  <textarea ref="templatedesc" defaultValue={EventFile.event.details} className="ce_textArea"></textarea>
-  <button ref="cancel" onClick={()=>{this.createRoleTemplate()}} className="Row_3buttons">Opprett Vakt Mal</button>
-  <button ref="cancel" onClick={()=>{this.togglePopup()}} className="Row_3buttons">Velg Vakt Mal</button>
-  <div className="gMaps"></div>
+  <div className="ec_inputDiv">
+    <label htmlFor="Postnr" className="inputWidth">Postnummber:: </label>
+       <input ref="zip" id="Postnr" defaultValue={EventFile.event.postal}className="inputWidth" type="text"  name="Postnr"/>
+  </div>
+  <div className="ec_inputDiv">
+    <label className="ce_textAreaLabel">Legg til beskrivelse: </label>
+    <textarea ref="details" defaultValue={EventFile.event.details} className="ce_textArea"></textarea>
+  </div>
+    <button ref="create" onClick={()=>{this.eventCreate()}}className="ec_opprett">Opprett Arrangement</button>
 </div>
 </div>)
 }
@@ -244,65 +210,21 @@ class createevents extends React.Component<{}> {
            employee.getEmployee(EventFile.event.contact.value).then((RKContact) => {
                   employee.getExternalContact(EventFile.event.contact.value).then((extContact) => {
                     employee.createEvent(this.refs.start.value, this.refs.end.value, this.refs.prep.value, this.refs.eventname.value, this.refs.Hostname.value, this.refs.details.value, this.refs.adress.value, this.refs.zip.value, EventFile.event.contact.value, EventFile.event.extContact.value).then((eventData) => {
-                      employee.getEvent(eventData.insertId).then((createdEvent)=> {
-                      console.log(createdEvent)
-                      let eventFile = localStorage.getItem("eventFile")
-                      EventFile = JSON.parse(eventFile)
-                      console.log(EventFile)
-                      let oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-                      let firstDate = createdEvent.prep
-                      let secondDate = createdEvent.end
-                      let diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
-                      for (let x in EventFile.roles) {
-                        if(EventFile.roles[x] != null){
-                          let z = 0;
-                          let shiftDate =new Date( createdEvent.prep )
-                          console.log(EventFile.roles[x].role_name + " dag: " + z )
-                            shiftDate.setDate(shiftDate.getDate() + 1);
-                            let shiftEnd = new Date( createdEvent.start.getFullYear(), shiftDate.getMonth(), shiftDate.getDate(), createdEvent.end.getHours())
-                            let y = 0;
-                            while (y < EventFile.roles[x].amount){
-                              y++
-                              console.log(shiftDate)
-                              console.log(shiftEnd)
-                              employee.createShift(eventData.insertId, EventFile.roles[x].role_id, this.refs.start.value, this.refs.end.value, EventFile.roles[x].role_name)
-                          }
-                        }
-                      }
                     })
                     })
-
-                  })
-
-           })
+            })
+           }
           }
         }
         }
       }
     }
   }
-}
+
 
   // start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id
 
-  renderRoles(){
-  EventFile = localStorage.getItem("eventFile")
-  EventFile = JSON.parse(EventFile)
-    this.setState({
-      addedroles: EventFile.roles.map((role) => {if(role != null){console.log("SKJEDDE"); return <div key={role.role_id} className="AddedRolesRow">{role.amount + " skift for ansatte med rollen: " + role.role_name + " er satt opp."} <button onClick={ () => { this.removeRole(role.role_id)} } className="removeShift">X</button></div>}})
-    })
-  }
 
-
-
-  createRoleTemplate(){
-    employee.createTemplate(this.refs.templatename.value, this.refs.templatedesc.value).then((template) => {
-      console.log(template)
-      EventFile.roles.map((role) => {
-        if (role != null) {employee.addRolesToTemplate(template.insertId, role.role_id, role.amount)}
-      })
-    })
-  }
 
 renderAvailableRKContactPersons(){
     //OnInput er ikke den beste metoden. Men har ikke tid til å lage et alternativ. I teorien ville jeg helst ha laget en funksjon som skjekker om alle datoer er satt inn og så utfører get Employee funksjonen.
@@ -333,20 +255,6 @@ renderSelect(option) {
     return (<span><img style={imgStyle} width="40" height="40" src={option.photo} /><span>{option.name}</span></span>);
 }
 
-  addRoles(){
-    if(this.refs.addRoleAmount.vale < 1){
-      alert("Vennligst legg til en eller flere av rollen.")
-    } else {
-
-    employee.getRole(selectedRole.value).then((role) => {
-      EventFile.roles[role.role_id] = {role_id: role.role_id, role_name: role.role_name, amount: this.refs.addRoleAmount.value}
-      //Med løsningen over får vi ikke duplikate innslag av samme rolle i eventet
-      localStorage.setItem("eventFile", JSON.stringify(EventFile))
-      console.log(EventFile)
-      this.renderRoles()
-    })
-  }
-  }
 
   removeRole(roleid){
     console.log(EventFile.roles[roleid])
