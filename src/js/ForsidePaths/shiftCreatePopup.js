@@ -113,9 +113,7 @@ export class ShiftCreatePopup extends React.Component<{}> {
     let endDate = new Date(this.props.info.end)
     let startHours = this.refs.SCPStart.value.split(":")
     let endHours = this.refs.SCPEnd.value.split(":")
-
     startDate.setHours(startHours[0], startHours[1])
-
     endDate.setHours(endHours[0], endHours[1])
     console.log(SCPRef.state.roleObject)
     console.log(startHours)
@@ -128,7 +126,11 @@ export class ShiftCreatePopup extends React.Component<{}> {
           let y = 0;
           while (y < SCPRef.state.roleObject.roles[x].amount){
             y++
-            employee.createShift(selectedEvent.value, SCPRef.state.roleObject.roles[x].role_id, startDate, endDate, SCPRef.state.roleObject.roles[x].role_name)
+            if(selectedEvent.value == null){
+              employee.createShift(SCPRef.state.roleObject.roles[x].role_id, startDate, endDate, SCPRef.state.roleObject.roles[x].role_name)
+            } else {
+              employee.createShift(selectedEvent.value, SCPRef.state.roleObject.roles[x].role_id, startDate, endDate, SCPRef.state.roleObject.roles[x].role_name)
+            }
         }
       }
     }
