@@ -11,7 +11,7 @@ import { EventPopup } from "./eventPopup.js";
 import SelectSearch from 'react-select-search'
 import onClickOutside from "react-onclickoutside";
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
-
+//Using React-BigCalendar npm for the calendar
 
 
 
@@ -150,7 +150,7 @@ componentWillUnmount(){
     firstSlotSelected: false
   })
 }
-
+//Rendering function for calendar
   RenderCalendar(){
     let eventz;
     let signUpEvents;
