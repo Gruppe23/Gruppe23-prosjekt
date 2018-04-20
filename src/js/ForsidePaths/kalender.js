@@ -11,6 +11,7 @@ import { EventPopup } from "./eventPopup.js";
 import SelectSearch from 'react-select-search'
 import onClickOutside from "react-onclickoutside";
 import {ShiftCreatePopup} from "./shiftCreatePopup.js"
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 
 
@@ -300,7 +301,7 @@ componentWillUnmount(){
               if(user.user_type == 2){
                 this.setState({kalender3:
                   <BigCalendar
-                  selectable
+                    selectable
                     events={signUpEvents}
                     defaultDate={new Date()}
                     eventPropGetter={(this.eventStyleGetter)}

@@ -173,6 +173,8 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     })
   }
 
+
+
   getNewUsers(): Promise<User[]> {
     let nada = 0;
     return new Promise((resolve, reject) => {
@@ -527,6 +529,23 @@ setShiftEmployee(employee_id, shift_id){
       })
     })
 }
+
+getEventsAvailable(date): Promise< ?Object> {
+  return new Promise((resolve, reject) => {
+    connection.query('SELECT * FROM events WHERE ? BETWEEN prep AND end',[date], (error, result) => {
+      if(error) {
+        reject(error);
+        return;
+      }
+      console.log(result)
+      resolve(result)
+    })
+  })
+}
+
+
+
+
 
   createTemplate(name: string, description: string): Promise<Object[]>{
     return new Promise((resolve, reject) => {
