@@ -205,7 +205,7 @@ class createevents extends React.Component<{}> {
 }
 
 
-
+//Remove item for creating event. Remove localStorage.
   cancelEventCreation(){
     localStorage.removeItem("eventFile")
     EventFile = ""
@@ -220,7 +220,7 @@ class createevents extends React.Component<{}> {
     this.refs.details.value = ""
     this.renderRoles()
   }
-
+//Popup for creating event. Else creating event
   eventCreate(){
     console.log(EventFile)
     if(this.refs.eventname.value.length == 0){
@@ -303,7 +303,7 @@ class createevents extends React.Component<{}> {
   }
 
 
-
+//Template for creating new role in event
   createRoleTemplate(){
     employee.createTemplate(this.refs.templatename.value, this.refs.templatedesc.value).then((template) => {
       console.log(template)
@@ -341,7 +341,7 @@ renderSelect(option) {
     };
     return (<span><img style={imgStyle} width="40" height="40" src={option.photo} /><span>{option.name}</span></span>);
 }
-
+//Adding roles in event. Also popup if error
   addRoles(){
     if(this.refs.addRoleAmount.vale < 1){
       alert("Vennligst legg til en eller flere av rollen.")
@@ -356,14 +356,14 @@ renderSelect(option) {
     })
   }
   }
-
+//Removing role from event
   removeRole(roleid){
     console.log(EventFile.roles[roleid])
     EventFile.roles[roleid] = null
     localStorage.setItem("eventFile", JSON.stringify(EventFile))
     this.renderRoles()
   }
-
+//Adding external contact for event
   addNewExtContact(){
     if(this.refs.Exttlf.value.length >= 8){
       if(this.refs.Extfirstname.value.length > 2 && this.refs.Extlastname.value.length > 2) {
@@ -379,7 +379,7 @@ renderSelect(option) {
     alert("Kan ikke opprette kontakt med ugyldig antall tall i tlfnr")
   }
 }
-
+//For saving events after filled out
   saveEventProgress(){
     EventFile.event.title = this.refs.eventname.value
     EventFile.event.adress = this.refs.adress.value
