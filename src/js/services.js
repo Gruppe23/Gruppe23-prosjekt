@@ -173,7 +173,11 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       })
     })
   }
+  
+  
 //Get new user that has signed up for approval
+
+
   getNewUsers(): Promise<User[]> {
     let nada = 0;
     return new Promise((resolve, reject) => {
@@ -330,9 +334,10 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
   }
 //Getting user with a spesific role
   getAvailableUsersWithRole(shift_date, id : number): Promise<Object[]> {
+    console.log(shift_date)
     return new Promise((resolve, reject) => {
-      connection.query("SELECT COUNT(*) AS CertCount, rc.role_id, e.first_name, e.surname, e.user_id FROM employee e INNER JOIN ( employee_certificate ec INNER JOIN role_certificate rc ON rc.certificate_id = ec.certificate_id ) ON e.user_id = ec.employee_id AND rc.role_id = ? WHERE not EXISTS ( SELECT * FROM passive p WHERE (? BETWEEN p.from_date AND p.to_date) AND (p.employee_id = e.user_id) AND (p.employee_id=ec.employee_id)) AND e.status = 1 GROUP BY e.user_id HAVING CertCount =( SELECT COUNT(*) FROM role_certificate WHERE role_id = ? GROUP BY rc.role_id )", [
-         id, shift_date, id
+      connection.query("SELECT COUNT(*) AS CertCount, rc.role_id, e.first_name, e.surname, e.user_id FROM employee e INNER JOIN ( employee_certificate ec INNER JOIN role_certificate rc ON rc.certificate_id = ec.certificate_id ) ON e.user_id = ec.employee_id AND rc.role_id = ? WHERE NOT EXISTS ( SELECT * FROM passive p WHERE ( ? BETWEEN p.from_date AND p.to_date ) AND(p.employee_id = e.user_id) AND(p.employee_id = ec.employee_id) ) AND NOT EXISTS ( SELECT * FROM shift s WHERE ( ? BETWEEN s.start AND s.end ) AND(s.employee_id = e.user_id) AND(s.employee_id = ec.employee_id) ) AND e.status = 1 GROUP BY e.user_id HAVING CertCount =( SELECT COUNT(*) FROM role_certificate WHERE role_id = ? GROUP BY rc.role_id )", [
+         id, shift_date, shift_date, id
       ], (error, result) => {
         if (error) {
           reject(error);
@@ -470,6 +475,7 @@ setShiftEmployee(employee_id, shift_id){
           reject(error);
           return;
         }
+        console.log(result)
         resolve(result);
       });
     });
@@ -528,6 +534,26 @@ setShiftEmployee(employee_id, shift_id){
       })
     })
 }
+
+
+
+
+getEventsAvailable(date): Promise< ?Object> {
+  return new Promise((resolve, reject) => {
+    connection.query('SELECT * FROM events WHERE ? BETWEEN prep AND end',[date], (error, result) => {
+      if(error) {
+        reject(error);
+        return;
+      }
+      console.log(result)
+      resolve(result)
+    })
+  })
+}
+
+
+
+
 //Creating templates for event
   createTemplate(name: string, description: string): Promise<Object[]>{
     return new Promise((resolve, reject) => {
@@ -607,6 +633,21 @@ setShiftEmployee(employee_id, shift_id){
       })
     })
   }
+
+
+
+  getFrontPageShifts(id: number){
+    return new Promise((resolve, reject) => {
+      connection.query('select * from shift where employee_id = ?', [id], (error, result) => {
+        if(error) {
+          reject(error);
+          return;
+        }
+        resolve(result)
+      })
+    })
+  }
+
 
 // Get roles from templates
   getTemplateRoles(id: number): Promise<Object[]>{

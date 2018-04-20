@@ -242,8 +242,7 @@ class createevents extends React.Component<{}> {
               alert("Vennligst velg begge kontaktpersonene")
             }else {
            employee.getEmployee(EventFile.event.contact.value).then((RKContact) => {
-                  employee.getExternalContact(EventFile.event.contact_id).then((extContact) => {
-                    console.log(extContact.contact_id +" extContact_id")
+                  employee.getExternalContact(EventFile.event.contact.value).then((extContact) => {
                     employee.createEvent(this.refs.start.value, this.refs.end.value, this.refs.prep.value, this.refs.eventname.value, this.refs.Hostname.value, this.refs.details.value, this.refs.adress.value, this.refs.zip.value, EventFile.event.contact.value, EventFile.event.extContact.value).then((eventData) => {
                       employee.getEvent(eventData.insertId).then((createdEvent)=> {
                       console.log(createdEvent)
@@ -253,29 +252,21 @@ class createevents extends React.Component<{}> {
                       let oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
                       let firstDate = createdEvent.prep
                       let secondDate = createdEvent.end
-                      console.log(firstDate)
-                      console.log(secondDate)
                       let diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
-                      console.log(firstDate)
-                      console.log(secondDate)
                       for (let x in EventFile.roles) {
                         if(EventFile.roles[x] != null){
                           let z = 0;
                           let shiftDate =new Date( createdEvent.prep )
                           console.log(EventFile.roles[x].role_name + " dag: " + z )
-                          while (z < diffDays){
                             shiftDate.setDate(shiftDate.getDate() + 1);
                             let shiftEnd = new Date( createdEvent.start.getFullYear(), shiftDate.getMonth(), shiftDate.getDate(), createdEvent.end.getHours())
                             let y = 0;
-                            z++
-                            console.log(z)
                             while (y < EventFile.roles[x].amount){
                               y++
                               console.log(shiftDate)
                               console.log(shiftEnd)
-                              employee.createShift(eventData.insertId, EventFile.roles[x].role_id, shiftDate, shiftEnd, EventFile.roles[x].role_name)
+                              employee.createShift(eventData.insertId, EventFile.roles[x].role_id, this.refs.start.value, this.refs.end.value, EventFile.roles[x].role_name)
                           }
-                        }
                         }
                       }
                     })

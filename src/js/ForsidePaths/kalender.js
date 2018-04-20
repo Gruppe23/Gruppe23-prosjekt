@@ -10,6 +10,8 @@ import {  Button, Container, Divider, Dropdown, Header, Message, Segment, Menu, 
 import { EventPopup } from "./eventPopup.js";
 import SelectSearch from 'react-select-search'
 import onClickOutside from "react-onclickoutside";
+import {ShiftCreatePopup} from "./shiftCreatePopup.js"
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 //Using React-BigCalendar npm for the calendar
 
@@ -28,7 +30,9 @@ export class Kalender extends React.Component<{}> {
       kalender3: "",
       menuVisible: true,
       showPopup: false,
-      firstSlotSelected: false
+      showShiftCreation: false,
+      firstSlotSelected: false,
+      createShiftInfo: "",
     }
     kalender = this;
   }
@@ -69,6 +73,8 @@ let user = employee.getSignedInUser2()
         if(user.user_type == 2 && event.empty_shifts > 0) {
           style.backgroundColor = "#b2262e"
         }
+      }else{
+        style.backgroundColor = "#3174ad"
       }
     }
     return {
@@ -89,6 +95,10 @@ let user = employee.getSignedInUser2()
     {
       menuItem: <Menu.Item key='passive'>Velg utilgjendelige dager</Menu.Item>,
       render: () => <Tab.Pane Loading>{this.state.kalender2}</Tab.Pane>,
+    },
+    {
+      menuItem: <Menu.Item key='opprettSkift'>Opprett Skift</Menu.Item>,
+      render: () => <Tab.Pane Loading>{this.state.kalender3}</Tab.Pane>,
     }
   ]
     }else {
@@ -119,6 +129,12 @@ let user = employee.getSignedInUser2()
             closePopup={this.closePopup.bind(this)}
             />:null
         }
+        {
+          this.state.showShiftCreation
+            ? <ShiftCreatePopup text="Close Me" info={this.state.createShiftInfo} updateCalendar={this.RenderCalendar.bind(this)} closePopup={this.toggleShiftCreation.bind(this)}
+        />
+            : null
+        }
       </div>
     )
   }
@@ -133,11 +149,28 @@ let user = employee.getSignedInUser2()
     new Promise((resolve,reject) =>{
       localStorage.removeItem('event')
       localStorage.setItem('event', JSON.stringify(event))
-      console.log(event)
       resolve()
     }).then(()=>{
       this.setState({
         showPopup: !this.state.showPopup
+      });
+    })
+  }
+
+  closeShiftCreation(slotInfo, event){
+    this.setState({
+      showShiftCreation: !this.state.showShiftCreation
+    });
+  }
+
+  toggleShiftCreation(slotInfo) {
+    new Promise((resolve,reject) =>{
+      console.log(slotInfo)
+      resolve()
+    }).then(()=>{
+      this.setState({
+        showShiftCreation: !this.state.showShiftCreation,
+        createShiftInfo: slotInfo,
       });
     })
   }
@@ -207,10 +240,12 @@ componentWillUnmount(){
                   selectable
                   events={passiveEvents}
                   defaultDate={new Date()}
+                  onEventDrop={console.log("lul")}
                   eventPropGetter={(this.eventStyleGetter)}
                   onSelectEvent={
                     event => {
                     if(event.ispassive){
+
                       let c = confirm('Are you sure you wish to remove this passive event?')
                       if(c == true){
                         employee.removePassiveEvent(event.passiveId)
@@ -229,40 +264,70 @@ componentWillUnmount(){
                       action: "select" | "click"
                     }
                     ) => {
-                      if(this.state.firstSlotSelected != true) {
-                        new Promise((resolve, reject) => {
-                        localStorage.setItem('startTime', slotInfo.start)
-                        resolve();
-                        }).then(() => {
-                        this.setState({firstSlotSelected: true})
-                      })
-                    } else {
                       new Promise((resolve, reject) => {
-                        let inpdato = new Date(localStorage.getItem('startTime'))
-                        slotInfo.end.setHours(slotInfo.end.getHours() + 1)
-                        let c = confirm('Valgt tidsramme er fra \n' +inpdato+ '\nTil \n'+ slotInfo.end+ '\nØnsker du å sette deg opp som utilgjengelig disse dagene?')
-                        if(c == true){
-                        employee.setPassive(user.user_id, inpdato, slotInfo.end )
+
+                        console.log(slotInfo)
+                        if(slotInfo.end == slotInfo.start) {
+                          slotInfo.end.setHours(23:59)
+                          slotInfo.start.setHours(0)
+                          resolve(true)
+                        }else {
+
+                        if((slotInfo.end.getDate() - slotInfo.start.getDate()) < 1) {
+                          if((slotInfo.end.getHours() - slotInfo.start.getHours()) < 12){
+                            alert("Du må sette opp en passiv event på over 12 timer for at den skal opprettes.")
+                          }else {
+                            resolve(false);
+                          }
+                        } else {
+                          resolve(false);
                         }
-                        resolve();
-                      }).then(()=>{
-                        this.setState({firstSlotSelected: false})
-                        localStorage.removeItem('startSlot')
+                      }
+                    }).then((x)=> {
+                        if(x == false) {
+                        slotInfo.end.setHours(slotInfo.end.getHours() + 1)
+                      }
+                        let c = confirm('Valgt tidsramme er fra \n' +slotInfo.start+ '\nTil \n'+ slotInfo.end+ '\nØnsker du å sette deg opp som utilgjengelig disse dagene?')
+                        if(c == true){
+                          employee.setPassive(user.user_id, slotInfo.start, slotInfo.end )
+                        }
                         this.RenderCalendar();
                       })
+
                     }
-                  }}
+                  }
                 />
               })
+              if(user.user_type == 2){
+                this.setState({kalender3:
+                  <BigCalendar
+                    selectable
+                    events={signUpEvents}
+                    defaultDate={new Date()}
+                    eventPropGetter={(this.eventStyleGetter)}
+                    onSelectEvent={event => {this.togglePopup(event)}}
+                    onSelectSlot={(
+                      slotInfo: {
+                        start: Date,
+                        end: Date,
+                        slots: Array<Date>,
+                        action: "select" | "click"
+                      }
+                    ) => {this.toggleShiftCreation(slotInfo)}}
+                  />
+                })
+              } else {
+                this.setState({kalender3:
+                  <BigCalendar
+                  selectable
+                  events={signUpEvents}
+                  defaultDate={new Date()}
+                  eventPropGetter={(this.eventStyleGetter)}
+                  onSelectEvent={event => {this.togglePopup(event)}}
 
-          this.setState({kalender3:
-            <BigCalendar
-              events={signUpEvents}
-              defaultDate={new Date()}
-              eventPropGetter={(this.eventStyleGetter)}
-              onSelectEvent={event => {this.togglePopup(event)}}
-            />
-          })
+                  />
+                })
+              }
         })
       })
     })
