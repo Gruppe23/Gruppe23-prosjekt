@@ -28,7 +28,7 @@ class Forside2 extends React.Component<{}> {
   constructor() {
     super();
   }
-
+//Localstorage for getting logged in user. For saving locally
   render(){
     let item: obj = localStorage.getItem('signedInUser')
     if (item != null){

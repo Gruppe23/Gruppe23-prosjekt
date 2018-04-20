@@ -51,7 +51,7 @@ class EventPopup2 extends React.Component<{}> {
       signup = ""
     }
 
-
+//Return when event is clicked on...
     return(
     <div className="popup">
       <div className="popup_inner">
@@ -84,7 +84,7 @@ class EventPopup2 extends React.Component<{}> {
     </div>
     )
   }
-
+//Letting users show interest in a shift
   showInterest(user, shift_id){
     employee.setInterest(user, shift_id)
     kalender.RenderCalendar();
@@ -151,7 +151,7 @@ class EventPopup2 extends React.Component<{}> {
   })
   }
 }
-
+//Admin has own rights when selecting events
 class AdminContent extends React.Component<{}> {
   constructor(props){
     super(props);
@@ -174,7 +174,7 @@ class AdminContent extends React.Component<{}> {
     </div>
   )
   }
-
+//Assign a employee for at specific shift
 assignShift(value, shift_id){
   console.log(value.value, shift_id)
   employee.setShiftEmployee(value.value, shift_id).then((x)=>{

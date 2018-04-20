@@ -13,7 +13,7 @@ import onClickOutside from "react-onclickoutside";
 import {ShiftCreatePopup} from "./shiftCreatePopup.js"
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
-
+//Using React-BigCalendar npm for the calendar
 
 
 
@@ -183,7 +183,7 @@ componentWillUnmount(){
     firstSlotSelected: false
   })
 }
-
+//Rendering function for calendar
   RenderCalendar(){
     let eventz;
     let signUpEvents;

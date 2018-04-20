@@ -1,5 +1,5 @@
 //@flow
-
+//React file imports
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route } from 'react-router-dom';
@@ -25,7 +25,7 @@ class RegisterWindow extends React.Component<{}> {
     super();
     userCreateRef = this;
   }
-
+//Inputs for registerwindow
   render() {
     return(
 
@@ -94,7 +94,7 @@ class RegisterWindow extends React.Component<{}> {
 
     )
   }
-
+//Feedback register
   register(){
     if (userCreateRef.refs.pwd.value == userCreateRef.refs.confirmpwd.value && userCreateRef.refs.email.value == userCreateRef.refs.confirmemail.value){
       if(userCreateRef.refs.pwd.value != "" || userCreateRef.refs.email.value != "" || userCreateRef.refs.adress.value != "" ){
