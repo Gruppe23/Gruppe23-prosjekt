@@ -471,6 +471,7 @@ setShiftEmployee(employee_id, shift_id){
           reject(error);
           return;
         }
+        console.log(result)
         resolve(result);
       });
     });

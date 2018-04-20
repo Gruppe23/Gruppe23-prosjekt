@@ -131,7 +131,7 @@ let user = employee.getSignedInUser2()
         }
         {
           this.state.showShiftCreation
-            ? <ShiftCreatePopup text="Close Me" info={this.state.createShiftInfo} closePopup={this.toggleShiftCreation.bind(this)}
+            ? <ShiftCreatePopup text="Close Me" info={this.state.createShiftInfo} updateCalendar={this.RenderCalendar.bind(this)} closePopup={this.toggleShiftCreation.bind(this)}
         />
             : null
         }
@@ -305,6 +305,7 @@ componentWillUnmount(){
                     events={signUpEvents}
                     defaultDate={new Date()}
                     eventPropGetter={(this.eventStyleGetter)}
+                    onSelectEvent={event => {this.togglePopup(event)}}
                     onSelectSlot={(
                       slotInfo: {
                         start: Date,

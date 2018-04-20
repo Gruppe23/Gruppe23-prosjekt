@@ -61,6 +61,7 @@ export class ShiftCreatePopup extends React.Component<{}> {
                   console.log(value)}}
               />
               </div>
+              <button ref="create" onClick={()=>{this.createShift()}}className="ec_opprett">Opprett Arrangement</button>
           </div>
 
           <div className="SCPRow2">
@@ -107,25 +108,32 @@ export class ShiftCreatePopup extends React.Component<{}> {
 
     }
 
-  createShift(){
+  createShift(props){
     let startDate = new Date(this.props.info.start)
     let endDate = new Date(this.props.info.end)
+    let startHours = this.refs.SCPStart.value.split(":")
+    let endHours = this.refs.SCPEnd.value.split(":")
+
+    startDate.setHours(startHours[0], startHours[1])
+
+    endDate.setHours(endHours[0], endHours[1])
+    console.log(SCPRef.state.roleObject)
+    console.log(startHours)
+    console.log(endHours)
     console.log(startDate)
-    startDate.setHours(this.refs.SCPStart.value)
-    console.log(startDate)
-    endDate.setHours(this.refs.SCPEnd.value)
-    for (let x in SCPRefroleObject.roles) {
+    console.log(endDate)
+    for (let x in SCPRef.state.roleObject.roles) {
       if(SCPRef.state.roleObject.roles[x] != null){
         let z = 0;
           let y = 0;
-          while (y < SCPRef.state.objectRoles.roles[x].amount){
+          while (y < SCPRef.state.roleObject.roles[x].amount){
             y++
-            console.log(shiftDate)
-            console.log(shiftEnd)
-        //    employee.createShift(*EVENT_ID,  objectRole.roles[x].role_id, this.refs.SCPStart.value, this.end.value, EventFile.roles[x].role_name)
+            employee.createShift(selectedEvent.value, SCPRef.state.roleObject.roles[x].role_id, startDate, endDate, SCPRef.state.roleObject.roles[x].role_name)
         }
       }
     }
+    this.props.updateCalendar()
+    this.props.closePopup()
 }
 
 
