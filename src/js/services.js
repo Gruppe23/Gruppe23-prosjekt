@@ -173,8 +173,8 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       })
     })
   }
-  
-  
+
+
 //Get new user that has signed up for approval
 
 
@@ -734,6 +734,28 @@ removePassiveEvent(id: number): Promise< ?Object> {
   });
 }
 
+getUserByMail(mail: string): Promise< ?Object> {
+  return new Promise((resolve, reject) => {
+    connection.query('SELECT * FROM employee WHERE email = ?', [mail], (error, result) => {
+      if(error) {
+        reject(error);
+        return;
+      }
+      resolve(result[0]);
+    });
+  });
+}
+resetPw(password: string, mail: string): Promise<?Object> {
+  return new Promise((resolve, reject) => {
+    connection.query('UPDATE employee SET password =? WHERE email= ?', [password, mail], (error, result) => {
+      if(error) {
+        reject(error);
+        return;
+      }
+      resolve(result);
+    });
+   });
+}
 }
 
 

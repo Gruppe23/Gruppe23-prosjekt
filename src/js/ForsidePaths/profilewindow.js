@@ -221,24 +221,27 @@ class AdminEditing extends React.Component < {} > {
     }
 
   }
-//for disableing accont. Popup will appear and ask if you want to delete + mail 
+//for disableing accont. Popup will appear and ask if you want to delete + mail
   disableAccount(props) {
     if (confirm('Are you sure you want to deactivate this account?')) {
       employee.deactivateAccount(this.props.user_id).then(() => {
         employee.getEmployee(this.props.user_id).then((user) => {
+          let api_key = 'key-53691f7229e0eec8522473b2e853cabf';
+          let domain = 'sandboxb5cedbd4224a4475ac49059ce199712a.mailgun.org';
+          let mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
           let mailMessage = "<p>Hei " + user.first_name + ", din brukerkonto hos Røde Kors bemanningsapplikasjon har blitt deaktivert.</p> Ved eventuelle spørsmål, klager eller tilbakemeldinger vennligst ta kontakt med oss på gruppe23prosjekt@gmail.com<p> Vennlig hilsen oss fra Gruppe 23 teamet.</p> "
           let mailOptions = {
-            from: 'rexp22@gmail.com', // sender address
-            to: 'andreasfrenning@gmail.com', // list of receivers
+            from: 'Rode Kors <gruppe23prosjekt@gmail.com>', // sender address
+            to: user.email, // list of receivers
             subject: 'Brukerkonto deaktivert', // Subject line
             html: mailMessage // plain text body
           };
 //Transporter for sending out mail
-          transporter.sendMail(mailOptions, function(err, info) {
-            if (err) {
-              console.log(err)
+          mailgun.messages().send(mailOptions, function(error, body) {
+            if (error) {
+              console.log(error)
             } else {
-              console.log(info)
+              console.log(body)
             }
           })
         })

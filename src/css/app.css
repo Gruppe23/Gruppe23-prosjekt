@@ -305,6 +305,21 @@ html, body, .app {
   display: block;
   z-index: 1001;
 }
+.popup_inner2 {
+  border: 1px solid #ccc;
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  top: 100px;
+  right: 0;
+  left: 0;
+  width: 400px;
+  height: 250px;
+  margin: auto;
+  background: white;
+  display: block;
+  z-index: 1001;
+}
 
 .kalender {
   height: calc(95% - 50px);
@@ -795,6 +810,15 @@ img{
  max-width:100%;
 }
 
+.newPw {
+  width: 100%;
+  height: 100%;
+  position: absolute !important;
+  background-color: #8B8484;
+  padding-left: 30px;
+  text-align: left;
+}
+
 .profilePage {
     position:relative;
     height: 70%;
@@ -814,7 +838,7 @@ img{
   color: red;
 
 
-.popupContent{
+.popupContent {
   margin-top: 10px;
   margin-left: 10px;
 }
