@@ -118,22 +118,20 @@ export class ShiftCreatePopup extends React.Component<{}> {
     console.log(endHours)
     console.log(startDate)
     console.log(endDate)
+    if(selectedEvent.value != undefined){
     for (let x in SCPRef.state.roleObject.roles) {
       if(SCPRef.state.roleObject.roles[x] != null){
         let z = 0;
           let y = 0;
           while (y < SCPRef.state.roleObject.roles[x].amount){
             y++
-            if(selectedEvent.value != undefined){
+
               employee.createShift(selectedEvent.value, SCPRef.state.roleObject.roles[x].role_id, startDate, endDate, SCPRef.state.roleObject.roles[x].role_name)
-            } else {
-                alert("Du må asossiere skift med en pågående event.")
-        }
       }
     }
     this.props.updateCalendar()
     this.props.closePopup()
-}}
+}}}
 
 
 

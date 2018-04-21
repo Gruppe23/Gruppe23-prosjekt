@@ -318,6 +318,32 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       })
     }
 
+    deleteEvent(id: number){
+      return new Promise((resolve, reject) => {
+        connection.query('SET foreign_key_checks = 0', (error, result) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+            new Promise ((resolve, reject) =>{
+              connection.query('DELETE i, s, e from events e left join (shift s left join interest i on s.shift_id = i.shift_id) on e.id = s.event_id where e.id = ?', [id], (error, result) =>{
+                if (error) {
+                  reject(error);
+                  return;
+                }
+                console.log(result)
+              connection.query('SET foreign_key_checks = 1', (error, result )=> {
+                resolve()
+              })
+            }
+          )
+        }).then(()=>{
+          resolve();
+        })
+        })
+      })
+  }
+
     removeInterest(employee_id, shift_id){
       return new Promise((resolve, reject) => {
         connection.query('DELETE FROM interest where employee_id = ? AND shift_id = ?', [employee_id, shift_id], (error, result) => {
@@ -649,12 +675,10 @@ getEventsAvailable(date): Promise< ?Object> {
           reject(error);
           return;
         }
-        console.log(result[0])
         resolve(result[0])
       })
     })
   }
-
 
   deleteShift(id){
       return new Promise((resolve, reject) => {
@@ -666,8 +690,8 @@ getEventsAvailable(date): Promise< ?Object> {
           resolve(result);
         })
       })
-
   }
+
   getFrontPageShifts(id: number){
     return new Promise((resolve, reject) => {
       connection.query('select * from shift where employee_id = ?', [id], (error, result) => {
@@ -679,7 +703,6 @@ getEventsAvailable(date): Promise< ?Object> {
       })
     })
   }
-
 
   getTemplateRoles(id: number): Promise<Object[]>{
     return new Promise((resolve, reject) => {

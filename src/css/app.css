@@ -4,9 +4,12 @@ html, body {
   width: 100%;
   max-height: 1080px;
   max-width: 1920px;
+  overflow: hidden;
+  background-color: lightgrey;
 }
 
 body {
+    background-color: lightgrey !important;
     -ms-overflow-style: scrollbar;
 }
 
@@ -41,14 +44,19 @@ margin: auto;
 .all {
   height: calc(99% - 2px);
   width: calc(100% - 2px);
-  position: absolute;
   background-color: lightgrey;
+}
 
+.all2{
+  height: calc(95% - 2px);
+  width: calc(100% - 2px);
+  position: absolute;
 }
 
 .full {
-  height: calc(99% - 55px);
+  height: calc(98%);
   width: 100%;
+    background-color: lightgrey;
 }
 
 #full {
@@ -69,8 +77,10 @@ font-size: 30px;
   float: right;
 }
 
-#adminpagebtn{
-  float: right;
+.adminpagebtn{
+  position: absolute;
+  bottom: 5px;
+  left: 26px;
 }
 #taskbar {
   width: -webkit-calc(100% - 35px);
@@ -194,10 +204,11 @@ height: calc(100% - 12px);
 }
 #AdminPage_RightBox {
   width: 45%;
-  height: calc(100% - 12px);
+  height: 97%;
   border: 1px solid black;
   margin: 4px;
   float: right;
+  position: relative;
 }
 
 .AdminPage_Container {
@@ -306,17 +317,23 @@ html, body, .app {
   display: block;
   z-index: 1001;
 }
-
+.kalenderWrap{
+  height: 90%;
+  width: 100%;
+  margin-top: 55px;
+}
 .kalender {
   height: calc(95% - 50px);
   border: 1px solid black;
 }
 
 .forsideContent{
-  height: 100%;
-  margin-top: 70px;
+  margin-top: 55px;
+  height: calc(100% - 70px);
+  overflow: hidden;
   overflow: hidden;
 }
+
 
 #AcceptUsersBox {
   height: 28%;

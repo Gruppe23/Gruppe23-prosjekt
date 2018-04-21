@@ -64,6 +64,7 @@ class AdminPage extends React.Component < {} > {
         </button>
       </div>
       <div id="AdminPage_RightBox" className="grey hundre">
+        <button className="adminpagebtn" ref="AcceptBTN">Aksepter</button>
         <span className="centered">Nye registrerte brukere.</span>
         {/* Vi oppretter boksen for å akseptere nye brukere til appen. Vi må bruke state for selecten  fordi det er et element som skal oppdateres dynamisk
           med det vi søker etter.*/
@@ -137,7 +138,11 @@ class AdminPage extends React.Component < {} > {
   componentWillMount() {
     this.loadRegisterList()
     this.loadLicenseList()
+        AdminPageRef = this
 
+  }
+  componentDidMount(){
+        AdminPageRef = this
   }
 
   SearchRegFilter(): void {
@@ -239,13 +244,9 @@ class AdminPage extends React.Component < {} > {
           <div ref="UIBName"></div>
           <div ref="UIBEmail"></div>
           <div ref="UIBAdress"></div>
-          <div id="UserInfoBoxBTNS">
-            <button ref="AcceptBTN">Aksepter</button>
-            {/* <button ref="DeclineBTN>">Avvis</button> */}
-          </div>
         </div>
         ) } componentDidMount(){
-          this.refs.AcceptBTN.onclick = () => {
+          AdminPageRef.refs.AcceptBTN.onclick = () => {
             //OnClicken for å akseptere bruker eller sertifikat som er valgt. Oppdaterer tabellen i MySQL og oppdaterer listen som vises.
             if (RegisterClick == true) { //Skjekker om det er et sertifikat eller brukerkonto som er til revidering i info-boksen
               employee.acceptNewUser(ClickedRegister.user_id).then(() => {

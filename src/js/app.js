@@ -54,9 +54,9 @@ class ProgramRender extends React.Component<{}> {
         )
       }else{
         return(
-          <div id="full">
+          <div id="all">
           <nav className="navbar navbar-inverse navbar-fixed-top drag">
-            <div className="container-fluid full">
+            <div className="container-fluid">
               <div className="navbar-header">
                 <img className="RCIcon" src="src\pictures\Red_Cross.png"/>
               </div>

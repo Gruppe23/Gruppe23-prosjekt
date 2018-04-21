@@ -215,26 +215,33 @@ class AdminContent extends React.Component<{}> {
   })}
 
   deleteShift(props){
-      let confirmed = confirm("Vil du fjerne dette skiftet?")
-      if(confirmed = true){
         if(kalender.state.popupinfo.isshift != undefined){
+          let confirmed = confirm("Vil du fjerne dette skiftet?")
+          if(confirmed = true){
           employee.deleteShift(kalender.state.popupinfo.id).then(()=> {
             this.props.closePopup()
             this.props.updateCalendar()
-            alert("Skift har blitt fjernet!")
+
           })
         }
+      } else {
+        let confirmed = confirm("Vil du fjerne dette arrangementet?")
+        if(confirmed = true){
+          employee.deleteEvent(kalender.state.popupinfo.id).then(()=>{
+            this.props.closePopup()
+            this.props.updateCalendar()
+          })
       }
     }
+  }
 
   componentDidMount(){
     let disableBTNType;
     if(this.props.shift.isshift != undefined) {
       this.refs.disableBTN.textContent = "Fjern Skift"
     } else {
-      this.refs.disableBTN.textContent = "Fjern Event"
+      this.refs.disableBTN.textContent = "Fjern Arrangement"
     }
-
     employee.getShift(this.props.shift.id).then((shift) => {
       employee.getAvailableUsersWithRole(shift.start, this.props.shift.rolle).then((employees)=>{
         employees.map((x)=>{this.state.employees.push({name: (x.first_name + " " + x.surname), value: x.user_id})})
