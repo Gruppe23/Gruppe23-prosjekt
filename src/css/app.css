@@ -810,6 +810,7 @@ img{
     background-color: #696969;
     padding: 15px;
     float:left;
+    margin-left: 15px;
 }
 .pWinUserInfo {
   text-align: left;

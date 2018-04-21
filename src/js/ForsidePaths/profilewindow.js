@@ -52,9 +52,9 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
         <div className="profilePage">
           <div className="row">
             <div className="col-md-12 pWinUserInfo">
-              <h4>
+              <h3>
               <div ref="name"></div>
-              </h4><p/>
+              </h3><p/>
               <div ref="adress"></div><p/>
               <div ref="email"></div><p/>
               <div ref="usertype"></div><p/>

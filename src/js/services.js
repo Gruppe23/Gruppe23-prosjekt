@@ -460,7 +460,6 @@ setShiftEmployee(employee_id, shift_id){
 
   createEvent(start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id){
     return new Promise((resolve, reject) => {
-      let date = new Date()
       connection.query('INSERT INTO events (start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
         start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id
       ], (error, result) => {

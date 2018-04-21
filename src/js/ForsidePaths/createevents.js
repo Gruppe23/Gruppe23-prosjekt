@@ -53,10 +53,9 @@ class createevents extends React.Component<{}> {
   constructor(){
     super()
     this.state = {externcontact: [],
-                  addroles: [],
                   addedroles: "",
                   contactpersons: [],
-                  addedroles: ""}
+              }
   }
 
   togglePopup(): void {
@@ -96,7 +95,8 @@ class createevents extends React.Component<{}> {
      onChange={(value)=>{EventFile.event.extContact= value
                     console.log(value)}}
      onHighlight={onHighlight}
-     onBlur={onBlur}
+     onBlur={(value)=>{EventFile.event.extContact= value
+                    console.log(value)}}
      onFocus={onFocus}/>
      </div>
      </div>
@@ -184,7 +184,6 @@ class createevents extends React.Component<{}> {
     this.refs.prep.value = ""
     this.refs.zip.value = ""
     this.refs.details.value = ""
-    this.renderRoles()
   }
 
   eventCreate(){
@@ -207,12 +206,9 @@ class createevents extends React.Component<{}> {
             if(EventFile.event.contact.value == "" || EventFile.event.extContact.value == ""){
               alert("Vennligst velg begge kontaktpersonene")
             }else {
-           employee.getEmployee(EventFile.event.contact.value).then((RKContact) => {
-                  employee.getExternalContact(EventFile.event.contact.value).then((extContact) => {
-                    employee.createEvent(this.refs.start.value, this.refs.end.value, this.refs.prep.value, this.refs.eventname.value, this.refs.Hostname.value, this.refs.details.value, this.refs.adress.value, this.refs.zip.value, EventFile.event.contact.value, EventFile.event.extContact.value).then((eventData) => {
-                    })
-                    })
-            })
+                    console.log(this.refs.start.value +  " " + this.refs.end.value + " " +this.refs.prep.value + " " +this.refs.eventname.value + " " +this.refs.Hostname.value + " " +this.refs.details.value + " " +this.refs.adress.value + " " +this.refs.zip.value + " " +EventFile.event.contact.value + " " + EventFile.event.extContact.value )
+                    console.log(EventFile)
+                    employee.createEvent(this.refs.start.value, this.refs.end.value, this.refs.prep.value, this.refs.eventname.value, this.refs.Hostname.value, this.refs.details.value, this.refs.adress.value, this.refs.zip.value, Number(EventFile.event.contact.value), Number(EventFile.event.extContact.value))
            }
           }
         }
@@ -306,12 +302,7 @@ renderSelect(option) {
 
 
   componentDidMount(){
-    this.renderRoles()
     this.renderExternalContacts()
-    employee.getDistinctRoles().then((roles) => {
-      localStorage.setItem("roles", JSON.stringify(roles))
-      roles.map((y) => this.state.addroles.push({name: y.role_name, value: y.role_id}))
-    })
     this.renderAvailableRKContactPersons()
   }
 
