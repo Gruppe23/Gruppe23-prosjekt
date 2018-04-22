@@ -3,10 +3,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { employee } from "../services"
+import { employee } from "../../services"
 import { Map, InfoWindow, Marker, Listing, GoogleApiWrapper } from 'google-maps-react';
-import { kalender, Kalender } from './kalender';
-import {SelectRoleTemplate} from './createeventpopup/RoleTemplatePopup';
+import { kalender, Kalender } from '../kalender';
+import {SelectRoleTemplate} from './RoleTemplatePopup';
 import onClickOutside from "react-onclickoutside";
 import SelectSearch from 'react-select-search'
 
@@ -89,13 +89,6 @@ class EventPopup2 extends React.Component<{}> {
     employee.setInterest(user, shift_id)
     kalender.RenderCalendar();
   }
-
-
-
-
-
-
-
 
   componentDidMount(props){
     popp = this
@@ -215,6 +208,11 @@ class AdminContent extends React.Component<{}> {
   })}
 
   deleteShift(props){
+    let today = new Date()
+    today.setDate(today.getDate() + 14)
+    if (kalender.state.popupinfo.start <= today ){
+      alert("Du kan ikke slette shift eller arrangement som allerede har skjedd eller skjer snart!")
+    } else {
         if(kalender.state.popupinfo.isshift != undefined){
           let confirmed = confirm("Vil du fjerne dette skiftet?")
           if(confirmed = true){
@@ -233,6 +231,7 @@ class AdminContent extends React.Component<{}> {
           })
       }
     }
+  }
   }
 
   componentDidMount(){

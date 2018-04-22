@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { employee } from "../services"
+import { employee } from "../../services"
 import { Map, InfoWindow, Marker, Listing, GoogleApiWrapper } from 'google-maps-react';
-import { kalender } from './kalender';
-import {SelectRoleTemplate} from './createeventpopup/RoleTemplatePopup';
+import { kalender } from '../kalender';
+import {SelectRoleTemplate} from './RoleTemplatePopup';
 import onClickOutside from "react-onclickoutside";
 import SelectSearch from 'react-select-search'
-let selectedRole;
+let selectedRole = {value: null, name: null}
 let selectedEvent = {value: null, name: null}
 let roleObject = {roles: []}
 let SCPRef;

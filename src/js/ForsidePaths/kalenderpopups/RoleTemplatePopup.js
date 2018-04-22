@@ -4,8 +4,8 @@ import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route } from 'react-router-dom';
 import {RegisterWindow} from '../../registerwindow';
 import { employee } from '../../services';
-import {ShiftCreatePopup} from '../shiftCreatePopup';
-import { SCPRef } from "../shiftCreatePopup"
+import {ShiftCreatePopup} from './shiftCreatePopup';
+import { SCPRef } from "./shiftCreatePopup"
 let templateRolesString = []
 let templateString =[]
 let EventFile;

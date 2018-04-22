@@ -5,6 +5,10 @@ import {Link, HashRouter, Switch, Route} from 'react-router-dom';
 import {transporter, nodemailer} from '../app';
 import {employee, User} from '../services';
 import {history} from '../forside';
+import {UserSearch, userSearch} from './user_search';
+import onClickOutside from "react-onclickoutside";
+import SelectSearch from 'react-select-search'
+let selectedCertificate = {name: null, value: null}
 
 let profilSideRef;
 class ProfilSide extends React.Component < {} > {
@@ -89,6 +93,8 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
     profileDetailsRef = this
   }
 
+
+
   loadProfileInfo(props) {
     employee.getSignedInUser().then((user : User) => { // VI henter inn profilen som er signet inn, slik at vi kan sammenligne det med profilsiden vi faktisk er på.
       employee.getUserRoles2(this.props.profil_id).then((user_roles) => {
@@ -144,40 +150,49 @@ class UserAdding extends React.Component < {} > {
   constructor(props) {
     super()
     this.state = {
-      rolelist: ""
+      rolelist: "",
+      certlist: []
     }
   }
   render() {
-    return (<div className="full">
+    return (<div className="full PWuserContent">
       <h4>
         <div>Brukerverktøy</div>
       </h4>
       <div>Legge til sertifikater</div>
-      <select ref="certselect">
-        {this.state.certlist}
-      </select>
+      <SelectSearch ref="Usertificate" name="language" options={this.state.certlist} search={true} placeholder="Velg sertifikat"
+        mode="input"
+        onBlur={(value)=> {selectedCertificate = value}}
+        onChange={(value)=> {selectedCertificate = value}}
+      />
       <button ref="addselect" onClick={ () => {this.addQualification()} }>Legg til kompetanse</button>
     </div>)
   }
 
   addQualification(props) {
     if (confirm('Er du sikker på at du vil søke om å legge til dette sertifikatet?')) {
-      employee.addCertificate(this.props.user_id, this.refs.certselect.value, 0).then((check) => {
+      employee.addCertificate(this.props.user_id, selectedCertificate.value, 0).then((check) => {
         alert(check)
         profileDetailsRef.loadProfileInfo()
+        this.loadCertifications()
       })
     } else {
       // Do nothing!
     }
   }
 
-  componentDidMount(props) {
-    employee.getUnobtainedUserCertifications(this.props.user_id).then((cert) => {
-      this.setState({
-        certlist: cert.map((cert) => <option key={cert.certificate_id} value={cert.certificate_id}>{cert.certificate_name}</option>)
-      })
+loadCertification(){
+  this.state.certlist = []
+  employee.getUnobtainedUserCertifications(this.props.user_id).then((cert) => {
+    cert.map((cert) => certlist.push({name: cert.certificate_name, value: cert.certificate_id}))
+    this.setState({
+      certlist: this.state.certlist
     })
+  })
+}
 
+  componentDidMount(props) {
+    this.loadCertification()
   }
 }
 
@@ -189,11 +204,12 @@ class AdminEditing extends React.Component < {} > {
   constructor(props) {
     super()
     this.state = {
-      rolelist: ""
+      rolelist: "",
+      certlist: []
     }
   }
   render() {
-    return (<div>
+    return (<div className="PWadminContent">
       <button className="TopRight" ref="disableAccount" onClick={() => {
           this.disableAccount()
         }}>
@@ -203,23 +219,38 @@ class AdminEditing extends React.Component < {} > {
         <div>Administratorverktøy</div>
       </h4>
       <div>Legge til sertifikater</div>
-      <select ref="certselect">
-        {this.state.certlist}
-      </select>
+      <SelectSearch ref="Asertificate" name="language" options={this.state.certlist} search={true} placeholder="Velg sertifikat"
+        mode="input"
+        onBlur={(value)=> {selectedCertificate = value}}
+        onChange={(value)=> {selectedCertificate = value}}
+      />
       <button ref="addselect" onClick={()=> {this.addQualification()}}>Legg til kompetanse</button>
+      <button ref="editProfile">Endre profil.</button>
     </div>)
   }
 
   addQualification(props) {
     if (confirm('Er du sikker på at du vil legge til dette sertifikatet hos brukeren?')) {
-      employee.addCertificate(this.props.user_id, this.refs.certselect.value, 1).then((check) => {
+      employee.addCertificate(this.props.user_id, selectedCertificate.value, 1).then((check) => {
         alert(check)
         profileDetailsRef.loadProfileInfo()
+        this.loadCertification()
       })
     } else {
       // Do nothing!
     }
+  }
 
+  loadCertification(){
+    console.log(this.props.user_id)
+    this.state.certlist = []
+    employee.getUnobtainedUserCertifications(this.props.user_id).then((cert) => {
+      cert.map((x) => this.state.certlist.push({name: x.certificate_name, value: x.certificate_id}))
+      this.setState({
+        certlist: this.state.certlist
+      })
+    })
+    console.log(this.state.certlist)
   }
 
   disableAccount(props) {
@@ -233,7 +264,7 @@ class AdminEditing extends React.Component < {} > {
             subject: 'Brukerkonto deaktivert', // Subject line
             html: mailMessage // plain text body
           };
-
+          userSearch.loadUserList()
           transporter.sendMail(mailOptions, function(err, info) {
             if (err) {
               console.log(err)
@@ -249,11 +280,7 @@ class AdminEditing extends React.Component < {} > {
   }
 
   componentDidMount(props) {
-    employee.getUnobtainedUserCertifications(this.props.user_id).then((cert) => {
-      this.setState({
-        certlist: cert.map((cert) => <option key={cert.certificate_id} value={cert.certificate_id}>{cert.certificate_name}</option>)
-      })
-    })
+this.loadCertification()
   }
 
 }

@@ -29,12 +29,12 @@ import {
 } from 'semantic-ui-react';
 import {
   EventPopup
-} from "./eventPopup.js";
+} from "./kalenderpopups/eventPopup.js";
 import SelectSearch from 'react-select-search'
 import onClickOutside from "react-onclickoutside";
 import {
   ShiftCreatePopup
-} from "./shiftCreatePopup.js"
+} from "./kalenderpopups/shiftCreatePopup.js"
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 

@@ -9,6 +9,7 @@ import {User, userCertificates} from "../services"
 import {RegisterWindow} from '../registerwindow';
 import ReactTooltip from 'react-tooltip'
 
+
 let reglist;
 let licenselist;
 let ClickedLicence: userCertificates;
@@ -262,8 +263,26 @@ class AdminPage extends React.Component < {} > {
             }
 
           }
-          // this.refs.DeclineBTN.onclick = () => {
-          //
-          // }
+
         }
-        } export {AdminPage}
+        }
+
+        class EditProfile extends React.Component <{}> {
+          constructor(){
+            super()
+
+          }
+
+          render(){
+            return(
+              <div>
+                  <input placeholder="Adresse"/>
+                  <input placeholder="" />
+
+
+
+              </div>
+            )
+          }
+        }
+         export {AdminPage}

@@ -5,11 +5,10 @@ import SelectSearch from 'react-select-search'
 import { employee } from "../services"
 import { User, userCertificates, ExtContact } from "../services"
 import {history} from '../forside';
-import {SelectRoleTemplate} from './createeventpopup/RoleTemplatePopup';
+import {SelectRoleTemplate} from './kalenderpopups/RoleTemplatePopup';
 import onClickOutside from "react-onclickoutside";
 let EventFile: LSEventObject;
 let selectedRole = {};
-
 if (localStorage.getItem("eventFile") === null) {
 EventFile = eventObject()
 console.log(EventFile)
