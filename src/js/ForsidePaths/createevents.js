@@ -90,7 +90,7 @@ class createevents extends React.Component<{}> {
 
      <div id="extContact" className="tabcontent">
      <div className="ec_inputDiv" className="inputWidth" ref="contactpersonSelect">
-     <SelectSearch ref="RKContactPerson" name="language" options={this.state.externcontact} search={true} placeholder="Velg Kontaktperson"
+     <SelectSearch ref="RKContactPerson" name="language" options={this.state.externcontact} search={true} placeholder="Søk etter eksternkontakt"
      mode="input"
      onMount={()=> EventFile.event.extContact}
      onChange={(value)=>{EventFile.event.extContact= value
@@ -134,7 +134,7 @@ class createevents extends React.Component<{}> {
    </div>
 
    <div className="ec_inputDiv">
-     <label  htmlFor="Prep" className="inputWidth">Preparasjon tid: </label>
+     <label  htmlFor="Prep" className="inputWidth">Preparasjons tid: </label>
         <input ref="prep" onBlur={this.renderAvailableRKContactPersons.bind(this)} id="Prep" Max="2999-12-31" defaultValue={EventFile.event.prep} className="inputWidth" type="datetime-local"  name="Prep"/>
    </div>
 
@@ -157,7 +157,7 @@ class createevents extends React.Component<{}> {
    </div>
 
    <div className="ec_inputDiv">
-     <label htmlFor="Postnr" className="inputWidth">Postnummber:: </label>
+     <label htmlFor="Postnr" className="inputWidth">Postnummer: </label>
         <input ref="zip" id="Postnr" defaultValue={EventFile.event.postal}className="inputWidth" type="text"  name="Postnr"/>
    </div>
    <div className="ec_inputDiv">
@@ -172,7 +172,7 @@ class createevents extends React.Component<{}> {
       <div className="ec_inputDiv" className="ec_SelectRole">
         <label htmlFor="myBrowser" className="inputWidth">
             Velg roller å legge til arrangementet:</label>
-            <SelectSearch ref="roleadd" name="language" options={this.state.addroles} search={true} placeholder="Velg Kontaktperson"
+            <SelectSearch ref="roleadd" name="language" options={this.state.addroles} search={true} placeholder="Legg til roller"
                mode="input"
                onMount={()=> EventFile.event.extContact}
                onChange={(value)=>{selectedRole = value
