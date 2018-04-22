@@ -47,7 +47,7 @@ class Forside2 extends React.Component<{}> {
           <HashRouter>
             <div className="full">
               <nav className="navbar navbar-inverse navbar-fixed-top drag">
-                <div className="container-fluid full">
+                <div className="container-fluid">
                   <div className="navbar-header">
                     <img className="RCIcon" src="src\pictures\Red_Cross.png"/>
                   </div>

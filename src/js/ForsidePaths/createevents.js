@@ -5,11 +5,10 @@ import SelectSearch from 'react-select-search'
 import { employee } from "../services"
 import { User, userCertificates, ExtContact } from "../services"
 import {history} from '../forside';
-import {SelectRoleTemplate} from './createeventpopup/RoleTemplatePopup';
+import {SelectRoleTemplate} from './kalenderpopups/RoleTemplatePopup';
 import onClickOutside from "react-onclickoutside";
 let EventFile: LSEventObject;
 let selectedRole = {};
-
 if (localStorage.getItem("eventFile") === null) {
 EventFile = eventObject()
 console.log(EventFile)
@@ -29,7 +28,7 @@ return object
 
 class LSEventObject {
   roles: array;
-  event: {id: number, start: datetime, end: datetime, prep: datetime, hostname: string, contact_id: number, adress: string, gmaps: string, postal: number, extContact: string, details: string}
+  event: {id: number, start: datetime, end: datetime, hostname: string, contact_id: number, adress: string, gmaps: string, postal: number, extContact: string, details: string}
 }
 
 class createevents extends React.Component<{}> {
@@ -53,10 +52,9 @@ class createevents extends React.Component<{}> {
   constructor(){
     super()
     this.state = {externcontact: [],
-                  addroles: [],
                   addedroles: "",
                   contactpersons: [],
-                  addedroles: ""}
+              }
   }
 
   togglePopup(): void {
@@ -96,7 +94,8 @@ class createevents extends React.Component<{}> {
      onChange={(value)=>{EventFile.event.extContact= value
                     console.log(value)}}
      onHighlight={onHighlight}
-     onBlur={onBlur}
+     onBlur={(value)=>{EventFile.event.extContact= value
+                    console.log(value)}}
      onFocus={onFocus}/>
      </div>
      </div>
@@ -121,6 +120,10 @@ class createevents extends React.Component<{}> {
        <label htmlFor="Arranger" className="inputWidth">Arrangørnavn: </label>
           <input ref="Hostname" id="Arranger" className="inputWidth" type="text" name="Arranger"/>
      </div>
+     <div className="ec_inputDiv">
+     <label className="ce_textAreaLabel">Legg til beskrivelse: </label>
+     <textarea ref="details" defaultValue={EventFile.event.details} className="ce_textArea"></textarea>
+   </div>
    </section>
 
    <div className="ec_inputDiv">
@@ -133,10 +136,6 @@ class createevents extends React.Component<{}> {
         <input ref="end" id="Sluttdato" onBlur={this.renderAvailableRKContactPersons.bind(this)} Max="2999-12-31" className="inputWidth" defaultValue={EventFile.event.end} type="datetime-local"  name="Sluttdato"/>
    </div>
 
-   <div className="ec_inputDiv">
-     <label  htmlFor="Prep" className="inputWidth">Preparasjons tid: </label>
-        <input ref="prep" onBlur={this.renderAvailableRKContactPersons.bind(this)} id="Prep" Max="2999-12-31" defaultValue={EventFile.event.prep} className="inputWidth" type="datetime-local"  name="Prep"/>
-   </div>
 
    <div className="ec_inputDiv" className="inputWidth" ref="contactpersonSelect">
    <label className="inputWidth">Velg kontaktperson:  <i><h6 className="h6fix">(Alle datoer og tider må velges først)</h6></i></label>
@@ -151,56 +150,20 @@ class createevents extends React.Component<{}> {
                       />
    </div>
 
-   <div className="ec_inputDiv">
-     <label htmlFor="Adresse" className="inputWidth">Adresse: </label>
-        <input ref="adress" defaultValue={EventFile.event.adress} id="Adresse" className="inputWidth" type="text"  name="Prep"/>
-   </div>
-
-   <div className="ec_inputDiv">
-     <label htmlFor="Postnr" className="inputWidth">Postnummer: </label>
-        <input ref="zip" id="Postnr" defaultValue={EventFile.event.postal}className="inputWidth" type="text"  name="Postnr"/>
-   </div>
-   <div className="ec_inputDiv">
-     <label className="ce_textAreaLabel">Legg til beskrivelse: </label>
-     <textarea ref="details" defaultValue={EventFile.event.details} className="ce_textArea"></textarea>
-   </div>
-     <button ref="create" onClick={()=>{this.eventCreate()}}className="ec_opprett">Opprett Arrangement</button>
 </div>
-
 <div className="ce_Row2">
-    <div className="ec_addRoles">
-      <div className="ec_inputDiv" className="ec_SelectRole">
-        <label htmlFor="myBrowser" className="inputWidth">
-            Velg roller å legge til arrangementet:</label>
-            <SelectSearch ref="roleadd" name="language" options={this.state.addroles} search={true} placeholder="Legg til roller"
-               mode="input"
-               onMount={()=> EventFile.event.extContact}
-               onChange={(value)=>{selectedRole = value
-                               console.log(value)}}
-                               onHighlight={onHighlight}
-                               onBlur={(value)=>{selectedRole = value
-                                               console.log(value)}}
-                               onFocus={onFocus}/>
-          </div>
-          <div className="ec_RoleAmount"><label className="inputWidth">Antall:</label><input ref="addRoleAmount" className="inputWidth" type="number"/></div>
-          <div className="ec_RoleAddButtonDiv"><label></label><button onClick={ () => {this.addRoles()}} className="ec_RoleAddButton">Legg til</button></div>
-        </div>
-
-        <div className="ec_addedRoles">
-          {this.state.addedroles}
-        </div>
-
-      </div>
-
-<div className="ce_Row3">
   <button ref="cancel" onClick={()=>{this.cancelEventCreation()}} className="Row_3buttons">Avbytt opprettelse</button>
-  <label>Opprett ny template</label>
-  <input type="text" ref="templatename" placeholder="Template Navn" className="Row_3Input"/>
-  <textarea ref="templatedesc" defaultValue={EventFile.event.details} className="ce_textArea"></textarea>
-  <button ref="cancel" onClick={()=>{this.createRoleTemplate()}} className="Row_3buttons">Opprett Vakt Mal</button>
-  <button ref="cancel" onClick={()=>{this.togglePopup()}} className="Row_3buttons">Velg Vakt Mal</button>
-  <div className="gMaps"></div>
-</div>
+  <div className="ec_inputDiv">
+    <label htmlFor="Adresse" className="inputWidth">Adresse: </label>
+       <input ref="adress" defaultValue={EventFile.event.adress} id="Adresse" className="inputWidth" type="text"  name="Prep"/>
+  </div>
+  <div className="ec_inputDiv">
+    <label htmlFor="Postnr" className="inputWidth">Postnummber:: </label>
+       <input ref="zip" id="Postnr" defaultValue={EventFile.event.postal}className="inputWidth" type="text"  name="Postnr"/>
+  </div>
+
+    <button ref="create" onClick={()=>{this.eventCreate()}}className="ec_opprett">Opprett Arrangement</button>
+      </div>
 </div>)
 }
 
@@ -215,10 +178,8 @@ class createevents extends React.Component<{}> {
     this.refs.adress.value = ""
     this.refs.start.value = ""
     this.refs.end.value = ""
-    this.refs.prep.value = ""
     this.refs.zip.value = ""
     this.refs.details.value = ""
-    this.renderRoles()
   }
 //Popup for creating event. Else creating event
   eventCreate(){
@@ -229,7 +190,7 @@ class createevents extends React.Component<{}> {
       if(this.refs.adress.value.length == 0){
         alert("vennligst fyll inn en adresse")
       } else {
-        if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16 || this.refs.prep.value.length != 16){
+        if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16){
           alert("Vennligst fyll ut alle datoer!")
         } else {
         if  (this.refs.Hostname.value.length == 0 ) {
@@ -241,80 +202,29 @@ class createevents extends React.Component<{}> {
             if(EventFile.event.contact.value == "" || EventFile.event.extContact.value == ""){
               alert("Vennligst velg begge kontaktpersonene")
             }else {
-           employee.getEmployee(EventFile.event.contact.value).then((RKContact) => {
-                  employee.getExternalContact(EventFile.event.contact.value).then((extContact) => {
-                    employee.createEvent(this.refs.start.value, this.refs.end.value, this.refs.prep.value, this.refs.eventname.value, this.refs.Hostname.value, this.refs.details.value, this.refs.adress.value, this.refs.zip.value, EventFile.event.contact.value, EventFile.event.extContact.value).then((eventData) => {
-                      employee.getEvent(eventData.insertId).then((createdEvent)=> {
-                      console.log(createdEvent)
-                      let eventFile = localStorage.getItem("eventFile")
-                      EventFile = JSON.parse(eventFile)
-                      console.log(EventFile)
-                      let oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-                      let firstDate = createdEvent.prep
-                      let secondDate = createdEvent.end
-                      let diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
-                      for (let x in EventFile.roles) {
-                        if(EventFile.roles[x] != null){
-                          let z = 0;
-                          let shiftDate =new Date( createdEvent.prep )
-                          console.log(EventFile.roles[x].role_name + " dag: " + z )
-                            shiftDate.setDate(shiftDate.getDate() + 1);
-                            let shiftEnd = new Date( createdEvent.start.getFullYear(), shiftDate.getMonth(), shiftDate.getDate(), createdEvent.end.getHours())
-                            let y = 0;
-                            while (y < EventFile.roles[x].amount){
-                              y++
-                              console.log(shiftDate)
-                              console.log(shiftEnd)
-                              employee.createShift(eventData.insertId, EventFile.roles[x].role_id, this.refs.start.value, this.refs.end.value, EventFile.roles[x].role_name)
-                          }
-                        }
-                      }
-                    })
-                    })
-
-                  })
-
-           })
+                    console.log(this.refs.start.value +  " " + this.refs.end.value +this.refs.eventname.value + " " +this.refs.Hostname.value + " " +this.refs.details.value + " " +this.refs.adress.value + " " +this.refs.zip.value + " " +EventFile.event.contact.value + " " + EventFile.event.extContact.value )
+                    console.log(EventFile)
+                    employee.createEvent(this.refs.start.value, this.refs.end.value,this.refs.eventname.value, this.refs.Hostname.value, this.refs.details.value, this.refs.adress.value, this.refs.zip.value, Number(EventFile.event.contact.value), Number(EventFile.event.extContact.value))
+           }
           }
         }
         }
       }
     }
   }
-}
+
 
   // start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id
-
-  renderRoles(){
-  EventFile = localStorage.getItem("eventFile")
-  EventFile = JSON.parse(EventFile)
-    this.setState({
-      addedroles: EventFile.roles.map((role) => {if(role != null){console.log("SKJEDDE"); return <div key={role.role_id} className="AddedRolesRow">{role.amount + " skift for ansatte med rollen: " + role.role_name + " er satt opp."} <button onClick={ () => { this.removeRole(role.role_id)} } className="removeShift">X</button></div>}})
-    })
-  }
-
-
-//Template for creating new role in event
-  createRoleTemplate(){
-    employee.createTemplate(this.refs.templatename.value, this.refs.templatedesc.value).then((template) => {
-      console.log(template)
-      EventFile.roles.map((role) => {
-        if (role != null) {employee.addRolesToTemplate(template.insertId, role.role_id, role.amount)}
-      })
-    })
-  }
-
 renderAvailableRKContactPersons(){
     //OnInput er ikke den beste metoden. Men har ikke tid til å lage et alternativ. I teorien ville jeg helst ha laget en funksjon som skjekker om alle datoer er satt inn og så utfører get Employee funksjonen.
     //Eventuelt gjevnlig eller on date-change.
-
-    if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16 || this.refs.prep.value.length != 16) {
+    if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16) {
       this.state.contactpersons = []
         this.refs.RKContacts.placeholder = "Velg alle datoer og tid."
         this.setState({contactpersons: []})
     }else {
       this.state.contactpersons = []
-      employee.getAvailableEmployeesEventCreation(this.refs.prep.value, this.refs.end.value).then((x) => {
+      employee.getAvailableEmployeesEventCreation(this.refs.start.value, this.refs.end.value).then((x) => {
       x.map((y) => this.state.contactpersons.push({name: (y.first_name + " " + y.surname), value: y.user_id}))
       this.setState({contactpersons: this.state.contactpersons})
     })
@@ -332,28 +242,8 @@ renderSelect(option) {
     };
     return (<span><img style={imgStyle} width="40" height="40" src={option.photo} /><span>{option.name}</span></span>);
 }
-//Adding roles in event. Also popup if error
-  addRoles(){
-    if(this.refs.addRoleAmount.vale < 1){
-      alert("Vennligst legg til en eller flere av rollen.")
-    } else {
 
-    employee.getRole(selectedRole.value).then((role) => {
-      EventFile.roles[role.role_id] = {role_id: role.role_id, role_name: role.role_name, amount: this.refs.addRoleAmount.value}
-      //Med løsningen over får vi ikke duplikate innslag av samme rolle i eventet
-      localStorage.setItem("eventFile", JSON.stringify(EventFile))
-      console.log(EventFile)
-      this.renderRoles()
-    })
-  }
-  }
-//Removing role from event
-  removeRole(roleid){
-    console.log(EventFile.roles[roleid])
-    EventFile.roles[roleid] = null
-    localStorage.setItem("eventFile", JSON.stringify(EventFile))
-    this.renderRoles()
-  }
+
 //Adding external contact for event
   addNewExtContact(){
     if(this.refs.Exttlf.value.length >= 8){
@@ -376,7 +266,6 @@ renderSelect(option) {
     EventFile.event.adress = this.refs.adress.value
     EventFile.event.start = this.refs.start.value
     EventFile.event.end = this.refs.end.value
-    EventFile.event.prep = this.refs.prep.value
     EventFile.event.postal = this.refs.zip.value
     EventFile.event.details = this.refs.details.value
     EventFile.event.hostname = this.refs.Hostname.value
@@ -388,7 +277,6 @@ renderSelect(option) {
     this.refs.adress.value = EventFile.event.adress
     this.refs.start.value = EventFile.event.start
     this.refs.end.value = EventFile.event.end
-    this.refs.prep.value = EventFile.event.prep
     this.refs.zip.value = EventFile.event.postal
     this.refs.ExtContactName.value = EventFile.event.extContact
     this.refs.details.value = EventFile.event.details
@@ -398,12 +286,7 @@ renderSelect(option) {
 
 
   componentDidMount(){
-    this.renderRoles()
     this.renderExternalContacts()
-    employee.getDistinctRoles().then((roles) => {
-      localStorage.setItem("roles", JSON.stringify(roles))
-      roles.map((y) => this.state.addroles.push({name: y.role_name, value: y.role_id}))
-    })
     this.renderAvailableRKContactPersons()
   }
 
