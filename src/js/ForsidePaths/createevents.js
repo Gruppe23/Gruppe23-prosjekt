@@ -166,7 +166,7 @@ class createevents extends React.Component<{}> {
 }
 
 
-
+//Remove item for creating event. Remove localStorage.
   cancelEventCreation(){
     localStorage.removeItem("eventFile")
     EventFile = ""
@@ -179,7 +179,7 @@ class createevents extends React.Component<{}> {
     this.refs.zip.value = ""
     this.refs.details.value = ""
   }
-
+//Popup for creating event. Else creating event
   eventCreate(){
     console.log(EventFile)
     if(this.refs.eventname.value.length == 0){
@@ -213,13 +213,9 @@ class createevents extends React.Component<{}> {
 
 
   // start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id
-
-
-
 renderAvailableRKContactPersons(){
     //OnInput er ikke den beste metoden. Men har ikke tid til å lage et alternativ. I teorien ville jeg helst ha laget en funksjon som skjekker om alle datoer er satt inn og så utfører get Employee funksjonen.
     //Eventuelt gjevnlig eller on date-change.
-
     if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16) {
       this.state.contactpersons = []
         this.refs.RKContacts.placeholder = "Velg alle datoer og tid."
@@ -246,13 +242,7 @@ renderSelect(option) {
 }
 
 
-  removeRole(roleid){
-    console.log(EventFile.roles[roleid])
-    EventFile.roles[roleid] = null
-    localStorage.setItem("eventFile", JSON.stringify(EventFile))
-    this.renderRoles()
-  }
-
+//Adding external contact for event
   addNewExtContact(){
     if(this.refs.Exttlf.value.length >= 8){
       if(this.refs.Extfirstname.value.length > 2 && this.refs.Extlastname.value.length > 2) {
@@ -268,7 +258,7 @@ renderSelect(option) {
     alert("Kan ikke opprette kontakt med ugyldig antall tall i tlfnr")
   }
 }
-
+//For saving events after filled out
   saveEventProgress(){
     EventFile.event.title = this.refs.eventname.value
     EventFile.event.adress = this.refs.adress.value

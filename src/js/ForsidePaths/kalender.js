@@ -37,7 +37,7 @@ import {
 } from "./kalenderpopups/shiftCreatePopup.js"
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
-
+//Using React-BigCalendar npm for the calendar
 
 
 
@@ -235,7 +235,7 @@ export class Kalender extends React.Component < {} > {
       });
     })
   }
-
+  
   componentWillUnmount() {
     this.setState({
       kalender1: "",
@@ -245,6 +245,8 @@ export class Kalender extends React.Component < {} > {
     })
   }
 
+
+//Rendering function for calendar
   RenderCalendar() {
     let eventz;
     let signUpEvents;
