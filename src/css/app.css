@@ -558,7 +558,10 @@ button, label {
     background-color: #f1f1f1;
 }
 
-
+.formBTN{
+  height: 36px;
+margin-top: 23px;
+}
 .ce_tip:hover {
   cursor: pointer;
 
@@ -824,13 +827,17 @@ img{
  max-width:100%;
 }
 
+.editUserBTN{
+  margin-top: 10px;
+}
+
 .profilePage {
     position:relative;
     height: 70%;
     width: 50%;
     background-color: #696969;
     padding: 15px;
-    min-width: 700px;
+    min-width: 550px;
     float:left;
     margin-left: 15px;
 }
@@ -843,11 +850,12 @@ img{
 }
 .delButton:hover {
   color: red;
-
+}
 
 .popupContent{
-  margin-top: 10px;
-  margin-left: 10px;
+  height: 100%;
+  width: 100%;
+  background-color:
 }
 
 .editTime {

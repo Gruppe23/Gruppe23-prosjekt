@@ -8,6 +8,7 @@ import {history} from '../forside';
 import {UserSearch, userSearch} from './user_search';
 import onClickOutside from "react-onclickoutside";
 import SelectSearch from 'react-select-search'
+import {EditUser} from "./AdminPage/editUser"
 let selectedCertificate = {name: null, value: null}
 
 let profilSideRef;
@@ -44,7 +45,8 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
     this.state = {
       Roles: "",
       Qualifications: "",
-      admin: ""
+      admin: "",
+      showPopup: false,
     }
     let profil_id = this.props.profil_id //profil_id må inkluderes når react-classen blir referert.
     profileDetailsRef = this
@@ -53,14 +55,20 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
   render() {
     return (
       <div className="profilside">
+        {
+          this.state.showPopup
+            ? <EditUser user_id={this.props.profil_id} closePopup={this.togglePopup.bind(this) }
+            />
+            : null
+        }
         <div className="profilePage">
           <div className="row">
             <div className="col-md-12 pWinUserInfo">
               <h3>
               <div ref="name"></div>
               </h3><p/>
-              <div ref="adress"></div><p/>
               <div ref="email"></div><p/>
+              <div ref="tlf"></div><p/>
               <div ref="usertype"></div><p/>
               <p/>
             </div>
@@ -93,7 +101,12 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
     profileDetailsRef = this
   }
 
-
+  togglePopup(): void {
+    /* Funksjonen som slår av/på registreringspopup */
+    this.setState({
+      showPopup: !this.state.showPopup
+    });
+  }
 
   loadProfileInfo(props) {
     employee.getSignedInUser().then((user : User) => { // VI henter inn profilen som er signet inn, slik at vi kan sammenligne det med profilsiden vi faktisk er på.
@@ -101,7 +114,7 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
         employee.getUserCertifications(this.props.profil_id).then((user_cert) => {
           employee.getEmployee(this.props.profil_id).then((user_profile) => {
             this.refs.name.textContent = user_profile.first_name + " " + user_profile.surname
-            this.refs.adress.textContent = "Adresse: " + user_profile.adress;
+            this.refs.tlf.textContent = "Telefonnummer " + user_profile.tlf;
             this.refs.email.textContent = "Email: " + user_profile.email;
             if (user_profile.user_type == 2) {
               this.refs.usertype.textContent = "Brukertype: Administrator"
@@ -111,7 +124,7 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
             if (user.user_type == 2) { // VI velger om brukeren av appen skal kunne se verktøy på profilsiden eller ikke. Er adminbruker pålogget får han mulighet på alles profiler. Er det vanlig bruker er verktøy bare tilgjengelig på egebn profil.
               this.setState({admin: <AdminEditing user_id={user_profile.user_id}/>})
             } else {
-              if (this.props.profil_id == user.user_id) {
+              if (user.user_id == user_profile.user_id) {
                 this.setState({admin: <UserAdding user_id={user_profile.user_id}/>})
               }
             }
@@ -155,7 +168,7 @@ class UserAdding extends React.Component < {} > {
     }
   }
   render() {
-    return (<div className="full PWuserContent">
+    return (<div className="PWuserContent">
       <h4>
         <div>Brukerverktøy</div>
       </h4>
@@ -165,7 +178,8 @@ class UserAdding extends React.Component < {} > {
         onBlur={(value)=> {selectedCertificate = value}}
         onChange={(value)=> {selectedCertificate = value}}
       />
-      <button ref="addselect" onClick={ () => {this.addQualification()} }>Legg til kompetanse</button>
+      <button className="editUserBTN" ref="addselect" onClick={ () => {this.addQualification()} }>Legg til kompetanse</button>
+        <button className="editUserBTN" ref="editProfile" onClick={()=>{profileDetailsRef.togglePopup()}}>Endre profil</button>
     </div>)
   }
 
@@ -184,7 +198,7 @@ class UserAdding extends React.Component < {} > {
 loadCertification(){
   this.state.certlist = []
   employee.getUnobtainedUserCertifications(this.props.user_id).then((cert) => {
-    cert.map((cert) => certlist.push({name: cert.certificate_name, value: cert.certificate_id}))
+    cert.map((cert) => this.state.certlist.push({name: cert.certificate_name, value: cert.certificate_id}))
     this.setState({
       certlist: this.state.certlist
     })
@@ -224,8 +238,8 @@ class AdminEditing extends React.Component < {} > {
         onBlur={(value)=> {selectedCertificate = value}}
         onChange={(value)=> {selectedCertificate = value}}
       />
-      <button ref="addselect" onClick={()=> {this.addQualification()}}>Legg til kompetanse</button>
-      <button ref="editProfile">Endre profil.</button>
+      <button ref="addselect" className="editUserBTN" onClick={()=> {this.addQualification()}}>Legg til kompetanse</button>
+      <button  className="editUserBTN" ref="editProfile" onClick={()=>{profileDetailsRef.togglePopup()}}>Endre profil</button>
     </div>)
   }
 

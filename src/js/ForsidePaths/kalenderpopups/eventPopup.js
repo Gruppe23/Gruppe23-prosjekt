@@ -55,7 +55,7 @@ class EventPopup2 extends React.Component<{}> {
     return(
     <div className="popup">
       <div className="popup_inner">
-        <div className="full popupContent">
+        <div className="popupContent">
         <div className="event">
           <div ref="eventName"></div>
           <div ref="eventDescription"></div>
@@ -70,9 +70,12 @@ class EventPopup2 extends React.Component<{}> {
           <div ref="contactName"></div>
           <div ref="contactNumber"></div>
           <div id="map_canvas"></div>
+          <h4><div ref="emp_title"></div></h4>
+          <div ref="emp_name"></div>
+          <div ref="emp_tlf"></div>
+          <div ref="emp_mail"></div>
           {signup}
           <div ref="mapGoesHere">
-
           </div>
         </div>
         <div>
@@ -98,7 +101,6 @@ class EventPopup2 extends React.Component<{}> {
       }).then((event)=> {
         employee.getSignedInUser().then((user)=>{
         if(event.isshift != undefined){
-          if(user.user_type == 2) {
             console.log(event)
             let start = new Date(event.start)
             let end = new Date(event.end)
@@ -113,25 +115,15 @@ class EventPopup2 extends React.Component<{}> {
             this.refs.contactNumber.textContent = "TLF: " + event.ec_tlf
             this.refs.RKC_name.textContent = "Navn: " + event.contact_first_name + " " + event.contact_last_name
             this.refs.RKC_tlf.textContent = "TLF: " + event.contact_tlf
-
-          } else if(event.employee_id == null){
-            console.log(event)
-            let start = new Date(event.start)
-            let end = new Date(event.end)
-            let txtStart = String(start.toTimeString()).split(":")
-            let txtEnd = String(end.toTimeString()).split(":")
-            console.log(start)
-            this.refs.eventName.textContent = "Shifttittel: " + event.title;
-            this.refs.eventLocation.textContent  = "Adresse: " + event.address;
-            this.refs.startTime.textContent = "Starttid: " + txtStart[0] + ":" +  txtStart[1]
-            this.refs.endTime.textContent = "Sluttid: " + txtEnd[0] + ":" + txtEnd[1]
-            this.refs.contactName.textContent = "Navn: " + event.ext_contact_name + ' ' + event.contact_last_name
-            this.refs.contactNumber.textContent = "TLF: " + event.ec_tlf
-            this.refs.RKC_name.textContent = "Navn: " + event.contact_first_name + " " + event.contact_last_name
-            this.refs.RKC_tlf.textContent = "TLF: " + event.contact_tlf
-          }
+            if(event.employee_id != null) {
+              employee.getEmployee(event.employee_id).then((employee)=>{
+                this.refs.emp_title.textContent = "Skifttaker: "
+                this.refs.emp_name.textContent = "Navn: " + employee.first_name + " " + employee.surname
+                this.refs.emp_mail.textContent = "E-Mail: " + employee.email
+                this.refs.emp_tlf.textContent = "TLF: " + employee.tlf
+              })
+            }
         } else {
-
             let start = new Date(event.start)
             let end = new Date(event.end)
             this.refs.eventName.textContent = "Arrangsjemangstittel: " + event.title;
@@ -142,6 +134,7 @@ class EventPopup2 extends React.Component<{}> {
             this.refs.contactNumber.textContent = "TLF: " + event.ec_tlf
             this.refs.RKC_name.textContent = "Navn: " + event.contact_first_name + " " + event.contact_last_name
             this.refs.RKC_tlf.textContent = "TLF: " + event.contact_tlf
+            this.refs.emp_name = ""
 
           }
     })
@@ -165,6 +158,7 @@ class AdminContent extends React.Component<{}> {
                           onBlur={(value)=> {if(value != undefined){this.assignShift(value, this.props.shift.id)}}}
                           onChange={(value)=> {if(value != undefined){this.assignShift(value, this.props.shift.id)}}}
                         />
+                        <div ref="tilbakemelding"></div>
                         <div className="editTime">
                           <span>Endre starttid: </span><input ref="startEdit" type="time"/><span> Endre sluttid: </span><input ref="sluttEdit" type="time"/><button onClick={()=>{this.editShiftTime()}} ref="setNyTid">Endre Tid</button>
                         </div>
@@ -184,6 +178,7 @@ class AdminContent extends React.Component<{}> {
   assignShift(value, shift_id){
     console.log(value.value, shift_id)
     employee.setShiftEmployee(value.value, shift_id).then((x)=>{
+      this.refs.tilbakemending.innerHTML = value.name + " har blitt satt til skiftet!"
       console.log(x)
       kalender.RenderCalendar()
       console.log("Success!")
@@ -234,7 +229,7 @@ class AdminContent extends React.Component<{}> {
   }
   }
 
-  componentDidMount(){
+  componentDidMount(props){
     let disableBTNType;
     if(this.props.shift.isshift != undefined) {
       this.refs.disableBTN.textContent = "Fjern Skift"
@@ -242,10 +237,19 @@ class AdminContent extends React.Component<{}> {
       this.refs.disableBTN.textContent = "Fjern Arrangement"
     }
     employee.getShift(this.props.shift.id).then((shift) => {
-      employee.getAvailableUsersWithRole(shift.start, this.props.shift.rolle).then((employees)=>{
-        employees.map((x)=>{this.state.employees.push({name: (x.first_name + " " + x.surname), value: x.user_id})})
+      employee.getInterestedAvailableUsersWithRole(shift.start, shift.role_id, shift.shift_id).then((employees)=>{
+        console.log(employees)
+        employees.map((x)=>{this.state.employees.push({name: (x.first_name + " " + x.surname + " - " + x.shiftscore), value: x.user_id})
       })
     })
+      employee.getUninterestedAvailableUsersWithRole(shift.start, shift.role_id, shift.shift_id).then((employees)=>{
+        console.log(employees)
+        employees.map((y)=>{this.state.employees.push({name: (y.first_name + " " + y.surname + " - " + y.shiftscore), value: y.user_id})})
+      })
+    }).then(()=>{
+      this.setState({employee: this.state.employees})
+    })
+
   }
   componentWillUnmount(){
     this.setState({employees: []})

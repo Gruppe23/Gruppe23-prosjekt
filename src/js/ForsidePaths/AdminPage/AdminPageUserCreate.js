@@ -31,7 +31,7 @@ let userCreateRef;
   render() {
     return (
     <div className="popup">
-      <div className="row popup_inner">
+      <div className="popup_inner">
       <div className="col-sm-6">
         <form className="form">
           <span>Brukerinfo </span>

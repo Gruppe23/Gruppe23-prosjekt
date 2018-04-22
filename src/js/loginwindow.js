@@ -42,7 +42,6 @@ class LoginWindow extends React.Component<{}> {
      employee.getLogin(username).then((notes: User) => {
        console.log(notes)
        if (passwordHash.verify(pass, notes.password) == true && notes.status == 1)  {
-         alert("password match")
          localStorage.removeItem('signedInUser')
          localStorage.setItem('signedInUser', JSON.stringify(notes))
          programRender.forceUpdate();

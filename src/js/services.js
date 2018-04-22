@@ -161,9 +161,9 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
   });
 }
 
-  getAvailableEmployeesEventCreation(prepDate: Date, endDate: Date): Promise<User[]>{
+  getAvailableEmployeesEventCreation(startDate: Date, endDate: Date): Promise<User[]>{
     return new Promise((resolve, reject) => {
-      connection.query("SELECT * FROM employee e WHERE NOT EXISTS (SELECT * FROM passive p WHERE from_date BETWEEN ? AND ? AND p.employee_id = e.user_id)", [prepDate, endDate], (error, result) => {
+      connection.query("SELECT * FROM employee e WHERE NOT EXISTS (SELECT * FROM passive p WHERE from_date BETWEEN ? AND ? AND p.employee_id = e.user_id)", [startDate, endDate], (error, result) => {
         if(error) {
           reject(error);
           return;
@@ -227,7 +227,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     if(!item) return null
     resolve(JSON.parse(item));
   })
-  }
+}
 
 
 
@@ -368,11 +368,25 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     })
   }
 
-  getAvailableUsersWithRole(shift_date, id : number): Promise<Object[]> {
+  getUninterestedAvailableUsersWithRole(shift_date: date, id:number, shift_id: number): Promise<Object[]> {
     console.log(shift_date)
     return new Promise((resolve, reject) => {
-      connection.query("SELECT COUNT(*) AS CertCount, rc.role_id, e.first_name, e.surname, e.user_id FROM employee e INNER JOIN ( employee_certificate ec INNER JOIN role_certificate rc ON rc.certificate_id = ec.certificate_id ) ON e.user_id = ec.employee_id AND rc.role_id = ? WHERE NOT EXISTS ( SELECT * FROM passive p WHERE ( ? BETWEEN p.from_date AND p.to_date ) AND(p.employee_id = e.user_id) AND(p.employee_id = ec.employee_id) ) AND NOT EXISTS ( SELECT * FROM shift s WHERE ( ? BETWEEN s.start AND s.end ) AND(s.employee_id = e.user_id) AND(s.employee_id = ec.employee_id) ) AND e.status = 1 GROUP BY e.user_id HAVING CertCount =( SELECT COUNT(*) FROM role_certificate WHERE role_id = ? GROUP BY rc.role_id )", [
-         id, shift_date, shift_date, id
+      connection.query("SELECT COUNT(*) AS CertCount, rc.role_id, e.first_name, e.surname, e.shiftscore, e.user_id FROM employee e INNER JOIN (employee_certificate ec INNER JOIN role_certificate rc ON rc.certificate_id = ec.certificate_id) ON e.user_id = ec.employee_id AND rc.role_id = ? WHERE NOT EXISTS ( SELECT * FROM passive p WHERE (? BETWEEN p.from_date AND p.to_date) AND(p.employee_id = e.user_id) AND(p.employee_id = ec.employee_id)) AND NOT EXISTS( SELECT * FROM shift s WHERE (? BETWEEN s.start AND s.end) AND(s.employee_id = e.user_id) AND(s.employee_id = ec.employee_id) ) AND e.status = 1 AND (SELECT case when employee_id is not null then true else false end from interest where shift_id = ? and employee_id = e.user_id) is null GROUP BY e.user_id HAVING CertCount =( SELECT COUNT(*) FROM role_certificate WHERE role_id = ? GROUP BY rc.role_id )	ORDER By e.shiftscore ASC", [
+         id, shift_date, shift_date, shift_id, id
+      ], (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(result);
+      })
+    })
+  }
+  getInterestedAvailableUsersWithRole(shift_date: date, id: number, shift_id: number): Promise<Object[]> {
+    console.log(shift_date)
+    return new Promise((resolve, reject) => {
+      connection.query("SELECT COUNT(*) AS CertCount, rc.role_id, e.first_name, e.surname, e.shiftscore, e.user_id FROM employee e INNER JOIN (employee_certificate ec INNER JOIN role_certificate rc ON rc.certificate_id = ec.certificate_id) ON e.user_id = ec.employee_id AND rc.role_id = ? WHERE NOT EXISTS ( SELECT * FROM passive p WHERE (? BETWEEN p.from_date AND p.to_date) AND(p.employee_id = e.user_id) AND(p.employee_id = ec.employee_id)) AND NOT EXISTS( SELECT * FROM shift s WHERE (? BETWEEN s.start AND s.end) AND(s.employee_id = e.user_id) AND(s.employee_id = ec.employee_id) ) AND e.status = 1 AND (SELECT case when employee_id is NOT Null then true else false end from interest where shift_id = ? and employee_id = e.user_id) is not null GROUP BY e.user_id HAVING CertCount =( SELECT COUNT(*) FROM role_certificate WHERE role_id = ? GROUP BY rc.role_id )	ORDER By e.shiftscore DESC", [
+         id, shift_date, shift_date, shift_id, id
       ], (error, result) => {
         if (error) {
           reject(error);
@@ -484,10 +498,10 @@ setShiftEmployee(employee_id, shift_id){
     });
   }
 
-  createEvent(start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id){
+  createEvent(start, end, title, hostname, description, address, postal, contact_id, ext_contact_id){
     return new Promise((resolve, reject) => {
-      connection.query('INSERT INTO events (start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-        start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id
+      connection.query('INSERT INTO events (start, end, title, hostname, description, address, postal, contact_id, ext_contact_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+        start, end, title, hostname, description, address, postal, contact_id, ext_contact_id
       ], (error, result) => {
         if (error) {
           reject(error);
@@ -569,12 +583,27 @@ setShiftEmployee(employee_id, shift_id){
         resolve();
       });
     });
-  }
+}
+
+    editUser(editArray, user_id): Promise<void> {
+      return new Promise((resolve, reject) => {
+
+        connection.query('update employee SET ? where user_id = ?', [
+      editArray, user_id
+        ], (error, result) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve();
+        });
+      });
+    }
 
 
   getEvents(): Promise< ?Object> {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT id, start, end, prep, address, postal, gmaps, title, contact_id, ext_contact_id, description, hostname, allDay, (select count(*) from shift where event_id=id and employee_id IS NULL) AS empty_shifts from events', (error, result) => {
+      connection.query('SELECT id, start, end, address, postal, gmaps, title, contact_id, ext_contact_id, description, hostname, allDay, (select count(*) from shift where event_id=id and employee_id IS NULL) AS empty_shifts from events', (error, result) => {
         if(error) {
           reject(error);
           return;
@@ -585,8 +614,9 @@ setShiftEmployee(employee_id, shift_id){
 }
 
 getEventsAvailable(date): Promise< ?Object> {
+  console.log(date)
   return new Promise((resolve, reject) => {
-    connection.query('SELECT * FROM events WHERE ? BETWEEN prep AND end',[date], (error, result) => {
+    connection.query('SELECT * FROM events WHERE ? BETWEEN start AND end',[date], (error, result) => {
       if(error) {
         reject(error);
         return;

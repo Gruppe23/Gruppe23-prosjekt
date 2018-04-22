@@ -28,7 +28,7 @@ return object
 
 class LSEventObject {
   roles: array;
-  event: {id: number, start: datetime, end: datetime, prep: datetime, hostname: string, contact_id: number, adress: string, gmaps: string, postal: number, extContact: string, details: string}
+  event: {id: number, start: datetime, end: datetime, hostname: string, contact_id: number, adress: string, gmaps: string, postal: number, extContact: string, details: string}
 }
 
 class createevents extends React.Component<{}> {
@@ -132,10 +132,6 @@ class createevents extends React.Component<{}> {
         <input ref="end" id="Sluttdato" onBlur={this.renderAvailableRKContactPersons.bind(this)} Max="2999-12-31" className="inputWidth" defaultValue={EventFile.event.end} type="datetime-local"  name="Sluttdato"/>
    </div>
 
-   <div className="ec_inputDiv">
-     <label  htmlFor="Prep" className="inputWidth">Preparasjon tid: </label>
-        <input ref="prep" onBlur={this.renderAvailableRKContactPersons.bind(this)} id="Prep" Max="2999-12-31" defaultValue={EventFile.event.prep} className="inputWidth" type="datetime-local"  name="Prep"/>
-   </div>
 
    <div className="ec_inputDiv" className="inputWidth" ref="contactpersonSelect">
    <label className="inputWidth">Velg kontaktperson:  <i><h6 className="h6fix">(Alle datoer og tider må velges først)</h6></i></label>
@@ -180,7 +176,6 @@ class createevents extends React.Component<{}> {
     this.refs.adress.value = ""
     this.refs.start.value = ""
     this.refs.end.value = ""
-    this.refs.prep.value = ""
     this.refs.zip.value = ""
     this.refs.details.value = ""
   }
@@ -193,7 +188,7 @@ class createevents extends React.Component<{}> {
       if(this.refs.adress.value.length == 0){
         alert("vennligst fyll inn en adresse")
       } else {
-        if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16 || this.refs.prep.value.length != 16){
+        if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16){
           alert("Vennligst fyll ut alle datoer!")
         } else {
         if  (this.refs.Hostname.value.length == 0 ) {
@@ -205,9 +200,9 @@ class createevents extends React.Component<{}> {
             if(EventFile.event.contact.value == "" || EventFile.event.extContact.value == ""){
               alert("Vennligst velg begge kontaktpersonene")
             }else {
-                    console.log(this.refs.start.value +  " " + this.refs.end.value + " " +this.refs.prep.value + " " +this.refs.eventname.value + " " +this.refs.Hostname.value + " " +this.refs.details.value + " " +this.refs.adress.value + " " +this.refs.zip.value + " " +EventFile.event.contact.value + " " + EventFile.event.extContact.value )
+                    console.log(this.refs.start.value +  " " + this.refs.end.value +this.refs.eventname.value + " " +this.refs.Hostname.value + " " +this.refs.details.value + " " +this.refs.adress.value + " " +this.refs.zip.value + " " +EventFile.event.contact.value + " " + EventFile.event.extContact.value )
                     console.log(EventFile)
-                    employee.createEvent(this.refs.start.value, this.refs.end.value, this.refs.prep.value, this.refs.eventname.value, this.refs.Hostname.value, this.refs.details.value, this.refs.adress.value, this.refs.zip.value, Number(EventFile.event.contact.value), Number(EventFile.event.extContact.value))
+                    employee.createEvent(this.refs.start.value, this.refs.end.value,this.refs.eventname.value, this.refs.Hostname.value, this.refs.details.value, this.refs.adress.value, this.refs.zip.value, Number(EventFile.event.contact.value), Number(EventFile.event.extContact.value))
            }
           }
         }
@@ -225,13 +220,13 @@ renderAvailableRKContactPersons(){
     //OnInput er ikke den beste metoden. Men har ikke tid til å lage et alternativ. I teorien ville jeg helst ha laget en funksjon som skjekker om alle datoer er satt inn og så utfører get Employee funksjonen.
     //Eventuelt gjevnlig eller on date-change.
 
-    if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16 || this.refs.prep.value.length != 16) {
+    if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16) {
       this.state.contactpersons = []
         this.refs.RKContacts.placeholder = "Velg alle datoer og tid."
         this.setState({contactpersons: []})
     }else {
       this.state.contactpersons = []
-      employee.getAvailableEmployeesEventCreation(this.refs.prep.value, this.refs.end.value).then((x) => {
+      employee.getAvailableEmployeesEventCreation(this.refs.start.value, this.refs.end.value).then((x) => {
       x.map((y) => this.state.contactpersons.push({name: (y.first_name + " " + y.surname), value: y.user_id}))
       this.setState({contactpersons: this.state.contactpersons})
     })
@@ -279,7 +274,6 @@ renderSelect(option) {
     EventFile.event.adress = this.refs.adress.value
     EventFile.event.start = this.refs.start.value
     EventFile.event.end = this.refs.end.value
-    EventFile.event.prep = this.refs.prep.value
     EventFile.event.postal = this.refs.zip.value
     EventFile.event.details = this.refs.details.value
     EventFile.event.hostname = this.refs.Hostname.value
@@ -291,7 +285,6 @@ renderSelect(option) {
     this.refs.adress.value = EventFile.event.adress
     this.refs.start.value = EventFile.event.start
     this.refs.end.value = EventFile.event.end
-    this.refs.prep.value = EventFile.event.prep
     this.refs.zip.value = EventFile.event.postal
     this.refs.ExtContactName.value = EventFile.event.extContact
     this.refs.details.value = EventFile.event.details

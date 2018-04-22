@@ -112,7 +112,7 @@ class RegisterWindow extends React.Component<{}> {
           userCreateRef.refs.confirmpwd.value = ""
           userCreateRef.refs.username.value = ""
         }).catch((error)=>{
-          userCreateRef.refs.response.innerHTML = errorMessage
+          userCreateRef.refs.response.innerHTML = "Brukernavn eller email er allerede i bruk."
           userCreateRef.refs.response.style.color = "red"
         })
         }else{

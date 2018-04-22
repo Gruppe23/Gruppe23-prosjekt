@@ -402,10 +402,22 @@ export class Kalender extends React.Component < {} > {
                     new Promise((resolve, reject) => {
                       console.log(slotInfo)
                       if (slotInfo.end == slotInfo.start) {
+                        let thirtyDays = new Date()
+                        thirtyDays.setDate(thirtyDays.getDate() + 30)
+                        if(slotInfo.start < thirtyDays){
+                          alert("Passivtid må settes opp en måned i fremtid.")
+                        } else {
                         slotInfo.end.setHours(23: 59)
                         slotInfo.start.setHours(0)
-                        resolve(true)
+                          resolve(true)
+                        }
                       } else {
+                        let thirtyDays = new Date()
+                        thirtyDays.setDate(thirtyDays.getDate() + 30)
+                        if(slotInfo.start < thirtyDays){
+                          alert("Passivtid må settes opp en måned i fremtid.")
+                        } else {
+
                         if ((slotInfo.end.getDate() - slotInfo.start.getDate()) < 1) {
                           if ((slotInfo.end.getHours() - slotInfo.start.getHours()) < 12) {
                             alert("Du må sette opp en passiv event på over 12 timer for at den skal opprettes.")
@@ -416,6 +428,7 @@ export class Kalender extends React.Component < {} > {
                           resolve(false);
                         }
                       }
+                    }
                     }).then((x) => {
                       if (x == false) {
                         slotInfo.end.setHours(slotInfo.end.getHours() + 1)
