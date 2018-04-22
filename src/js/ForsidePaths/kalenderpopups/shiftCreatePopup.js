@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { employee } from "../services"
+import { employee } from "../../services"
 import { Map, InfoWindow, Marker, Listing, GoogleApiWrapper } from 'google-maps-react';
-import { kalender } from './kalender';
-import {SelectRoleTemplate} from './createeventpopup/RoleTemplatePopup';
+import { kalender } from '../kalender';
+import {SelectRoleTemplate} from './RoleTemplatePopup';
 import onClickOutside from "react-onclickoutside";
 import SelectSearch from 'react-select-search'
-let selectedRole;
-let selectedEvent;
+let selectedRole = {value: null, name: null}
+let selectedEvent = {value: null, name: null}
 let roleObject = {roles: []}
 let SCPRef;
 
@@ -89,9 +89,7 @@ export class ShiftCreatePopup extends React.Component<{}> {
             <textarea ref="templatedesc" defaultValue={""} className="ce_textArea"></textarea>
             <button ref="cancel" onClick={()=>{this.createRoleTemplate()}} className="Row_3buttons">Opprett Vakt Mal</button>
             <button ref="cancel" onClick={()=>{this.togglePopup()}} className="Row_3buttons">Velg Vakt Mal</button>
-            <div className="gMaps"></div>
           </div>
-
           </div>
       <button className="SCPLuck" onClick={this.props.closePopup}>Lukk </button>
     </div>
@@ -120,23 +118,22 @@ export class ShiftCreatePopup extends React.Component<{}> {
     console.log(endHours)
     console.log(startDate)
     console.log(endDate)
+    if(selectedEvent.value != undefined){
     for (let x in SCPRef.state.roleObject.roles) {
       if(SCPRef.state.roleObject.roles[x] != null){
         let z = 0;
           let y = 0;
           while (y < SCPRef.state.roleObject.roles[x].amount){
             y++
-            if(selectedEvent.value == null){
-              employee.createShift(SCPRef.state.roleObject.roles[x].role_id, startDate, endDate, SCPRef.state.roleObject.roles[x].role_name)
-            } else {
+
               employee.createShift(selectedEvent.value, SCPRef.state.roleObject.roles[x].role_id, startDate, endDate, SCPRef.state.roleObject.roles[x].role_name)
-            }
-        }
       }
     }
     this.props.updateCalendar()
     this.props.closePopup()
-}
+}}}
+
+
 
 
   addRole(){
@@ -211,6 +208,7 @@ export class ShiftCreatePopup extends React.Component<{}> {
   componentWillUnmount(){
     SCPRef.state.roleObject = {roles: []}
     roleObject = {roles: []}
+    selectedEvent = {value: null, name: null}
     this.setState({
       addroles: [],
       renderedRoles: "",

@@ -5,6 +5,11 @@ import {Link, HashRouter, Switch, Route} from 'react-router-dom';
 import {transporter, nodemailer} from '../app';
 import {employee, User} from '../services';
 import {history} from '../forside';
+import {UserSearch, userSearch} from './user_search';
+import onClickOutside from "react-onclickoutside";
+import SelectSearch from 'react-select-search'
+import {EditUser} from "./AdminPage/editUser"
+let selectedCertificate = {name: null, value: null}
 
 let profilSideRef;
 class ProfilSide extends React.Component < {} > {
@@ -40,7 +45,8 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
     this.state = {
       Roles: "",
       Qualifications: "",
-      admin: ""
+      admin: "",
+      showPopup: false,
     }
     let profil_id = this.props.profil_id //profil_id må inkluderes når react-classen blir referert.
     profileDetailsRef = this
@@ -49,14 +55,20 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
   render() {
     return (
       <div className="profilside">
+        {
+          this.state.showPopup
+            ? <EditUser user_id={this.props.profil_id} closePopup={this.togglePopup.bind(this) }
+            />
+            : null
+        }
         <div className="profilePage">
           <div className="row">
             <div className="col-md-12 pWinUserInfo">
-              <h4>
+              <h3>
               <div ref="name"></div>
-              </h4><p/>
-              <div ref="adress"></div><p/>
+              </h3><p/>
               <div ref="email"></div><p/>
+              <div ref="tlf"></div><p/>
               <div ref="usertype"></div><p/>
               <p/>
             </div>
@@ -88,14 +100,25 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
     this.loadProfileInfo()
     profileDetailsRef = this
   }
+<<<<<<< HEAD
 //Info for getting relevant information from user when using profilepage
+=======
+
+  togglePopup(): void {
+    /* Funksjonen som slår av/på registreringspopup */
+    this.setState({
+      showPopup: !this.state.showPopup
+    });
+  }
+
+>>>>>>> Andreas-Kalender-osv
   loadProfileInfo(props) {
     employee.getSignedInUser().then((user : User) => { // VI henter inn profilen som er signet inn, slik at vi kan sammenligne det med profilsiden vi faktisk er på.
       employee.getUserRoles2(this.props.profil_id).then((user_roles) => {
         employee.getUserCertifications(this.props.profil_id).then((user_cert) => {
           employee.getEmployee(this.props.profil_id).then((user_profile) => {
             this.refs.name.textContent = user_profile.first_name + " " + user_profile.surname
-            this.refs.adress.textContent = "Adresse: " + user_profile.adress;
+            this.refs.tlf.textContent = "Telefonnummer " + user_profile.tlf;
             this.refs.email.textContent = "Email: " + user_profile.email;
             if (user_profile.user_type == 2) {
               this.refs.usertype.textContent = "Brukertype: Administrator"
@@ -105,7 +128,7 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
             if (user.user_type == 2) { // VI velger om brukeren av appen skal kunne se verktøy på profilsiden eller ikke. Er adminbruker pålogget får han mulighet på alles profiler. Er det vanlig bruker er verktøy bare tilgjengelig på egebn profil.
               this.setState({admin: <AdminEditing user_id={user_profile.user_id}/>})
             } else {
-              if (this.props.profil_id == user.user_id) {
+              if (user.user_id == user_profile.user_id) {
                 this.setState({admin: <UserAdding user_id={user_profile.user_id}/>})
               }
             }
@@ -144,40 +167,50 @@ class UserAdding extends React.Component < {} > {
   constructor(props) {
     super()
     this.state = {
-      rolelist: ""
+      rolelist: "",
+      certlist: []
     }
   }
   render() {
-    return (<div className="full">
+    return (<div className="PWuserContent">
       <h4>
         <div>Brukerverktøy</div>
       </h4>
       <div>Legge til sertifikater</div>
-      <select ref="certselect">
-        {this.state.certlist}
-      </select>
-      <button ref="addselect" onClick={ () => {this.addQualification()} }>Legg til kompetanse</button>
+      <SelectSearch ref="Usertificate" name="language" options={this.state.certlist} search={true} placeholder="Velg sertifikat"
+        mode="input"
+        onBlur={(value)=> {selectedCertificate = value}}
+        onChange={(value)=> {selectedCertificate = value}}
+      />
+      <button className="editUserBTN" ref="addselect" onClick={ () => {this.addQualification()} }>Legg til kompetanse</button>
+        <button className="editUserBTN" ref="editProfile" onClick={()=>{profileDetailsRef.togglePopup()}}>Endre profil</button>
     </div>)
   }
 //Popup alert for checking info
   addQualification(props) {
     if (confirm('Er du sikker på at du vil søke om å legge til dette sertifikatet?')) {
-      employee.addCertificate(this.props.user_id, this.refs.certselect.value, 0).then((check) => {
+      employee.addCertificate(this.props.user_id, selectedCertificate.value, 0).then((check) => {
         alert(check)
         profileDetailsRef.loadProfileInfo()
+        this.loadCertifications()
       })
     } else {
       // Do nothing!
     }
   }
 
-  componentDidMount(props) {
-    employee.getUnobtainedUserCertifications(this.props.user_id).then((cert) => {
-      this.setState({
-        certlist: cert.map((cert) => <option key={cert.certificate_id} value={cert.certificate_id}>{cert.certificate_name}</option>)
-      })
+loadCertification(){
+  this.state.certlist = []
+  employee.getUnobtainedUserCertifications(this.props.user_id).then((cert) => {
+    cert.map((cert) => this.state.certlist.push({name: cert.certificate_name, value: cert.certificate_id}))
+    this.setState({
+      certlist: this.state.certlist
     })
+  })
+}
 
+  componentDidMount(props) {
+    this.loadCertification()
   }
 }
 //Class for admin options in profilewindow
@@ -189,11 +222,12 @@ class AdminEditing extends React.Component < {} > {
   constructor(props) {
     super()
     this.state = {
-      rolelist: ""
+      rolelist: "",
+      certlist: []
     }
   }
   render() {
-    return (<div>
+    return (<div className="PWadminContent">
       <button className="TopRight" ref="disableAccount" onClick={() => {
           this.disableAccount()
         }}>
@@ -203,23 +237,38 @@ class AdminEditing extends React.Component < {} > {
         <div>Administratorverktøy</div>
       </h4>
       <div>Legge til sertifikater</div>
-      <select ref="certselect">
-        {this.state.certlist}
-      </select>
-      <button ref="addselect" onClick={()=> {this.addQualification()}}>Legg til kompetanse</button>
+      <SelectSearch ref="Asertificate" name="language" options={this.state.certlist} search={true} placeholder="Velg sertifikat"
+        mode="input"
+        onBlur={(value)=> {selectedCertificate = value}}
+        onChange={(value)=> {selectedCertificate = value}}
+      />
+      <button ref="addselect" className="editUserBTN" onClick={()=> {this.addQualification()}}>Legg til kompetanse</button>
+      <button  className="editUserBTN" ref="editProfile" onClick={()=>{profileDetailsRef.togglePopup()}}>Endre profil</button>
     </div>)
   }
 //explains itself
   addQualification(props) {
     if (confirm('Er du sikker på at du vil legge til dette sertifikatet hos brukeren?')) {
-      employee.addCertificate(this.props.user_id, this.refs.certselect.value, 1).then((check) => {
+      employee.addCertificate(this.props.user_id, selectedCertificate.value, 1).then((check) => {
         alert(check)
         profileDetailsRef.loadProfileInfo()
+        this.loadCertification()
       })
     } else {
       // Do nothing!
     }
+  }
 
+  loadCertification(){
+    console.log(this.props.user_id)
+    this.state.certlist = []
+    employee.getUnobtainedUserCertifications(this.props.user_id).then((cert) => {
+      cert.map((x) => this.state.certlist.push({name: x.certificate_name, value: x.certificate_id}))
+      this.setState({
+        certlist: this.state.certlist
+      })
+    })
+    console.log(this.state.certlist)
   }
 //for disableing accont. Popup will appear and ask if you want to delete + mail 
   disableAccount(props) {
@@ -233,7 +282,11 @@ class AdminEditing extends React.Component < {} > {
             subject: 'Brukerkonto deaktivert', // Subject line
             html: mailMessage // plain text body
           };
+<<<<<<< HEAD
 //Transporter for sending out mail
+=======
+          userSearch.loadUserList()
+>>>>>>> Andreas-Kalender-osv
           transporter.sendMail(mailOptions, function(err, info) {
             if (err) {
               console.log(err)
@@ -249,11 +302,7 @@ class AdminEditing extends React.Component < {} > {
   }
 
   componentDidMount(props) {
-    employee.getUnobtainedUserCertifications(this.props.user_id).then((cert) => {
-      this.setState({
-        certlist: cert.map((cert) => <option key={cert.certificate_id} value={cert.certificate_id}>{cert.certificate_name}</option>)
-      })
-    })
+this.loadCertification()
   }
 
 }

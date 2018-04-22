@@ -61,6 +61,7 @@ body {
 		box-sizing: border-box;
 		font-weight: bold;
 		position: relative;
+		overflow-y: scroll;
 		z-index: 2;
 		cursor: pointer;
 		font-family: sans-serif;

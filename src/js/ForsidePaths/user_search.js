@@ -4,15 +4,16 @@ import { Link, HashRouter, Switch, Route } from 'react-router-dom';
 import { employee, User } from '../services';
 import {ProfileDetails} from './profilewindow';
 import { history } from '../forside';
-import {SelectRoleTemplate} from './createeventpopup/RoleTemplatePopup';
+import {SelectRoleTemplate} from './kalenderpopups/RoleTemplatePopup';
 import onClickOutside from "react-onclickoutside";
 
-
+let userSearch;
 class UserSearch extends React.Component<{}> {
   constructor() {
     super()
     this.state = {userlist: "",
                   userinfo: ""}
+    userSearch = this
   }
   render(){
     return(
@@ -30,11 +31,13 @@ class UserSearch extends React.Component<{}> {
   }
   componentDidMount(){
     this.loadUserList()
+    userSearch = this
   }
 
 
   componentWillUnmount(){
     this.setState({userlist: ""})
+
   }
 
   loadUserList() {
@@ -44,13 +47,13 @@ class UserSearch extends React.Component<{}> {
         userlist: users.map((user: User) => {
                             if (signedInUser.user_type == 2 || user.status == 1){
                               if (signedInUser.user_type == 2 && user.status == 0){
-                                return  <li id={"Reg" + user.user_id} className="red" key={user.first_name} onClick = { () => {this.loadUserInfo(user.user_id)}}>
+                                return  <li id={"Reg" + user.user_id} className="red" key={user.first_name + user.user_id} onClick = { () => {this.loadUserInfo(user.user_id)}}>
                                         <a className="red">{user.surname}, {user.first_name}</a>
                                         </li>
                               }else {
                                 /*Vi oppretter alle linjene i selecten, funksjonen map er basicly en For løkke, den tar for seg hvert element i reglist og oppretter react-elementene under.
                                   Anbefales å se console.log av reglist for å se bedre hva som menes.""*/
-                                  return  <li id={"Reg" + user.user_id} className="" key={user.first_name} onClick = { () => {this.loadUserInfo(user.user_id)}}>
+                                  return  <li id={"Reg" + user.user_id} className="" key={user.first_name + user.user_id} onClick = { () => {this.loadUserInfo(user.user_id)}}>
                                           <a>{user.surname}, {user.first_name}</a>
                                           </li>
                               }
@@ -88,4 +91,25 @@ class UserSearch extends React.Component<{}> {
   }
 }
 
-export { UserSearch }
+class EditProfile extends React.Component <{}> {
+  constructor(){
+    super()
+
+  }
+
+  render(){
+    return(
+      <div>
+          <input placeholder="Adresse"/>
+          <input placeholder="postnummer" />
+          <input placeholder="passord"/>
+          <input placeholder="passordskjekk"/>
+
+
+
+      </div>
+    )
+  }
+}
+
+export { UserSearch, userSearch }

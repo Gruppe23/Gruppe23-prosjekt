@@ -31,7 +31,7 @@ class LoginWindow extends React.Component<{}> {
                 <input type="password" ref="loginPassword"></input><p></p>
                 <button ref="login" onClick= {() => {this.login()}}>Login</button>
                 <p></p>
-                <button><Link to='/page2'>Til Registrering</Link></button>
+                <Link to='/page2'><button>Til Registrering</button></Link>
             </div>
         </div>
     );
@@ -42,7 +42,6 @@ class LoginWindow extends React.Component<{}> {
      employee.getLogin(username).then((notes: User) => {
        console.log(notes)
        if (passwordHash.verify(pass, notes.password) == true && notes.status == 1)  {
-         alert("password match")
          localStorage.removeItem('signedInUser')
          localStorage.setItem('signedInUser', JSON.stringify(notes))
          programRender.forceUpdate();

@@ -31,7 +31,7 @@ let userCreateRef;
   render() {
     return (
     <div className="popup">
-      <div className="row popup_inner">
+      <div className="popup_inner">
       <div className="col-sm-6">
         <form className="form">
           <span>Brukerinfo </span>
@@ -59,8 +59,8 @@ let userCreateRef;
           </div>
 
         <div className="form-group-horizontal">
-                <button ref="Signupbtn" className="btn btn-default" onClick={this.register}>Opprett Bruker</button>
-                <button className="btn btn-default" onClick={this.props.closePopup}> Lukk </button>
+                <button type="button" ref="Signupbtn" className="btn btn-default" onClick={this.register}>Opprett Bruker</button>
+                <button type="button" className="btn btn-default" onClick={this.props.closePopup}> Lukk </button>
         </div>
         <div ref="response"></div>
 
