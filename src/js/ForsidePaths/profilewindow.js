@@ -100,9 +100,6 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
     this.loadProfileInfo()
     profileDetailsRef = this
   }
-<<<<<<< HEAD
-//Info for getting relevant information from user when using profilepage
-=======
 
   togglePopup(): void {
     /* Funksjonen som slår av/på registreringspopup */
@@ -111,7 +108,7 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
     });
   }
 
->>>>>>> Andreas-Kalender-osv
+//Info for getting relevant information from user when using profilepage
   loadProfileInfo(props) {
     employee.getSignedInUser().then((user : User) => { // VI henter inn profilen som er signet inn, slik at vi kan sammenligne det med profilsiden vi faktisk er på.
       employee.getUserRoles2(this.props.profil_id).then((user_roles) => {
@@ -270,7 +267,7 @@ class AdminEditing extends React.Component < {} > {
     })
     console.log(this.state.certlist)
   }
-//for disableing accont. Popup will appear and ask if you want to delete + mail 
+//for disableing accont. Popup will appear and ask if you want to delete + mail
   disableAccount(props) {
     if (confirm('Are you sure you want to deactivate this account?')) {
       employee.deactivateAccount(this.props.user_id).then(() => {
@@ -282,11 +279,11 @@ class AdminEditing extends React.Component < {} > {
             subject: 'Brukerkonto deaktivert', // Subject line
             html: mailMessage // plain text body
           };
-<<<<<<< HEAD
-//Transporter for sending out mail
-=======
+
+
+
           userSearch.loadUserList()
->>>>>>> Andreas-Kalender-osv
+//Transporter for sending out mail
           transporter.sendMail(mailOptions, function(err, info) {
             if (err) {
               console.log(err)

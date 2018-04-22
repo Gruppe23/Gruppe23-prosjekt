@@ -235,19 +235,7 @@ export class Kalender extends React.Component < {} > {
       });
     })
   }
-
-<<<<<<< HEAD
-componentWillUnmount(){
-  this.setState({
-    kalender1: "",
-    kalender2: "",
-    kalender3: "",
-    firstSlotSelected: false
-  })
-}
-//Rendering function for calendar
-  RenderCalendar(){
-=======
+  
   componentWillUnmount() {
     this.setState({
       kalender1: "",
@@ -257,8 +245,9 @@ componentWillUnmount(){
     })
   }
 
+
+//Rendering function for calendar
   RenderCalendar() {
->>>>>>> Andreas-Kalender-osv
     let eventz;
     let signUpEvents;
     employee.getSignedInUser().then((user) => {

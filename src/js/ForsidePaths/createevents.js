@@ -213,25 +213,9 @@ class createevents extends React.Component<{}> {
 
 
   // start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id
-
-<<<<<<< HEAD
-//Template for creating new role in event
-  createRoleTemplate(){
-    employee.createTemplate(this.refs.templatename.value, this.refs.templatedesc.value).then((template) => {
-      console.log(template)
-      EventFile.roles.map((role) => {
-        if (role != null) {employee.addRolesToTemplate(template.insertId, role.role_id, role.amount)}
-      })
-    })
-  }
-=======
-
->>>>>>> Andreas-Kalender-osv
-
 renderAvailableRKContactPersons(){
     //OnInput er ikke den beste metoden. Men har ikke tid til å lage et alternativ. I teorien ville jeg helst ha laget en funksjon som skjekker om alle datoer er satt inn og så utfører get Employee funksjonen.
     //Eventuelt gjevnlig eller on date-change.
-
     if(this.refs.start.value.length != 16 || this.refs.end.value.length != 16) {
       this.state.contactpersons = []
         this.refs.RKContacts.placeholder = "Velg alle datoer og tid."
@@ -256,33 +240,8 @@ renderSelect(option) {
     };
     return (<span><img style={imgStyle} width="40" height="40" src={option.photo} /><span>{option.name}</span></span>);
 }
-<<<<<<< HEAD
-//Adding roles in event. Also popup if error
-  addRoles(){
-    if(this.refs.addRoleAmount.vale < 1){
-      alert("Vennligst legg til en eller flere av rollen.")
-    } else {
-
-    employee.getRole(selectedRole.value).then((role) => {
-      EventFile.roles[role.role_id] = {role_id: role.role_id, role_name: role.role_name, amount: this.refs.addRoleAmount.value}
-      //Med løsningen over får vi ikke duplikate innslag av samme rolle i eventet
-      localStorage.setItem("eventFile", JSON.stringify(EventFile))
-      console.log(EventFile)
-      this.renderRoles()
-    })
-  }
-  }
-//Removing role from event
-=======
 
 
->>>>>>> Andreas-Kalender-osv
-  removeRole(roleid){
-    console.log(EventFile.roles[roleid])
-    EventFile.roles[roleid] = null
-    localStorage.setItem("eventFile", JSON.stringify(EventFile))
-    this.renderRoles()
-  }
 //Adding external contact for event
   addNewExtContact(){
     if(this.refs.Exttlf.value.length >= 8){

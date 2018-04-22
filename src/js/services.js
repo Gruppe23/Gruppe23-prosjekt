@@ -161,13 +161,9 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     });
   });
 }
-<<<<<<< HEAD
-//Get availeable employees when you create a new event...
-  getAvailableEmployeesEventCreation(prepDate: Date, endDate: Date): Promise<User[]>{
-=======
+
 
   getAvailableEmployeesEventCreation(startDate: Date, endDate: Date): Promise<User[]>{
->>>>>>> Andreas-Kalender-osv
     return new Promise((resolve, reject) => {
       connection.query("SELECT * FROM employee e WHERE NOT EXISTS (SELECT * FROM passive p WHERE from_date BETWEEN ? AND ? AND p.employee_id = e.user_id)", [startDate, endDate], (error, result) => {
         if(error) {
@@ -178,8 +174,8 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       })
     })
   }
-  
-  
+
+
 //Get new user that has signed up for approval
 
 
@@ -289,6 +285,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       })
     })
   }
+
 //Bigass query for getting shifts that match the roles needed
     getShiftsMatchingUserRoles(id: number): Promise<shift[]> {
       return new Promise((resolve, reject) => {
@@ -301,9 +298,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
         })
       })
     }
-<<<<<<< HEAD
-//Query for setting up interest in a shift/event
-=======
+
 
     updateShiftTime(start, end, id){
       return new Promise((resolve, reject) => {
@@ -316,8 +311,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
         });
       });
     }
-
->>>>>>> Andreas-Kalender-osv
+//Query for setting up interest in a shift/event
     setInterest(employee_id, shift_id){
       return new Promise((resolve, reject) => {
         connection.query('INSERT INTO interest (employee_id, shift_id) VALUES (?, ?)', [employee_id, shift_id], (error, result) => {
@@ -329,9 +323,9 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
         })
       })
     }
-<<<<<<< HEAD
-//For removing interest in shift/event
-=======
+
+
+
 
     deleteEvent(id: number){
       return new Promise((resolve, reject) => {
@@ -359,7 +353,7 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       })
   }
 
->>>>>>> Andreas-Kalender-osv
+//For removing interest in shift/event
     removeInterest(employee_id, shift_id){
       return new Promise((resolve, reject) => {
         connection.query('DELETE FROM interest where employee_id = ? AND shift_id = ?', [employee_id, shift_id], (error, result) => {
@@ -383,13 +377,8 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
       })
     })
   }
-<<<<<<< HEAD
-//Getting user with a spesific role
-  getAvailableUsersWithRole(shift_date, id : number): Promise<Object[]> {
-=======
 
   getUninterestedAvailableUsersWithRole(shift_date: date, id:number, shift_id: number): Promise<Object[]> {
->>>>>>> Andreas-Kalender-osv
     console.log(shift_date)
     return new Promise((resolve, reject) => {
       connection.query("SELECT COUNT(*) AS CertCount, rc.role_id, e.first_name, e.surname, e.shiftscore, e.user_id FROM employee e INNER JOIN (employee_certificate ec INNER JOIN role_certificate rc ON rc.certificate_id = ec.certificate_id) ON e.user_id = ec.employee_id AND rc.role_id = ? WHERE NOT EXISTS ( SELECT * FROM passive p WHERE (? BETWEEN p.from_date AND p.to_date) AND(p.employee_id = e.user_id) AND(p.employee_id = ec.employee_id)) AND NOT EXISTS( SELECT * FROM shift s WHERE (? BETWEEN s.start AND s.end) AND(s.employee_id = e.user_id) AND(s.employee_id = ec.employee_id) ) AND e.status = 1 AND (SELECT case when employee_id is not null then true else false end from interest where shift_id = ? and employee_id = e.user_id) is null GROUP BY e.user_id HAVING CertCount =( SELECT COUNT(*) FROM role_certificate WHERE role_id = ? GROUP BY rc.role_id )	ORDER By e.shiftscore ASC", [
@@ -519,13 +508,9 @@ setShiftEmployee(employee_id, shift_id){
       });
     });
   }
-<<<<<<< HEAD
-// Creating new events
-  createEvent(start, end, prep, title, hostname, description, address, postal, contact_id, ext_contact_id){
-=======
 
+// Creating new events
   createEvent(start, end, title, hostname, description, address, postal, contact_id, ext_contact_id){
->>>>>>> Andreas-Kalender-osv
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO events (start, end, title, hostname, description, address, postal, contact_id, ext_contact_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [
         start, end, title, hostname, description, address, postal, contact_id, ext_contact_id
@@ -555,27 +540,7 @@ setShiftEmployee(employee_id, shift_id){
     });
   }
 
-<<<<<<< HEAD
-//Gettin login infor from users
-=======
-  createEventlessShift(id, role_id, start, end, shift_name){
-    return new Promise((resolve, reject) => {
-      let date = new Date()
-      connection.query('INSERT INTO shift (role_id, start, end, shift_name) VALUES (?, ?, ?, ?)', [
-        id, role_id, start, end, shift_name
-      ], (error, result) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        console.log(result)
-        resolve(result);
-      });
-    });
-  }
 
-
->>>>>>> Andreas-Kalender-osv
   getLogin(mail: string): Promise<User> {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM employee WHERE username=?', [mail], (error, result) => {
@@ -730,12 +695,8 @@ getEventsAvailable(date): Promise< ?Object> {
       })
     })
   }
-<<<<<<< HEAD
+
 //Get single shifts
-=======
-
-
->>>>>>> Andreas-Kalender-osv
   getShift(id: number){
     return new Promise((resolve, reject) => {
       connection.query('select * from shift where shift_id = ?', [id], (error, result) => {
@@ -748,9 +709,6 @@ getEventsAvailable(date): Promise< ?Object> {
     })
   }
 
-<<<<<<< HEAD
-
-=======
   deleteShift(id){
       return new Promise((resolve, reject) => {
         connection.query('DELETE FROM shift where shift_id = ?', [id], (error, result) => {
@@ -762,7 +720,6 @@ getEventsAvailable(date): Promise< ?Object> {
         })
       })
   }
->>>>>>> Andreas-Kalender-osv
 
   getFrontPageShifts(id: number){
     return new Promise((resolve, reject) => {
@@ -776,11 +733,7 @@ getEventsAvailable(date): Promise< ?Object> {
     })
   }
 
-<<<<<<< HEAD
-
 // Get roles from templates
-=======
->>>>>>> Andreas-Kalender-osv
   getTemplateRoles(id: number): Promise<Object[]>{
     return new Promise((resolve, reject) => {
       connection.query('SELECT * from shift_template_roles st INNER JOIN role r ON st.role_id = r.role_id where template_id = ?', [id], (error, result) => {
