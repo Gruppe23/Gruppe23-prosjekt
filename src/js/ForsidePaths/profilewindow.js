@@ -51,16 +51,20 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
       <div className="profilside">
         <div className="profilePage">
           <div className="row">
-            <div className="col-md-12 pWinUserInfo">
+            <div className="col-md-6 pWinUserInfo">
               <h4>
               <div ref="name"></div>
-              </h4><p/>
-              <div ref="adress"></div><p/>
-              <div ref="email"></div><p/>
-              <div ref="usertype"></div><p/>
-              <p/>
+              </h4>
+              <div ref="adress"></div>
+              <div ref="zipCode"></div>
+              <div ref="phone"></div>
+              <p></p>
+              <div ref="userid"></div>
+              <div ref="email"></div>
+              <div ref="usertype"></div>
             </div>
           </div>
+          <p></p>
           <div className="row">
             <div className="col-md-6">
               <h4>
@@ -96,6 +100,9 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
           employee.getEmployee(this.props.profil_id).then((user_profile) => {
             this.refs.name.textContent = user_profile.first_name + " " + user_profile.surname
             this.refs.adress.textContent = "Adresse: " + user_profile.adress;
+            this.refs.zipCode.textContent = "Postnr: " + user_profile.zipcode +" , Sted: " +user_profile.place;
+            this.refs.phone.textContent = "Mobil: " + user_profile.tlf;
+            this.refs.userid.textContent= "Medlemsnummer: " + user_profile.user_id;
             this.refs.email.textContent = "Email: " + user_profile.email;
             if (user_profile.user_type == 2) {
               this.refs.usertype.textContent = "Brukertype: Administrator"
@@ -103,7 +110,7 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
               this.refs.usertype.textContent = "Brukertype: Bemanning"
             }
             if (user.user_type == 2) { // VI velger om brukeren av appen skal kunne se verktøy på profilsiden eller ikke. Er adminbruker pålogget får han mulighet på alles profiler. Er det vanlig bruker er verktøy bare tilgjengelig på egebn profil.
-              this.setState({admin: <AdminEditing user_id={user_profile.user_id}/>})
+              this.setState({admin: <AdminEditing signedInUser={user.user_id} user_id={user_profile.user_id}/>})
             } else {
               if (this.props.profil_id == user.user_id) {
                 this.setState({admin: <UserAdding user_id={user_profile.user_id}/>})
@@ -193,12 +200,21 @@ class AdminEditing extends React.Component < {} > {
     }
   }
   render() {
-    return (<div>
-      <button className="TopRight" ref="disableAccount" onClick={() => {
-          this.disableAccount()
-        }}>
-        <a className="delButton"><i className="fa fa-user-times"></i></a>
-      </button>
+    let disableButton;
+    if(this.props.signedInUser == this.props.user_id) {
+      disableButton = "";
+    }else{
+      disableButton =  <button className="TopRight" ref="disableAccount" onClick={() => {
+      this.disableAccount()
+    }}>
+    <a className="delButton"><i className="fa fa-user-times"></i></a>
+    </button>
+
+
+    };
+    return (
+      <div>
+        {disableButton}
       <h4>
         <div>Administratorverktøy</div>
       </h4>
@@ -207,7 +223,8 @@ class AdminEditing extends React.Component < {} > {
         {this.state.certlist}
       </select>
       <button ref="addselect" onClick={()=> {this.addQualification()}}>Legg til kompetanse</button>
-    </div>)
+    </div>
+  )
   }
 //explains itself
   addQualification(props) {

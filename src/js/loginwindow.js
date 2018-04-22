@@ -111,8 +111,7 @@ export class ForgotPassword extends React.Component <{}> {
 
 
 
-
-  componentDidMount(){
+  componentDidMount(props){
     this.refs.newPwButton.onclick = () => {
       console.log('button clicked')
       let api_key = 'key-53691f7229e0eec8522473b2e853cabf';
@@ -149,6 +148,7 @@ export class ForgotPassword extends React.Component <{}> {
 
     }
   }
+
 
 }
 

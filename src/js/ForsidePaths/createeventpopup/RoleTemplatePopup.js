@@ -65,6 +65,7 @@ class SelectRoleTemplate extends React.Component<{}> {
     })
   }
 
+
   componentDidMount(){
     console.log(SCPRef)
     this.renderTemplates()

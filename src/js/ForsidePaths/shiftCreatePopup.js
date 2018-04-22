@@ -196,6 +196,8 @@ export class ShiftCreatePopup extends React.Component<{}> {
     this.setState({availableEvents: this.state.availableEvents})
   }
 
+
+
   componentDidMount(){
     SCPRef = this
     this.refs.SCPAddRoleAmount.onClick = () => {
@@ -208,7 +210,7 @@ export class ShiftCreatePopup extends React.Component<{}> {
 
   }
 
-  componentWillUnmount(){
+  componentWillUnmount(){ 
     SCPRef.state.roleObject = {roles: []}
     roleObject = {roles: []}
     this.setState({

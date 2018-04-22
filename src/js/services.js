@@ -756,6 +756,8 @@ resetPw(password: string, mail: string): Promise<?Object> {
     });
    });
 }
+
+
 }
 
 

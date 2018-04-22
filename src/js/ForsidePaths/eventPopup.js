@@ -17,21 +17,11 @@ import SelectSearch from 'react-select-search'
 // })(MapContainer)
 
 
-
-
-
-
-
-class EventPopup2 extends React.Component<{}> {
+class EventPopup extends React.Component<{}> {
   constructor(props){
     super(props);
-    this.handleClickOutside = this.handleClickOutside.bind(this)
   }
 
-  handleClickOutside(props){
-    this.props.closePopup()
-    console.log("OUTSIDEEE")
-  }
 
   render(){
     let item = localStorage.getItem('event')
@@ -150,6 +140,8 @@ class EventPopup2 extends React.Component<{}> {
     })
   })
   }
+  componentWillUnmount(){
+  }
 }
 //Admin has own rights when selecting events
 class AdminContent extends React.Component<{}> {
@@ -183,6 +175,8 @@ assignShift(value, shift_id){
     console.log("Success!")
   })
 }
+
+
   componentDidMount(){
     employee.getShift(this.props.shift.id).then((shift) => {
       console.log(shift)
@@ -191,11 +185,12 @@ assignShift(value, shift_id){
         employees.map((x)=>{this.state.employees.push({name: (x.first_name + " " + x.surname), value: x.user_id})})
       })
     })
+
   }
   componentWillUnmount(){
     this.setState({employees: []})
   }
 }
 
-let EventPopup = onClickOutside(EventPopup2)
+
 export {EventPopup}
