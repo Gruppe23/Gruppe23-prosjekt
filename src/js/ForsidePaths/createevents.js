@@ -90,9 +90,8 @@ class createevents extends React.Component<{}> {
      <SelectSearch ref="RKContactPerson" name="language" options={this.state.externcontact} search={true} placeholder="Søk etter eksternkontakt"
      mode="input"
      onMount={()=> EventFile.event.extContact}
-     onChange={(value)=>{EventFile.event.extContact= value)}}
-     onHighlight={onHighlight}
-     onBlur={(value)=>{EventFile.event.extContact= value}}
+     onChange={(value)=>{EventFile.event.extContact = value}}
+     onBlur={(value)=>{EventFile.event.extContact = value}}
      onFocus={onFocus}/>
      </div>
      </div>

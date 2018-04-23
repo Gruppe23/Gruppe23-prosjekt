@@ -28,7 +28,7 @@ class Forside2 extends React.Component<{}> {
   constructor() {
     super();
   }
-//Localstorage for getting logged in user. For saving locally
+//Localstorage for getting logged in user.
   render(){
     let item: obj = localStorage.getItem('signedInUser')
     if (item != null){
@@ -83,6 +83,7 @@ class Forside2 extends React.Component<{}> {
  }
   }
   componentDidMount(){
+    //Legger til vanlige vindusfunksjonaliteten til knappene vi selv vil ha istedet for de vanlige maximize, minimize og lukk knappene til programmet.
     history.push("/forside")
     document.getElementById("Minimize").addEventListener("click", function (e) {
       const window = remote.getCurrentWindow();
@@ -91,7 +92,12 @@ class Forside2 extends React.Component<{}> {
 
     document.getElementById("Maximize").addEventListener("click", function (e) {
       const window = remote.getCurrentWindow();
-      window.maximize();
+      if(window.isMaximized() == true) {
+        window.unmaximize()
+      } else {
+
+        window.maximize();
+      }
     })
 
     document.getElementById("Close").addEventListener("click", function (e) {

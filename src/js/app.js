@@ -65,20 +65,6 @@ class ProgramRender extends React.Component<{}> {
       }
       }
       componentDidMount(){
-        document.getElementById("Minimize").addEventListener("click", function (e) {
-          const window = remote.getCurrentWindow();
-          window.minimize();
-        })
-
-        document.getElementById("Maximize").addEventListener("click", function (e) {
-          const window = remote.getCurrentWindow();
-          window.maximize();
-        })
-
-        document.getElementById("Close").addEventListener("click", function (e) {
-          const window = remote.getCurrentWindow();
-          window.close();
-        })
         history.push("/page1")
         programRender = this
       }
