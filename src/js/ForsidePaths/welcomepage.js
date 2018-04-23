@@ -119,7 +119,6 @@ class WelcomePage extends React.Component<{}> {
   componentDidMount(){
     employee.getSignedInUser().then((user) =>{
       employee.getFrontPageShifts(user.user_id).then((shifts) => {
-        console.log(shifts);
       })
     })
   }

@@ -341,7 +341,7 @@ html, body, .app {
 
 .addsert {
   width: 350px;
-  height: 300px;
+  height: 200px;
 }
 .addsert > button {
   margin-top: 10px;
@@ -394,6 +394,7 @@ html, body, .app {
   float: left;
   border: 1px solid white;
   background-color: #f6f6f6;
+  overflow:auto;
 }
 
 #UserInfoBox {

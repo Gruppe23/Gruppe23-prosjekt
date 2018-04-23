@@ -240,7 +240,6 @@ export class Kalender extends React.Component < {} > {
 
   toggleShiftCreation(slotInfo) {
     new Promise((resolve, reject) => {
-      console.log(slotInfo)
       resolve()
     }).then(() => {
       this.setState({
@@ -347,15 +346,11 @@ export class Kalender extends React.Component < {} > {
                   }
                 }
               }
-              console.log(EventFetch)
               for (let x in EventFetch) {
                 signUpEvents.push(EventFetch[x])
                 eventz.push(EventFetch[x])
                 passiveEvents.push(EventFetch[x])
               }
-              console.log(passiveEvents)
-              console.log(signUpEvents)
-              console.log('nice for what');
               this.setState({
                 kalender1:
                   <
@@ -388,7 +383,7 @@ export class Kalender extends React.Component < {} > {
                   new Date()
                 }
                 onEventDrop = {
-                  console.log("lul")
+                  console.log('Event Dropped')
                 }
                 eventPropGetter = {
                   (this.eventStyleGetter)
@@ -396,7 +391,7 @@ export class Kalender extends React.Component < {} > {
                 onSelectEvent = {
                   event => {
                     if (event.ispassive) {
-                      let c = confirm('Are you sure you wish to remove this passive event?')
+                      let c = confirm('Er du sikker på at du vil gå tilbake til å være tilgjengelig i denne perioden?')
                       if (c == true) {
                         employee.removePassiveEvent(event.passiveId)
                         this.RenderCalendar();
@@ -416,7 +411,6 @@ export class Kalender extends React.Component < {} > {
                     }
                   ) => {
                     new Promise((resolve, reject) => {
-                      console.log(slotInfo)
                       if (slotInfo.end == slotInfo.start) {
                         let thirtyDays = new Date()
                         thirtyDays.setDate(thirtyDays.getDate() + 30)

@@ -17,8 +17,6 @@ export class ShiftCreatePopup extends React.Component<{}> {
     super(props)
     SCPRef = this
     let info = this.props.info
-    console.log(this.props.info.start.toLocaleTimeString().split(" "))
-    console.log(this.props.info)
     this.state ={
       addroles: [],
       renderedRoles: "",
@@ -31,7 +29,6 @@ export class ShiftCreatePopup extends React.Component<{}> {
   render(){
     let startRender = this.props.info.start.toTimeString().split(":")
     let endRender = this.props.info.end.toTimeString().split(":")
-    console.log(startRender)
     if(startRender[0].length == 1){
       startRender[0]= 0+startRender[0]
     }
@@ -55,10 +52,8 @@ export class ShiftCreatePopup extends React.Component<{}> {
             <input ref="SCPEnd" defaultValue={endRender[0] + ":" + endRender[1]} type="time"/></span>
             <div className="SelectSearchContainer">
             <SelectSearch ref="roleadd" name="language" options={this.state.availableEvents} search={true} placeholder="Velg arrangement skiftet hører til" mode="input"
-              onChange={(value)=>{selectedEvent = value
-                console.log(value)}}
-              onBlur={(value)=>{selectedEvent = value
-                  console.log(value)}}
+              onChange={(value)=>{selectedEvent = value}}
+              onBlur={(value)=>{selectedEvent = value}}
               />
               </div>
               <button ref="create" onClick={()=>{this.createShift()}}className="ec_opprett">Opprett Arrangement</button>
@@ -69,10 +64,8 @@ export class ShiftCreatePopup extends React.Component<{}> {
             <span> Velg roller å opprette shift for i valgt tidsperiode:
               <div className="SelectSearchContainer">
               <SelectSearch id ref="roleadd" name="language" options={this.state.addroles} search={true} placeholder="Velg roller å legge til" mode="input"
-                onChange={(value)=>{selectedRole = value
-                  console.log(value)}}
-                onBlur={(value)=>{selectedRole = value
-                    console.log(value)}}
+                onChange={(value)=>{selectedRole = value}}
+                onBlur={(value)=>{selectedRole = value}}
                 />
               </div>
               <input id="SCPAddRoleAmount" ref="SCPAddRoleAmount" defaultValue={3} type="number"/>
@@ -99,7 +92,6 @@ export class ShiftCreatePopup extends React.Component<{}> {
 //
   togglePopup(props): void {
     /* Funksjonen som slår av/på registreringspopup */
-    console.log(SCPRef)
     this.setState({
       showPopup: !this.state.showPopup
     });
@@ -113,11 +105,6 @@ export class ShiftCreatePopup extends React.Component<{}> {
     let endHours = this.refs.SCPEnd.value.split(":")
     startDate.setHours(startHours[0], startHours[1])
     endDate.setHours(endHours[0], endHours[1])
-    console.log(SCPRef.state.roleObject)
-    console.log(startHours)
-    console.log(endHours)
-    console.log(startDate)
-    console.log(endDate)
     if(selectedEvent.value != undefined){
     for (let x in SCPRef.state.roleObject.roles) {
       if(SCPRef.state.roleObject.roles[x] != null){
@@ -141,10 +128,7 @@ export class ShiftCreatePopup extends React.Component<{}> {
     let endDate = new Date(this.props.info.end)
     let inputStart = this.refs.SCPStart.value.split(":")
     let inputEnd = this.refs.SCPEnd.value.split(":")
-    console.log(inputStart)
     startDate.setHours(inputStart[0], inputStart[1])
-    console.log(this.refs.SCPStart.value)
-    console.log(startDate)
     if(document.getElementById("SCPAddRoleAmount").value < 1){
       alert("Vennligst legg til en eller flere av rollen.")
     } else {
@@ -158,19 +142,17 @@ export class ShiftCreatePopup extends React.Component<{}> {
 
   renderRoles(){
     this.setState({
-      renderedRoles: SCPRef.state.roleObject.roles.map((role) => {if(role != null){console.log("SKJEDDE"); return <div key={role.role_id} className="AddedRolesRow">{role.amount + " skift for ansatte med rollen: " + role.role_name + " er satt opp."} <button onClick={ () => { this.removeRole(role.role_id)} } className="removeShift">X</button></div>}})
+      renderedRoles: SCPRef.state.roleObject.roles.map((role) => {if(role != null){ return <div key={role.role_id} className="AddedRolesRow">{role.amount + " skift for ansatte med rollen: " + role.role_name + " er satt opp."} <button onClick={ () => { this.removeRole(role.role_id)} } className="removeShift">X</button></div>}})
     })
   }
 
   removeRole(roleid){
-    console.log(SCPRef.state.roleObject.roles[roleid])
     SCPRef.state.roleObject.roles[roleid] = null
     this.renderRoles()
   }
 
   createRoleTemplate(){
     employee.createTemplate(this.refs.templatename.value, this.refs.templatedesc.value).then((template) => {
-      console.log(template)
       SCPRef.state.roleObject.roles.map((role) => {
         if (role != null) {employee.addRolesToTemplate(template.insertId, role.role_id, role.amount)}
       })
@@ -180,13 +162,12 @@ export class ShiftCreatePopup extends React.Component<{}> {
   renderTemplate(){
   let roleJSON = localStorage.getItem("roleObject")
     this.setState({
-      renderedRoles: SCPRef.state.roleObject.roles.map((role) => {if(role != null){console.log("SKJEDDE"); return <div key={role.role_id} className="AddedRolesRow">{role.amount + " skift for ansatte med rollen: " + role.role_name + " er satt opp."} <button onClick={ () => { this.removeRole(role.role_id)} } className="removeShift">X</button></div>}})
+      renderedRoles: SCPRef.state.roleObject.roles.map((role) => {if(role != null){ return <div key={role.role_id} className="AddedRolesRow">{role.amount + " skift for ansatte med rollen: " + role.role_name + " er satt opp."} <button onClick={ () => { this.removeRole(role.role_id)} } className="removeShift">X</button></div>}})
     })
   }
 
   renderAvailableEvents(){
     this.state.availableEvents = []
-    console.log(this.props.info.start)
     employee.getEventsAvailable(this.props.info.start).then((events)=>{
       events.map((event) => this.state.availableEvents.push({name: event.title, value: event.id}))
     })

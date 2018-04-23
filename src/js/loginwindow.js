@@ -57,7 +57,6 @@ class LoginWindow extends React.Component<{}> {
 
   togglePopup() {
     new Promise((resolve,reject) =>{
-      console.log('popup should appear')
       resolve()
     }).then(()=>{
       this.setState({
@@ -71,7 +70,6 @@ class LoginWindow extends React.Component<{}> {
      let username: string = this.refs.loginUsername.value
      let pass: string = this.refs.loginPassword.value
      employee.getLogin(username).then((notes: User) => {
-       console.log(notes)
        if (passwordHash.verify(pass, notes.password) == true && notes.status == 1)  {
          localStorage.removeItem('signedInUser')
          localStorage.setItem('signedInUser', JSON.stringify(notes))
@@ -113,7 +111,6 @@ export class ForgotPassword extends React.Component <{}> {
 
   componentDidMount(props){
     this.refs.newPwButton.onclick = () => {
-      console.log('button clicked')
       let api_key = 'key-53691f7229e0eec8522473b2e853cabf';
       let domain = 'sandboxb5cedbd4224a4475ac49059ce199712a.mailgun.org';
       let mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
@@ -124,12 +121,7 @@ export class ForgotPassword extends React.Component <{}> {
         let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         for (let i = 0; i < 8; i++)
         newPassword += possible.charAt(Math.floor(Math.random() * possible.length));
-        console.log(Email);
-        console.log(newPassword);
-        console.log(user);
-        console.log(mailgun);
         let hashedPassword = passwordHash.generate(newPassword);
-        console.log(hashedPassword);
         var data = {
           from: 'Rode Kors <gruppe23prosjekt@gmail.com>',
           to: Email,
@@ -137,9 +129,7 @@ export class ForgotPassword extends React.Component <{}> {
           text: 'Hei ' +user.first_name+ '\nDitt nye passord er: ' + newPassword + '\nHvis du ikke har bedt om å få tilsendt nytt passord ber vi deg kontakte en administrator så fort som mulig. \nFor at du ikke skal glemme passordet ditt ber vi om at du går inn på profilsiden din og endrer passordet ditt etter at du har logget inn. \n\nVennlig hilsen oss fra Gruppe 23 teamet.'
         };
         employee.resetPw(hashedPassword, Email).then(() =>{
-          console.log(data);
           mailgun.messages().send(data, function (error, body) {
-            console.log(body);
           }).catch((error) => {
             console.log(errorMessage);
           })

@@ -205,7 +205,6 @@ class AdminPage extends React.Component < {} > {
         userInfoRef.refs.UIBCertificate.style.display = ""
         RegisterClick = false;
         ClickedLicence = object;
-        console.log(object)
       }
 
       RegisterUpdateUserInfoBox(object : User, event: Event) {
@@ -218,7 +217,6 @@ class AdminPage extends React.Component < {} > {
         userInfoRef.refs.UIBCertificate.style.display = "none"
         ClickedRegister = object;
         RegisterClick = true;
-        console.log(object)
       }
     }
 
@@ -255,7 +253,6 @@ class AdminPage extends React.Component < {} > {
                 ClickedRegister = ""
               })
             } else {
-              console.log(ClickedLicence)
               employee.acceptCertificate(ClickedLicence.user_id, ClickedLicence.certificate_id).then(() => {
                 AdminPageRef.loadLicenseList();
                 ClickedLicence = ''

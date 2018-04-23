@@ -4,14 +4,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, HashRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { employee } from "../../services"
-import { Map, InfoWindow, Marker, Listing, GoogleApiWrapper } from 'google-maps-react';
 import { kalender, Kalender } from '../kalender';
 import {SelectRoleTemplate} from './RoleTemplatePopup';
 import onClickOutside from "react-onclickoutside";
 import SelectSearch from 'react-select-search'
-// export default GoogleApiWrapper({
-//   apiKey: ('AIzaSyBBamUPCSbygOz1eTYvLkIWPpajzV8zi38')
-// })(MapContainer)
 let popp;
 class EventPopup2 extends React.Component<{}> {
   constructor(props){
@@ -30,8 +26,6 @@ class EventPopup2 extends React.Component<{}> {
     let signup;
     let admin;
     let user = employee.getSignedInUser2()
-    console.log(user)
-    console.log(item)
     if (item.employee_id == null && user.user_type != 2 && item.isshift){
       signup = <button onClick={()=> {this.showInterest(user.user_id, item.id)
                                       kalender.RenderCalendar()}}> Vis interesse! </button>
@@ -60,12 +54,12 @@ class EventPopup2 extends React.Component<{}> {
           <h4><div>Arrangørfirma kontaktperson</div></h4>
           <div ref="contactName"></div>
           <div ref="contactNumber"></div>
-          <div id="map_canvas"></div>
           <h4><div ref="emp_title"></div></h4>
           <div ref="emp_name"></div>
           <div ref="emp_tlf"></div>
           <div ref="emp_mail"></div>
           {signup}
+
           <div ref="fdback">
           </div>
         </div>
@@ -94,12 +88,10 @@ class EventPopup2 extends React.Component<{}> {
       }).then((event)=> {
         employee.getSignedInUser().then((user)=>{
         if(event.isshift != undefined){
-            console.log(event)
             let start = new Date(event.start)
             let end = new Date(event.end)
             let txtStart = String(start.toTimeString()).split(":")
             let txtEnd = String(end.toTimeString()).split(":")
-            console.log(start)
             this.refs.eventName.textContent = "Shifttittel: " + event.title;
             this.refs.eventLocation.textContent  = "Adresse: " + event.address;
             this.refs.startTime.textContent = "Starttid: " + txtStart[0] + ":" +  txtStart[1]
@@ -158,7 +150,6 @@ class AdminContent extends React.Component<{}> {
                       </div>
 
     }
-    console.log(this.props.shift)
 
     return(
     <div className="AdminContentWrap">
@@ -169,26 +160,16 @@ class AdminContent extends React.Component<{}> {
   }
 
   assignShift(value, shift_id){
-    console.log(value.value, shift_id)
     employee.setShiftEmployee(value.value, shift_id).then((x)=>{
-
-      console.log(x)
-
       this.refs.tilbakemelding.textContent = value.name + " er blitt satt opp til skiftet!"
       this.refs.tilbakemelding.style.color = "green";
-      console.log(this.refs.tilbakemelding)
       kalender.RenderCalendar()
-      console.log("Success!")
     })
   }
 
   editShiftTime(){
-    console.log(this.refs.startEdit.value.split(":"))
-    console.log(this.refs.sluttEdit.value)
-    console.log(kalender.state.popupinfo.start)
     let shiftStartTime = this.refs.startEdit.value.split(":")
     let shiftEndTime = this.refs.sluttEdit.value.split(":")
-    console.log(shiftStartTime)
     kalender.state.popupinfo.start.setHours(shiftStartTime[0], shiftStartTime[1])
     kalender.state.popupinfo.end.setHours(shiftEndTime[0], shiftEndTime[1])
 
@@ -235,12 +216,10 @@ class AdminContent extends React.Component<{}> {
     }
     employee.getShift(this.props.shift.id).then((shift) => {
       employee.getInterestedAvailableUsersWithRole(shift.start, shift.role_id, shift.shift_id).then((employees)=>{
-        console.log(employees)
         employees.map((x)=>{this.state.employees.push({name: (x.first_name + " " + x.surname + " - " + x.shiftscore), value: x.user_id})
       })
     })
       employee.getUninterestedAvailableUsersWithRole(shift.start, shift.role_id, shift.shift_id).then((employees)=>{
-        console.log(employees)
         employees.map((y)=>{this.state.employees.push({name: (y.first_name + " " + y.surname + " - " + y.shiftscore), value: y.user_id})})
       })
     }).then(()=>{
