@@ -1,9 +1,11 @@
 {
-  "name": "electron-react-example",
+  "name": "Rode-Kors-applikasjon",
+  "productName": "Rode Kors applikasjon",
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "start": "electron -r babel-register ."
+    "start": "electron -r babel-register .",
+    "package-win": "electron-packager . Rode-Kors-applikasjon --overwrite --asar=true --platform=win32 --arch=ia32 --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Rode Kors applikasjon\""
   },
   "dependencies": {
     "babel-plugin-transform-class-properties": "^6.24.1",
@@ -41,7 +43,8 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
-    "electron": "^1.8.2",
+    "electron": "^1.8.4",
+    "electron-packager": "^12.0.1",
     "flow-bin": "^0.66.0"
   }
 }

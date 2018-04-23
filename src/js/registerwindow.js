@@ -77,6 +77,10 @@ class RegisterWindow extends React.Component<{}> {
           <input type="text" className="form-control" ref="zipcode" placeholder="(XXXX)"/>
       </div>
       <div className="form-group">
+          <label className="control-label col-sm-4">Sted: </label>
+          <input type="text" className="form-control" ref="place" placeholder="Sted"/>
+      </div>
+      <div className="form-group">
           <label className="control-label col-sm-4" htmlFor="username">Brukernavn: </label>
           <input type="text" className="form-control" ref="username" placeholder="Brukernavn"/>
       </div>
@@ -99,7 +103,7 @@ class RegisterWindow extends React.Component<{}> {
     if (userCreateRef.refs.pwd.value == userCreateRef.refs.confirmpwd.value && userCreateRef.refs.email.value == userCreateRef.refs.confirmemail.value){
       if(userCreateRef.refs.pwd.value != "" || userCreateRef.refs.email.value != "" || userCreateRef.refs.adress.value != "" ){
         let hashedPassword = passwordHash.generate(userCreateRef.refs.pwd.value);
-        employee.signUp(userCreateRef.refs.firstname.value, userCreateRef.refs.surname.value, userCreateRef.refs.email.value, userCreateRef.refs.adress.value, userCreateRef.refs.zipcode.value, hashedPassword, userCreateRef.refs.username.value, userCreateRef.refs.tlf.value).then(() => {
+        employee.signUp(userCreateRef.refs.firstname.value, userCreateRef.refs.surname.value, userCreateRef.refs.email.value, userCreateRef.refs.adress.value, userCreateRef.refs.zipcode.value, userCreateRef.refs.place.value, hashedPassword, userCreateRef.refs.username.value, userCreateRef.refs.tlf.value).then(() => {
           userCreateRef.refs.response.textContent = "Brukerkonto for " + userCreateRef.refs.firstname.value + " " + userCreateRef.refs.surname.value + " har blitt opprettet."
           userCreateRef.refs.response.style.color = "green"
           userCreateRef.refs.firstname.value = ""
@@ -107,12 +111,13 @@ class RegisterWindow extends React.Component<{}> {
           userCreateRef.refs.email.value = ""
           userCreateRef.refs.confirmemail.value = ""
           userCreateRef.refs.adress.value = ""
+          userCreateRef.refs.place.value = ""
           userCreateRef.refs.zipcode.value = ""
           userCreateRef.refs.pwd.value = ""
           userCreateRef.refs.confirmpwd.value = ""
           userCreateRef.refs.username.value = ""
         }).catch((error)=>{
-          userCreateRef.refs.response.innerHTML = "Brukernavn eller email er allerede i bruk."
+          userCreateRef.refs.response.innerHTML = "Brukernavn eller email er allerede i bruk. "
           userCreateRef.refs.response.style.color = "red"
         })
         }else{

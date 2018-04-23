@@ -11,7 +11,6 @@ let EventFile: LSEventObject;
 let selectedRole = {};
 if (localStorage.getItem("eventFile") === null) {
 EventFile = eventObject()
-console.log(EventFile)
 } else {
     let eventFile = localStorage.getItem("eventFile")
     EventFile = JSON.parse(eventFile)
@@ -88,14 +87,12 @@ class createevents extends React.Component<{}> {
 
      <div id="extContact" className="tabcontent">
      <div className="ec_inputDiv" className="inputWidth" ref="contactpersonSelect">
-     <SelectSearch ref="RKContactPerson" name="language" options={this.state.externcontact} search={true} placeholder="Velg Kontaktperson"
+     <SelectSearch ref="RKContactPerson" name="language" options={this.state.externcontact} search={true} placeholder="Søk etter eksternkontakt"
      mode="input"
      onMount={()=> EventFile.event.extContact}
-     onChange={(value)=>{EventFile.event.extContact= value
-                    console.log(value)}}
+     onChange={(value)=>{EventFile.event.extContact= value)}}
      onHighlight={onHighlight}
-     onBlur={(value)=>{EventFile.event.extContact= value
-                    console.log(value)}}
+     onBlur={(value)=>{EventFile.event.extContact= value}}
      onFocus={onFocus}/>
      </div>
      </div>
@@ -120,6 +117,10 @@ class createevents extends React.Component<{}> {
        <label htmlFor="Arranger" className="inputWidth">Arrangørnavn: </label>
           <input ref="Hostname" id="Arranger" className="inputWidth" type="text" name="Arranger"/>
      </div>
+     <div className="ec_inputDiv">
+     <label className="ce_textAreaLabel">Legg til beskrivelse: </label>
+     <textarea ref="details" defaultValue={EventFile.event.details} className="ce_textArea"></textarea>
+   </div>
    </section>
 
    <div className="ec_inputDiv">
@@ -138,30 +139,25 @@ class createevents extends React.Component<{}> {
    <SelectSearch ref="RKContacts" name="language" options={this.state.contactpersons} search={true} placeholder="Velg Kontaktperson"
       mode="input"
       onMount={onMount}
-      onChange={(value)=>{EventFile.event.contact = value
-                      console.log(value)}}
-                      onBlur={(value)=>{EventFile.event.contact = value
-                                      console.log(value)}}
+      onChange={(value)=>{EventFile.event.contact = value}}
+                      onBlur={(value)=>{EventFile.event.contact = value}}
                                       onFocus={this.renderAvailableRKContactPersons.bind(this)}
                       />
    </div>
-</div>
-<div className="ce_Row2">
-  <div className="ec_inputDiv">
-    <label htmlFor="Adresse" className="inputWidth">Adresse: </label>
-       <input ref="adress" defaultValue={EventFile.event.adress} id="Adresse" className="inputWidth" type="text"  name="Prep"/>
-  </div>
 
-  <div className="ec_inputDiv">
-    <label htmlFor="Postnr" className="inputWidth">Postnummber:: </label>
-       <input ref="zip" id="Postnr" defaultValue={EventFile.event.postal}className="inputWidth" type="text"  name="Postnr"/>
-  </div>
-  <div className="ec_inputDiv">
-    <label className="ce_textAreaLabel">Legg til beskrivelse: </label>
-    <textarea ref="details" defaultValue={EventFile.event.details} className="ce_textArea"></textarea>
-  </div>
-    <button ref="create" onClick={()=>{this.eventCreate()}}className="ec_opprett">Opprett Arrangement</button>
 </div>
+  <div className="ce_Row2">
+    <div className="ec_inputDiv">
+      <label htmlFor="Adresse" className="inputWidth">Adresse: </label>
+      <input ref="adress" defaultValue={EventFile.event.adress} id="Adresse" className="inputWidth" type="text"  name="Prep"/>
+    </div>
+    <div className="ec_inputDiv">
+      <label htmlFor="Postnr" className="inputWidth">Postnummer: </label>
+       <input ref="zip" id="Postnr" defaultValue={EventFile.event.postal}className="inputWidth" type="text"  name="Postnr"/>
+     </div>
+        <button ref="cancel" onClick={()=>{this.cancelEventCreation()}} className="Row_3buttons">Avbytt opprettelse</button>
+        <button ref="create" onClick={()=>{this.eventCreate()}}className="ec_opprett">Opprett Arrangement</button>
+  </div>
 </div>)
 }
 
@@ -181,7 +177,6 @@ class createevents extends React.Component<{}> {
   }
 //Popup for creating event. Else creating event
   eventCreate(){
-    console.log(EventFile)
     if(this.refs.eventname.value.length == 0){
       alert("Vennligst fyll inn et arrangementnavn")
     } else{
@@ -200,8 +195,6 @@ class createevents extends React.Component<{}> {
             if(EventFile.event.contact.value == "" || EventFile.event.extContact.value == ""){
               alert("Vennligst velg begge kontaktpersonene")
             }else {
-                    console.log(this.refs.start.value +  " " + this.refs.end.value +this.refs.eventname.value + " " +this.refs.Hostname.value + " " +this.refs.details.value + " " +this.refs.adress.value + " " +this.refs.zip.value + " " +EventFile.event.contact.value + " " + EventFile.event.extContact.value )
-                    console.log(EventFile)
                     employee.createEvent(this.refs.start.value, this.refs.end.value,this.refs.eventname.value, this.refs.Hostname.value, this.refs.details.value, this.refs.adress.value, this.refs.zip.value, Number(EventFile.event.contact.value), Number(EventFile.event.extContact.value))
            }
           }
@@ -226,7 +219,6 @@ renderAvailableRKContactPersons(){
       x.map((y) => this.state.contactpersons.push({name: (y.first_name + " " + y.surname), value: y.user_id}))
       this.setState({contactpersons: this.state.contactpersons})
     })
-    console.log(this.refs.RKContacts)
 
   }
 
@@ -267,7 +259,6 @@ renderSelect(option) {
     EventFile.event.postal = this.refs.zip.value
     EventFile.event.details = this.refs.details.value
     EventFile.event.hostname = this.refs.Hostname.value
-    console.log(EventFile)
     localStorage.setItem("eventFile", JSON.stringify(EventFile))
   }
   loadEventProgress(){

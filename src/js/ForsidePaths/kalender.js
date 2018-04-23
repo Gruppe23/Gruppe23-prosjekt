@@ -58,6 +58,8 @@ export class Kalender extends React.Component < {} > {
       firstSlotSelected: false,
       createShiftInfo: "",
       popupinfo: "",
+      hjelp: <Help/>,
+      adminhjelp: <AdminHelp/>
     }
     kalender = this;
   }
@@ -136,7 +138,13 @@ export class Kalender extends React.Component < {} > {
           render: () => < Tab.Pane Loading > {
             this.state.kalender3
           } < /Tab.Pane>,
-        }
+        },
+        {
+          menuItem: < Menu.Item key = 'hjelp' > Hjelp! < /Menu.Item>,
+          render: () => < Tab.Pane Loading > {
+            this.state.adminhjelp
+          } < /Tab.Pane>,
+        },
       ]
     } else {
       panes = [{
@@ -159,6 +167,12 @@ export class Kalender extends React.Component < {} > {
           for arrangementer < /Menu.Item>,
           render: () => < Tab.Pane Loading > {
             this.state.kalender3
+          } < /Tab.Pane>,
+        },
+        {
+          menuItem: < Menu.Item key = 'hjelp' > Hjelp! < /Menu.Item>,
+          render: () => < Tab.Pane Loading > {
+            this.state.hjelp
           } < /Tab.Pane>,
         },
       ]
@@ -226,7 +240,6 @@ export class Kalender extends React.Component < {} > {
 
   toggleShiftCreation(slotInfo) {
     new Promise((resolve, reject) => {
-      console.log(slotInfo)
       resolve()
     }).then(() => {
       this.setState({
@@ -235,7 +248,7 @@ export class Kalender extends React.Component < {} > {
       });
     })
   }
-  
+
   componentWillUnmount() {
     this.setState({
       kalender1: "",
@@ -333,15 +346,11 @@ export class Kalender extends React.Component < {} > {
                   }
                 }
               }
-              console.log(EventFetch)
               for (let x in EventFetch) {
                 signUpEvents.push(EventFetch[x])
                 eventz.push(EventFetch[x])
                 passiveEvents.push(EventFetch[x])
               }
-              console.log(passiveEvents)
-              console.log(signUpEvents)
-              console.log('nice for what');
               this.setState({
                 kalender1:
                   <
@@ -374,7 +383,7 @@ export class Kalender extends React.Component < {} > {
                   new Date()
                 }
                 onEventDrop = {
-                  console.log("lul")
+                  console.log('Event Dropped')
                 }
                 eventPropGetter = {
                   (this.eventStyleGetter)
@@ -382,7 +391,7 @@ export class Kalender extends React.Component < {} > {
                 onSelectEvent = {
                   event => {
                     if (event.ispassive) {
-                      let c = confirm('Are you sure you wish to remove this passive event?')
+                      let c = confirm('Er du sikker på at du vil gå tilbake til å være tilgjengelig i denne perioden?')
                       if (c == true) {
                         employee.removePassiveEvent(event.passiveId)
                         this.RenderCalendar();
@@ -402,7 +411,6 @@ export class Kalender extends React.Component < {} > {
                     }
                   ) => {
                     new Promise((resolve, reject) => {
-                      console.log(slotInfo)
                       if (slotInfo.end == slotInfo.start) {
                         let thirtyDays = new Date()
                         thirtyDays.setDate(thirtyDays.getDate() + 30)
@@ -510,8 +518,47 @@ export class Kalender extends React.Component < {} > {
 
 
 
+
   componentDidMount() {
+    employee.updateShiftScore()
     this.RenderCalendar();
+  }
+}
+class AdminHelp extends React.Component <{}> {
+  render(){
+    return(
+
+    <div>
+    <h3>Velkommen til kalenderen!</h3>
+    <div>Vi i gruppe 23 har laget en kalender med enkel funskjonalitet, men som kanskje trenger en liten introduksjon.</div>
+    <div><p/><b>Tab 1:</b> Viser alle pågående arrangementer og deres skift. Alle skift vises som enten grønne eller grå. Grønt er skift som har blitt fylt og grått er de som ikke er fylt. <p/>Et godt tips er at hvert arrangement har et tekstfelt som forteller hvor mange tomme skift arrangementet har.
+    <p/> <b>Tab 2:</b> Lar deg sette opp når du ønsker å være utilgjengelig ved å trykke eller dra på dagene du ønsker. Du kan også sette opp mindre tidsperioder som timer på en dag, men det kan ikke være mindre en 12 timer.
+    <p/>
+          <p/><b>Tab 3:</b> Her kan administrator opprette skift til arrangementene ved å trykke på dagen de ønsker. I popupen som kommer frem kan administrator velge start og sluttid for skiftet. Samtidig kan administrator velge hvor mange skift som skal opprettes for hver rolle og kan enkelt lagre rollene og antallet av dem. Hvis forskjellige roller skal arbeide til forskjellige tider må det enten opprettes ved separate instanser eller endre start/sluttid i skiftet i etterkant.
+    </div>
+    </div>
+  )
+  }
+}
+
+class Help extends React.Component<{}> {
+  constructor() {
+    super()
+  }
+  render() {
+    return(<div>
+      <h3>Velkommen til kalenderen! </h3>
+      <div>Vi i gruppe 23 har laget en kalender med enkel funskjonalitet men, som kanskje trenger en liten introduksjon.</div>
+      <p/>
+      <div><b><p/>Først og fremst:</b> Kalenderen består av tre tabs. Hver tab lar deg opperere eller få informasjon som er relevant for deg. <p/>
+            <b>Tab 1:</b> Viser alle pågående arrangementer i røde kors og de skiftene du har i de.<p/>
+            <b>Tab 2:</b> Viser alle arrangementer og lar deg velge hvilke tider du skal vises som utilgjengelig/passiv. For å opprette en passiv periode trykker eller trykker og dra du over de dagene du ønsker å være passiv på.
+            For å angre på opprettede passive tider trengs det bare å trykke på et passiv element og du vil få muligheten til å fjerne det. Du kan også sette opp mindre tidsperioder som timer på en dag, men det kan ikke være mindre en 12 timer.<p/><p/>
+            <b>Tab 3:</b> Gir en oversikt over alle arrangementer du kan melde deg opp til. Svart betyr at et skift allerede er fylt, gult betyr at du har vist interesse for dette skiftet og grått betyr at skiftet er ledig.
+          </div>
+        </div>
+
+    )
   }
 }
 

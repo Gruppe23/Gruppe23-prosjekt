@@ -54,25 +54,23 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
 //Elements for profilepage
   render() {
     return (
-      <div className="profilside">
-        {
-          this.state.showPopup
-            ? <EditUser user_id={this.props.profil_id} closePopup={this.togglePopup.bind(this) }
-            />
-            : null
-        }
         <div className="profilePage">
           <div className="row">
-            <div className="col-md-12 pWinUserInfo">
-              <h3>
+            <div className="col-md-12">
+              <h4>
               <div ref="name"></div>
-              </h3><p/>
-              <div ref="email"></div><p/>
-              <div ref="tlf"></div><p/>
-              <div ref="usertype"></div><p/>
-              <p/>
+              </h4>
+              <div ref="adress"></div>
+              <div ref="zipCode"></div>
+              <div ref="phone"></div>
+              <p></p>
+              <div ref="userid"></div>
+              <div ref="email"></div>
+              <div ref="usertype"></div>
+
             </div>
           </div>
+          <p></p>
           <div className="row">
             <div className="col-md-6">
               <h4>
@@ -92,8 +90,13 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
               <p/> {this.state.admin}
             </div>
           </div>
+          {
+            this.state.showPopup
+            ? <EditUser user_id={this.props.profil_id} closePopup={this.togglePopup.bind(this) }
+            />
+            : null
+          }
         </div>
-      </div>
     )
   }
   componentDidMount(props) {
@@ -114,16 +117,25 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
       employee.getUserRoles2(this.props.profil_id).then((user_roles) => {
         employee.getUserCertifications(this.props.profil_id).then((user_cert) => {
           employee.getEmployee(this.props.profil_id).then((user_profile) => {
-            this.refs.name.textContent = user_profile.first_name + " " + user_profile.surname
-            this.refs.tlf.textContent = "Telefonnummer " + user_profile.tlf;
-            this.refs.email.textContent = "Email: " + user_profile.email;
+            if(user.user_type == 2) {
+              this.refs.adress.textContent = "Adresse: " + user_profile.adress;
+              this.refs.zipCode.textContent = "Postnr: " + user_profile.zipcode +" , Sted: " +user_profile.place;
+              this.refs.userid.textContent= "Medlemsnummer: " + user_profile.user_id;
+            } else if(user.user_id == user_profile.user_id) {
+              this.refs.adress.textContent = "Adresse: " + user_profile.adress;
+              this.refs.zipCode.textContent = "Postnr: " + user_profile.zipcode +" , Sted: " +user_profile.place;
+              this.refs.userid.textContent= "Medlemsnummer: " + user_profile.user_id;
+            }
+              this.refs.name.textContent = user_profile.first_name + " " + user_profile.surname
+              this.refs.phone.textContent = "Mobil: " + user_profile.tlf;
+              this.refs.email.textContent = "Email: " + user_profile.email;
             if (user_profile.user_type == 2) {
               this.refs.usertype.textContent = "Brukertype: Administrator"
             } else {
               this.refs.usertype.textContent = "Brukertype: Bemanning"
             }
             if (user.user_type == 2) { // VI velger om brukeren av appen skal kunne se verktøy på profilsiden eller ikke. Er adminbruker pålogget får han mulighet på alles profiler. Er det vanlig bruker er verktøy bare tilgjengelig på egebn profil.
-              this.setState({admin: <AdminEditing user_id={user_profile.user_id}/>})
+              this.setState({admin: <AdminEditing signedInUser={user.user_id} user_id={user_profile.user_id}/>})
             } else {
               if (user.user_id == user_profile.user_id) {
                 this.setState({admin: <UserAdding user_id={user_profile.user_id}/>})
@@ -187,7 +199,6 @@ class UserAdding extends React.Component < {} > {
   addQualification(props) {
     if (confirm('Er du sikker på at du vil søke om å legge til dette sertifikatet?')) {
       employee.addCertificate(this.props.user_id, selectedCertificate.value, 0).then((check) => {
-        alert(check)
         profileDetailsRef.loadProfileInfo()
         this.loadCertifications()
       })
@@ -224,12 +235,22 @@ class AdminEditing extends React.Component < {} > {
     }
   }
   render() {
-    return (<div className="PWadminContent">
-      <button className="TopRight" ref="disableAccount" onClick={() => {
-          this.disableAccount()
-        }}>
-        <a className="delButton"><i className="fa fa-user-times"></i></a>
-      </button>
+    let disableButton;
+    if(this.props.signedInUser == this.props.user_id) {
+      disableButton = "";
+    }else{
+      disableButton =  <button className="TopRight" ref="disableAccount" onClick={() => {
+      this.disableAccount()
+    }}>
+    <a className="delButton"><i className="fa fa-user-times"></i></a>
+    </button>
+
+
+    };
+    return (
+      <div className="addsert">
+        {disableButton}
+
       <h4>
         <div>Administratorverktøy</div>
       </h4>
@@ -242,12 +263,12 @@ class AdminEditing extends React.Component < {} > {
       <button ref="addselect" className="editUserBTN" onClick={()=> {this.addQualification()}}>Legg til kompetanse</button>
       <button  className="editUserBTN" ref="editProfile" onClick={()=>{profileDetailsRef.togglePopup()}}>Endre profil</button>
     </div>)
+
   }
 //explains itself
   addQualification(props) {
     if (confirm('Er du sikker på at du vil legge til dette sertifikatet hos brukeren?')) {
       employee.addCertificate(this.props.user_id, selectedCertificate.value, 1).then((check) => {
-        alert(check)
         profileDetailsRef.loadProfileInfo()
         this.loadCertification()
       })
@@ -257,7 +278,6 @@ class AdminEditing extends React.Component < {} > {
   }
 
   loadCertification(){
-    console.log(this.props.user_id)
     this.state.certlist = []
     employee.getUnobtainedUserCertifications(this.props.user_id).then((cert) => {
       cert.map((x) => this.state.certlist.push({name: x.certificate_name, value: x.certificate_id}))
@@ -265,17 +285,19 @@ class AdminEditing extends React.Component < {} > {
         certlist: this.state.certlist
       })
     })
-    console.log(this.state.certlist)
   }
 //for disableing accont. Popup will appear and ask if you want to delete + mail
   disableAccount(props) {
-    if (confirm('Are you sure you want to deactivate this account?')) {
+    if (confirm('Er du sikker på at du vil deaktivere denne brukeren?')) {
       employee.deactivateAccount(this.props.user_id).then(() => {
         employee.getEmployee(this.props.user_id).then((user) => {
+          let api_key = 'key-53691f7229e0eec8522473b2e853cabf';
+          let domain = 'sandboxb5cedbd4224a4475ac49059ce199712a.mailgun.org';
+          let mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
           let mailMessage = "<p>Hei " + user.first_name + ", din brukerkonto hos Røde Kors bemanningsapplikasjon har blitt deaktivert.</p> Ved eventuelle spørsmål, klager eller tilbakemeldinger vennligst ta kontakt med oss på gruppe23prosjekt@gmail.com<p> Vennlig hilsen oss fra Gruppe 23 teamet.</p> "
           let mailOptions = {
-            from: 'rexp22@gmail.com', // sender address
-            to: 'andreasfrenning@gmail.com', // list of receivers
+            from: 'Rode Kors <gruppe23prosjekt@gmail.com>', // sender address
+            to: user.email, // list of receivers
             subject: 'Brukerkonto deaktivert', // Subject line
             html: mailMessage // plain text body
           };
@@ -284,11 +306,11 @@ class AdminEditing extends React.Component < {} > {
 
           userSearch.loadUserList()
 //Transporter for sending out mail
-          transporter.sendMail(mailOptions, function(err, info) {
-            if (err) {
-              console.log(err)
+          mailgun.messages().send(mailOptions, function(error, body) {
+            if (error) {
+              console.log(error)
             } else {
-              console.log(info)
+              console.log(body)
             }
           })
         })

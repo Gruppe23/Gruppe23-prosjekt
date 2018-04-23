@@ -104,7 +104,6 @@ class getEmployee {
           return;
         }
         resolve(result[0]);
-        console.log(result[0])
       });
     });
   }
@@ -117,7 +116,6 @@ class getEmployee {
           return;
         }
         resolve(result[0]);
-        console.log(result[0])
       });
     });
   }
@@ -141,7 +139,6 @@ class getEmployee {
           reject(error);
           return;
         }
-        console.log(result[0])
         resolve(result[0])
       })
     })
@@ -340,7 +337,6 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
                   reject(error);
                   return;
                 }
-                console.log(result)
               connection.query('SET foreign_key_checks = 1', (error, result )=> {
                 resolve()
               })
@@ -379,7 +375,6 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
   }
 
   getUninterestedAvailableUsersWithRole(shift_date: date, id:number, shift_id: number): Promise<Object[]> {
-    console.log(shift_date)
     return new Promise((resolve, reject) => {
       connection.query("SELECT COUNT(*) AS CertCount, rc.role_id, e.first_name, e.surname, e.shiftscore, e.user_id FROM employee e INNER JOIN (employee_certificate ec INNER JOIN role_certificate rc ON rc.certificate_id = ec.certificate_id) ON e.user_id = ec.employee_id AND rc.role_id = ? WHERE NOT EXISTS ( SELECT * FROM passive p WHERE (? BETWEEN p.from_date AND p.to_date) AND(p.employee_id = e.user_id) AND(p.employee_id = ec.employee_id)) AND NOT EXISTS( SELECT * FROM shift s WHERE (? BETWEEN s.start AND s.end) AND(s.employee_id = e.user_id) AND(s.employee_id = ec.employee_id) ) AND e.status = 1 AND (SELECT case when employee_id is not null then true else false end from interest where shift_id = ? and employee_id = e.user_id) is null GROUP BY e.user_id HAVING CertCount =( SELECT COUNT(*) FROM role_certificate WHERE role_id = ? GROUP BY rc.role_id )	ORDER By e.shiftscore ASC", [
          id, shift_date, shift_date, shift_id, id
@@ -393,7 +388,6 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
     })
   }
   getInterestedAvailableUsersWithRole(shift_date: date, id: number, shift_id: number): Promise<Object[]> {
-    console.log(shift_date)
     return new Promise((resolve, reject) => {
       connection.query("SELECT COUNT(*) AS CertCount, rc.role_id, e.first_name, e.surname, e.shiftscore, e.user_id FROM employee e INNER JOIN (employee_certificate ec INNER JOIN role_certificate rc ON rc.certificate_id = ec.certificate_id) ON e.user_id = ec.employee_id AND rc.role_id = ? WHERE NOT EXISTS ( SELECT * FROM passive p WHERE (? BETWEEN p.from_date AND p.to_date) AND(p.employee_id = e.user_id) AND(p.employee_id = ec.employee_id)) AND NOT EXISTS( SELECT * FROM shift s WHERE (? BETWEEN s.start AND s.end) AND(s.employee_id = e.user_id) AND(s.employee_id = ec.employee_id) ) AND e.status = 1 AND (SELECT case when employee_id is NOT Null then true else false end from interest where shift_id = ? and employee_id = e.user_id) is not null GROUP BY e.user_id HAVING CertCount =( SELECT COUNT(*) FROM role_certificate WHERE role_id = ? GROUP BY rc.role_id )	ORDER By e.shiftscore DESC", [
          id, shift_date, shift_date, shift_id, id
@@ -408,7 +402,6 @@ newExtContact(first_name: string, last_name: string, phone_number: number) {
   }
 //Updating
 setShiftEmployee(employee_id, shift_id){
-  console.log()
   return new Promise((resolve, reject) => {
     connection.query('UPDATE shift SET employee_id = ? where shift_id = ?', [employee_id, shift_id], (error, result) => {
       if (error) {
@@ -534,7 +527,6 @@ setShiftEmployee(employee_id, shift_id){
           reject(error);
           return;
         }
-        console.log(result)
         resolve(result);
       });
     });
@@ -560,14 +552,15 @@ setShiftEmployee(employee_id, shift_id){
   };
   //Hente ut alle certifikater som ikke har blitt godkjent
 
-  signUp(first_name : string, surname : string, email : string, adress : string, zipcode : number, password : string, username : string, tlf : string): Promise<void> {
+  signUp(first_name : string, surname : string, email : string, adress : string, zipcode : number, place : string, password : string, username : string, tlf : string): Promise<void> {
     return new Promise((resolve, reject) => {
-      connection.query('INSERT INTO employee (first_name, surname, email, adress, zipcode, password, username, tlf) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [
+      connection.query('INSERT INTO employee (first_name, surname, email, adress, zipcode, place, password, username, tlf) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [
         first_name,
         surname,
         email,
         adress,
         zipcode,
+        place,
         password,
         username,
         tlf
@@ -613,14 +606,12 @@ setShiftEmployee(employee_id, shift_id){
 
 
 getEventsAvailable(date): Promise< ?Object> {
-  console.log(date)
   return new Promise((resolve, reject) => {
     connection.query('SELECT * FROM events WHERE ? BETWEEN start AND end',[date], (error, result) => {
       if(error) {
         reject(error);
         return;
       }
-      console.log(result)
       resolve(result)
     })
   })
@@ -690,7 +681,6 @@ getEventsAvailable(date): Promise< ?Object> {
           reject(error);
           return;
         }
-        console.log(result)
         resolve(result)
       })
     })
@@ -816,6 +806,41 @@ removePassiveEvent(id: number): Promise< ?Object> {
       resolve(result);
     });
   });
+}
+
+getUserByMail(mail: string): Promise< ?Object> {
+  return new Promise((resolve, reject) => {
+    connection.query('SELECT * FROM employee WHERE email = ?', [mail], (error, result) => {
+      if(error) {
+        reject(error);
+        return;
+      }
+      resolve(result[0]);
+    });
+  });
+}
+resetPw(password: string, mail: string): Promise<?Object> {
+  return new Promise((resolve, reject) => {
+    connection.query('UPDATE employee SET password =? WHERE email= ?', [password, mail], (error, result) => {
+      if(error) {
+        reject(error);
+        return;
+      }
+      resolve(result);
+    });
+   });
+}
+
+updateShiftScore(){
+  return new Promise((resolve, reject) => {
+    connection.query('update employee e inner join (Select employee_id, count(employee_id) as shift_amount from shift group by employee_id) as b on e.user_id = b.employee_id set e.shiftscore = b.shift_amount', (error, result) => {
+      if(error) {
+        reject(error);
+        return;
+      }
+      resolve(result);
+    });
+   });
 }
 
 }

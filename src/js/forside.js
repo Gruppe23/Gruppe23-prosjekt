@@ -40,7 +40,6 @@ class Forside2 extends React.Component<{}> {
         admin = <ul className="nav navbar-nav"><li><Link className="tooltipxx" to='/AdminPage'><span className="tooltiptextxx">Administratorverktøy</span><i className="fa fa-wrench"></i></Link></li><li><Link className="tooltipxx" to='/opprettevent'><span className="tooltiptextxx">Opprett Arrangement</span><i className="fa fa-calendar-plus"></i></Link></li></ul>
         adminpath = <Route exact path="/AdminPage" component={AdminPage} />
       } else {
-        admin = <span> Velkommen til Røde Kors appen!</span>;
     }
   }
     return(
@@ -104,7 +103,7 @@ class Forside2 extends React.Component<{}> {
 class Logout extends React.Component<{}> {
   render(){
       return(
-        <div> u should not be here </div>
+        <div>u should not be here</div>
       )
     }
     componentDidMount(){

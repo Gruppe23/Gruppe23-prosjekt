@@ -79,8 +79,8 @@ font-size: 30px;
 
 .adminpagebtn{
   position: absolute;
-  bottom: 5px;
-  left: 26px;
+  bottom: 15px;
+  left: 31px;
 }
 #taskbar {
   width: -webkit-calc(100% - 35px);
@@ -317,11 +317,40 @@ html, body, .app {
   display: block;
   z-index: 1001;
 }
-.kalenderWrap{
-  height: 90%;
-  width: 100%;
-  margin-top: 55px;
+
+.popup_inner2 {
+  border: 1px solid #ccc;
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  top: 100px;
+  right: 0;
+  left: 0;
+  width: 400px;
+  height: 250px;
+  margin: auto;
+  background: white;
+  display: block;
+  z-index: 1001;
 }
+
+.kalenderWrap{
+  height: 97% !important;
+  width: 100%;
+}
+
+.addsert {
+  width: 350px;
+  height: 200px;
+}
+.addsert > button {
+  margin-top: 10px;
+}
+
+.addsert > div > div > ul {
+  height: 100px;
+}
+
 .kalender {
   height: calc(95% - 50px);
   border: 1px solid black;
@@ -355,6 +384,7 @@ html, body, .app {
 }
 .PWuserContent, .PWadminContent > .select-search-box {
   width: 400px !important;
+  margin-left: 20px;
   margin-bottom: 10px;
 }
 #UserList {
@@ -364,6 +394,7 @@ html, body, .app {
   float: left;
   border: 1px solid white;
   background-color: #f6f6f6;
+  overflow:auto;
 }
 
 #UserInfoBox {
@@ -505,7 +536,7 @@ a.hover span {
 }
 
 .ce_Row2 {
-  width: 500px;
+  width: 200px;
   height: 700px;
   overflow: show;
   float: left;
@@ -700,16 +731,15 @@ button {
 }
 
 .Row_3buttons {
-  background-color: #f1f1f1;
-  outline: none;
+  background-color: #e47168;
+  outline:inherit;
   float: left;
-  border: 1px solid #ccc;
-  background-color: inherit;
+  border: 1px solid #696969;
   cursor: pointer;
   padding: 8px 5px;
   transition: 0.3s;
   font-size: 14px;
-  margin-top: 5px;
+  margin-top: 10px;
   width: 100%;
 }
 
@@ -748,9 +778,8 @@ right: 5px;
 }
 
 .Row_3buttons:hover {
-  background-color: #ccc;
+  background-color: #696969;
 }
-
 
 .cancer:hover {
   background-color: #ddd;
@@ -778,12 +807,13 @@ right: 5px;
   margin-top: 0px;
 }
 .ec_opprett{
-    background-color: lightgrey;
+    background-color: #e47168;
     float: left;
-    border: 1px solid grey;
-    outline: none;
+    border: 1px solid #696969;
+    outline: inherit;
     cursor: pointer;
     padding: 8px 16px;
+    margin-top:5px;
     WIDTH:  100%;
     transition: 0.3s;
     font-size: 14px;
@@ -791,7 +821,7 @@ right: 5px;
     left: 5px;
 }
 .ec_opprett:hover {
-    background-color: #ddd;
+    background-color: #696969;
 }
 /* Change background color of buttons on hover */
 .tab button:hover {
@@ -816,6 +846,7 @@ right: 5px;
 }
 
 .event{
+  width: 200px;
   float: left;
 }
 
@@ -827,24 +858,40 @@ img{
  max-width:100%;
 }
 
-.editUserBTN{
+.newPw {
+  width: 100%;
+  height: 100%;
+  position: absolute !important;
+  background-color: #8B8484;
+  padding-left: 30px;
+  text-align: left;
+}
+
+.editUserBTN {
   margin-top: 10px;
+
 }
 
 .profilePage {
     position:relative;
-    height: 70%;
+    height: 80%;
     width: 50%;
     background-color: #696969;
     padding: 15px;
-    min-width: 550px;
     float:left;
     margin-left: 15px;
+
+    overflow: auto;
 }
+
 .pWinUserInfo {
   text-align: left;
 }
-
+.disableBTN {
+  right: 5px;
+  bottom: 5px;
+  position: absolute;
+}
 .delButton {
   color:#696969;
 }
@@ -852,14 +899,15 @@ img{
   color: red;
 }
 
-.popupContent{
-  height: 100%;
-  width: 100%;
-  background-color:
+.popupContent {
+  margin-top: 10px;
+  margin-left: 10px;
 }
 
 .editTime {
   margin-top: 10px;
+  display: grid;
+  width: 100px;
 }
 .editTime > * {
   height: 25px;
