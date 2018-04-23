@@ -526,6 +526,7 @@ export class Kalender extends React.Component < {} > {
 
 
   componentDidMount() {
+    employee.updateShiftScore()
     this.RenderCalendar();
   }
 }

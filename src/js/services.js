@@ -842,6 +842,17 @@ resetPw(password: string, mail: string): Promise<?Object> {
    });
 }
 
+updateShiftScore(){
+  return new Promise((resolve, reject) => {
+    connection.query('update employee e inner join (Select employee_id, count(employee_id) as shift_amount from shift group by employee_id) as b on e.user_id = b.employee_id set e.shiftscore = b.shift_amount', (error, result) => {
+      if(error) {
+        reject(error);
+        return;
+      }
+      resolve(result);
+    });
+   });
+}
 
 }
 
