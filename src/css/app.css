@@ -871,13 +871,13 @@ img{
 
 .profilePage {
     position:relative;
-    height: 60%;
+    height: 80%;
     width: 50%;
     background-color: #696969;
     padding: 15px;
     float:left;
     margin-left: 15px;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .pWinUserInfo {
