@@ -317,7 +317,7 @@ html, body, .app {
   display: block;
   z-index: 1001;
 }
-<<<<<<< HEAD
+
 .popup_inner2 {
   border: 1px solid #ccc;
   position: absolute;
@@ -856,7 +856,6 @@ img{
  max-width:100%;
 }
 
-<<<<<<< HEAD
 .newPw {
   width: 100%;
   height: 100%;
@@ -864,19 +863,18 @@ img{
   background-color: #8B8484;
   padding-left: 30px;
   text-align: left;
-=======
-.editUserBTN{
+
+.editUserBTN {
   margin-top: 10px;
->>>>>>> master
+
 }
 
 .profilePage {
     position:relative;
-    height: 70%;
-    width: 50%;
+    height: 70% !important;
+    width: 50% !important;
     background-color: #696969;
     padding: 15px;
-    min-width: 550px;
     float:left;
     margin-left: 15px;
 }
@@ -891,16 +889,9 @@ img{
   color: red;
 }
 
-<<<<<<< HEAD
 .popupContent {
   margin-top: 10px;
   margin-left: 10px;
-=======
-.popupContent{
-  height: 100%;
-  width: 100%;
-  background-color:
->>>>>>> master
 }
 
 .editTime {

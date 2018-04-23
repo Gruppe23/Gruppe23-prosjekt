@@ -54,16 +54,9 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
 //Elements for profilepage
   render() {
     return (
-      <div className="profilside">
-        {
-          this.state.showPopup
-            ? <EditUser user_id={this.props.profil_id} closePopup={this.togglePopup.bind(this) }
-            />
-            : null
-        }
         <div className="profilePage">
           <div className="row">
-            <div className="col-md-6 pWinUserInfo">
+            <div className="col-md-12">
               <h4>
               <div ref="name"></div>
               </h4>
@@ -97,8 +90,13 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
               <p/> {this.state.admin}
             </div>
           </div>
+          {
+            this.state.showPopup
+            ? <EditUser user_id={this.props.profil_id} closePopup={this.togglePopup.bind(this) }
+            />
+            : null
+          }
         </div>
-      </div>
     )
   }
   componentDidMount(props) {
@@ -127,11 +125,10 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
               this.refs.adress.textContent = "Adresse: " + user_profile.adress;
               this.refs.zipCode.textContent = "Postnr: " + user_profile.zipcode +" , Sted: " +user_profile.place;
               this.refs.userid.textContent= "Medlemsnummer: " + user_profile.user_id;
-            } else{
+            }
               this.refs.name.textContent = user_profile.first_name + " " + user_profile.surname
               this.refs.phone.textContent = "Mobil: " + user_profile.tlf;
               this.refs.email.textContent = "Email: " + user_profile.email;
-            }
             if (user_profile.user_type == 2) {
               this.refs.usertype.textContent = "Brukertype: Administrator"
             } else {
