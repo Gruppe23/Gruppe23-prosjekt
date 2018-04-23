@@ -560,14 +560,15 @@ setShiftEmployee(employee_id, shift_id){
   };
   //Hente ut alle certifikater som ikke har blitt godkjent
 
-  signUp(first_name : string, surname : string, email : string, adress : string, zipcode : number, password : string, username : string, tlf : string): Promise<void> {
+  signUp(first_name : string, surname : string, email : string, adress : string, zipcode : number, place : string, password : string, username : string, tlf : string): Promise<void> {
     return new Promise((resolve, reject) => {
-      connection.query('INSERT INTO employee (first_name, surname, email, adress, zipcode, password, username, tlf) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [
+      connection.query('INSERT INTO employee (first_name, surname, email, adress, zipcode, place, password, username, tlf) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [
         first_name,
         surname,
         email,
         adress,
         zipcode,
+        place,
         password,
         username,
         tlf
