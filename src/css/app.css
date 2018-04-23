@@ -384,6 +384,7 @@ html, body, .app {
 }
 .PWuserContent, .PWadminContent > .select-search-box {
   width: 400px !important;
+  margin-left: 20px;
   margin-bottom: 10px;
 }
 #UserList {
@@ -845,6 +846,7 @@ right: 5px;
 }
 
 .event{
+  width: 200px;
   float: left;
 }
 
@@ -885,7 +887,11 @@ img{
 .pWinUserInfo {
   text-align: left;
 }
-
+.disableBTN {
+  right: 5px;
+  bottom: 5px;
+  position: absolute;
+}
 .delButton {
   color:#696969;
 }
@@ -900,6 +906,8 @@ img{
 
 .editTime {
   margin-top: 10px;
+  display: grid;
+  width: 100px;
 }
 .editTime > * {
   height: 25px;
