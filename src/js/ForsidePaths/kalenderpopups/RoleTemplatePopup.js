@@ -9,15 +9,6 @@ import { SCPRef } from "./shiftCreatePopup"
 let templateRolesString = []
 let templateString =[]
 let EventFile;
-//@flow
-//
-// if (localStorage.getItem("eventFile") === null) {
-//
-// console.log(EventFile)
-// } else {
-//     let eventFile = localStorage.getItem("eventFile")
-//     EventFile = JSON.parse(eventFile)
-// }
 
 class SelectRoleTemplate extends React.Component<{}> {
   constructor(props) {
@@ -67,7 +58,6 @@ class SelectRoleTemplate extends React.Component<{}> {
 
 
   componentDidMount(){
-    console.log(SCPRef)
     this.renderTemplates()
 
   }

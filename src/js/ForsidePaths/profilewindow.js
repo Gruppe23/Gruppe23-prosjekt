@@ -199,7 +199,6 @@ class UserAdding extends React.Component < {} > {
   addQualification(props) {
     if (confirm('Er du sikker på at du vil søke om å legge til dette sertifikatet?')) {
       employee.addCertificate(this.props.user_id, selectedCertificate.value, 0).then((check) => {
-        alert(check)
         profileDetailsRef.loadProfileInfo()
         this.loadCertifications()
       })
@@ -270,7 +269,6 @@ class AdminEditing extends React.Component < {} > {
   addQualification(props) {
     if (confirm('Er du sikker på at du vil legge til dette sertifikatet hos brukeren?')) {
       employee.addCertificate(this.props.user_id, selectedCertificate.value, 1).then((check) => {
-        alert(check)
         profileDetailsRef.loadProfileInfo()
         this.loadCertification()
       })
@@ -280,7 +278,6 @@ class AdminEditing extends React.Component < {} > {
   }
 
   loadCertification(){
-    console.log(this.props.user_id)
     this.state.certlist = []
     employee.getUnobtainedUserCertifications(this.props.user_id).then((cert) => {
       cert.map((x) => this.state.certlist.push({name: x.certificate_name, value: x.certificate_id}))
@@ -288,11 +285,10 @@ class AdminEditing extends React.Component < {} > {
         certlist: this.state.certlist
       })
     })
-    console.log(this.state.certlist)
   }
 //for disableing accont. Popup will appear and ask if you want to delete + mail
   disableAccount(props) {
-    if (confirm('Are you sure you want to deactivate this account?')) {
+    if (confirm('Er du sikker på at du vil deaktivere denne brukeren?')) {
       employee.deactivateAccount(this.props.user_id).then(() => {
         employee.getEmployee(this.props.user_id).then((user) => {
           let api_key = 'key-53691f7229e0eec8522473b2e853cabf';
