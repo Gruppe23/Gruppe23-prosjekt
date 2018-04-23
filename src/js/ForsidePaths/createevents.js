@@ -151,19 +151,18 @@ class createevents extends React.Component<{}> {
    </div>
 
 </div>
-<div className="ce_Row2">
-  <button ref="cancel" onClick={()=>{this.cancelEventCreation()}} className="Row_3buttons">Avbytt opprettelse</button>
-  <div className="ec_inputDiv">
-    <label htmlFor="Adresse" className="inputWidth">Adresse: </label>
-       <input ref="adress" defaultValue={EventFile.event.adress} id="Adresse" className="inputWidth" type="text"  name="Prep"/>
-  </div>
-  <div className="ec_inputDiv">
-    <label htmlFor="Postnr" className="inputWidth">Postnummber:: </label>
+  <div className="ce_Row2">
+    <div className="ec_inputDiv">
+      <label htmlFor="Adresse" className="inputWidth">Adresse: </label>
+      <input ref="adress" defaultValue={EventFile.event.adress} id="Adresse" className="inputWidth" type="text"  name="Prep"/>
+    </div>
+    <div className="ec_inputDiv">
+      <label htmlFor="Postnr" className="inputWidth">Postnummer: </label>
        <input ref="zip" id="Postnr" defaultValue={EventFile.event.postal}className="inputWidth" type="text"  name="Postnr"/>
+     </div>
+        <button ref="cancel" onClick={()=>{this.cancelEventCreation()}} className="Row_3buttons">Avbytt opprettelse</button>
+        <button ref="create" onClick={()=>{this.eventCreate()}}className="ec_opprett">Opprett Arrangement</button>
   </div>
-
-    <button ref="create" onClick={()=>{this.eventCreate()}}className="ec_opprett">Opprett Arrangement</button>
-      </div>
 </div>)
 }
 
