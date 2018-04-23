@@ -14,11 +14,5 @@ app.on('ready', () => {
 });
 
 app.on('window-all-closed', () => {
-  let item = localStorage.getItem("signedInUser")
-  item = JSON.pars(item)
-  if(item.staySignedIn != undefined || item.staySignedIn == true) {
-  } else {
-    localStorage.removeItem("signedInUser")
-  }
   app.quit();
 });
