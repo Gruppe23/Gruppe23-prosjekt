@@ -53,10 +53,10 @@ class EventPopup2 extends React.Component<{}> {
           <div ref="eventLocation"></div>
           <div id="startTime" ref="startTime"></div>
           <div id="endTime" ref="endTime"></div>
+          <div ref="shifts"></div>
           <h4><div>Røde Kors Kontaktperson</div></h4>
           <div ref="RKC_name"></div>
           <div ref="RKC_tlf"></div>
-        //  <a href="" ref="eventMapsLink">Google Maps Link</a>
           <h4><div>Arrangørfirma kontaktperson</div></h4>
           <div ref="contactName"></div>
           <div ref="contactNumber"></div>
@@ -66,7 +66,7 @@ class EventPopup2 extends React.Component<{}> {
           <div ref="emp_tlf"></div>
           <div ref="emp_mail"></div>
           {signup}
-          <div ref="mapGoesHere">
+          <div ref="fdback">
           </div>
         </div>
         <div>
@@ -80,6 +80,8 @@ class EventPopup2 extends React.Component<{}> {
   }
 
   showInterest(user, shift_id){
+    this.refs.fdback.textContent = "Du har vist interesse for skiftet!"
+    this.refs.fdback.style.color = "green"
     employee.setInterest(user, shift_id)
     kalender.RenderCalendar();
   }
@@ -119,8 +121,9 @@ class EventPopup2 extends React.Component<{}> {
             let end = new Date(event.end)
             this.refs.eventName.textContent = "Arrangsjemangstittel: " + event.title;
             this.refs.eventLocation.textContent  = "Adresse: " + event.address;
-            this.refs.startTime.textContent = "Start: " + start
-            this.refs.endTime.textContent = "Slutt: " + end
+            this.refs.startTime.textContent = "Start: " + start.toDateString()
+            this.refs.endTime.textContent = "Slutt: " + end.toDateString()
+            this.refs.shifts.textContent = "Tomme skift: " + event.empty_shifts
             this.refs.contactName.textContent = "Navn: " + event.ext_contact_name + ' ' + event.contact_last_name
             this.refs.contactNumber.textContent = "TLF: " + event.ec_tlf
             this.refs.RKC_name.textContent = "Navn: " + event.contact_first_name + " " + event.contact_last_name
@@ -146,7 +149,6 @@ class AdminContent extends React.Component<{}> {
       <span>Velg blant tilgjengelige ansatte som kvalifiserer til skiftet: </span>
                         <SelectSearch ref="userforRole" name="language" options={this.state.employees} search={true} placeholder="Tildel skift"
                           mode="input"
-                          onBlur={(value)=> {if(value != undefined){this.assignShift(value, this.props.shift.id)}}}
                           onChange={(value)=> {if(value != undefined){this.assignShift(value, this.props.shift.id)}}}
                         />
                         <div ref="tilbakemelding"></div>
@@ -161,7 +163,7 @@ class AdminContent extends React.Component<{}> {
     return(
     <div className="AdminContentWrap">
       {ShiftContent}
-      <button ref="disableBTN" onClick={()=> {this.deleteShift()}}></button>
+      <button className="disableBTN" ref="disableBTN" onClick={()=> {this.deleteShift()}}></button>
     </div>
   )
   }
@@ -169,8 +171,12 @@ class AdminContent extends React.Component<{}> {
   assignShift(value, shift_id){
     console.log(value.value, shift_id)
     employee.setShiftEmployee(value.value, shift_id).then((x)=>{
-      this.refs.tilbakemending.innerHTML = value.name + " har blitt satt til skiftet!"
+
       console.log(x)
+
+      this.refs.tilbakemelding.textContent = value.name + " er blitt satt opp til skiftet!"
+      this.refs.tilbakemelding.style.color = "green";
+      console.log(this.refs.tilbakemelding)
       kalender.RenderCalendar()
       console.log("Success!")
     })
