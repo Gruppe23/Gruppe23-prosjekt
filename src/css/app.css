@@ -79,8 +79,8 @@ font-size: 30px;
 
 .adminpagebtn{
   position: absolute;
-  bottom: 5px;
-  left: 26px;
+  bottom: 15px;
+  left: 31px;
 }
 #taskbar {
   width: -webkit-calc(100% - 35px);
@@ -780,7 +780,6 @@ right: 5px;
   background-color: #ccc;
 }
 
-
 .cancer:hover {
   background-color: #ddd;
 }
@@ -863,6 +862,7 @@ img{
   background-color: #8B8484;
   padding-left: 30px;
   text-align: left;
+}
 
 .editUserBTN {
   margin-top: 10px;
@@ -871,13 +871,15 @@ img{
 
 .profilePage {
     position:relative;
-    height: 70% !important;
-    width: 50% !important;
+    height: 60%;
+    width: 50%;
     background-color: #696969;
     padding: 15px;
     float:left;
     margin-left: 15px;
+    overflow: scroll;
 }
+
 .pWinUserInfo {
   text-align: left;
 }
