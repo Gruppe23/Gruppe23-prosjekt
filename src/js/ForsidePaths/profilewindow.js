@@ -127,10 +127,11 @@ class ProfileDetails extends React.Component < {} > { //React Class som lar oss 
               this.refs.adress.textContent = "Adresse: " + user_profile.adress;
               this.refs.zipCode.textContent = "Postnr: " + user_profile.zipcode +" , Sted: " +user_profile.place;
               this.refs.userid.textContent= "Medlemsnummer: " + user_profile.user_id;
+            } else{
+              this.refs.name.textContent = user_profile.first_name + " " + user_profile.surname
+              this.refs.phone.textContent = "Mobil: " + user_profile.tlf;
+              this.refs.email.textContent = "Email: " + user_profile.email;
             }
-            this.refs.name.textContent = user_profile.first_name + " " + user_profile.surname
-            this.refs.phone.textContent = "Mobil: " + user_profile.tlf;
-            this.refs.email.textContent = "Email: " + user_profile.email;
             if (user_profile.user_type == 2) {
               this.refs.usertype.textContent = "Brukertype: Administrator"
             } else {
