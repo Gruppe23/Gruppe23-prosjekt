@@ -130,8 +130,6 @@ export class ForgotPassword extends React.Component <{}> {
         };
         employee.resetPw(hashedPassword, Email).then(() =>{
           mailgun.messages().send(data, function (error, body) {
-          }).catch((error) => {
-            console.log(errorMessage);
           })
         })
       })

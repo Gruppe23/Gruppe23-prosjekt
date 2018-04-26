@@ -156,6 +156,7 @@ class createevents extends React.Component<{}> {
      </div>
         <button ref="cancel" onClick={()=>{this.cancelEventCreation()}} className="Row_3buttons">Avbytt opprettelse</button>
         <button ref="create" onClick={()=>{this.eventCreate()}}className="ec_opprett">Opprett Arrangement</button>
+        <div ref="feedback"></div>
   </div>
 </div>)
 }
@@ -194,7 +195,10 @@ class createevents extends React.Component<{}> {
             if(EventFile.event.contact.value == "" || EventFile.event.extContact.value == ""){
               alert("Vennligst velg begge kontaktpersonene")
             }else {
-                    employee.createEvent(this.refs.start.value, this.refs.end.value,this.refs.eventname.value, this.refs.Hostname.value, this.refs.details.value, this.refs.adress.value, this.refs.zip.value, Number(EventFile.event.contact.value), Number(EventFile.event.extContact.value))
+                    employee.createEvent(this.refs.start.value, this.refs.end.value,this.refs.eventname.value, this.refs.Hostname.value, this.refs.details.value, this.refs.adress.value, this.refs.zip.value, Number(EventFile.event.contact.value), Number(EventFile.event.extContact.value)).then(()=> {
+                      this.refs.feedback.textContent = "Arrangement Opprettet!"
+                      this.refs.feedback.style.color = "green"
+                    })
            }
           }
         }

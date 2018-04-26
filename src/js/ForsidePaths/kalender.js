@@ -207,7 +207,7 @@ export class Kalender extends React.Component < {} > {
           this.RenderCalendar.bind(this)
         }
         closePopup = {
-          this.toggleShiftCreation.bind(this)
+          this.closeShiftCreation.bind(this)
         }
         />: null
       } <
@@ -225,14 +225,13 @@ export class Kalender extends React.Component < {} > {
     new Promise((resolve, reject) => {
       this.state.popupinfo = event
       resolve()
-    }).then(() => {
       this.setState({
         showPopup: !this.state.showPopup
       });
     })
   }
 
-  closeShiftCreation(slotInfo, event) {
+  closeShiftCreation(event) {
     this.setState({
       showShiftCreation: !this.state.showShiftCreation
     });

@@ -103,17 +103,20 @@ export class EditUser extends React.Component<{}> {
     let editArray = {}
     userEditRef.refs.response.innerHTML = ""
     if(userEditRef.refs.pwd.value.length != undefined) {
-    if (userEditRef.refs.pwd.value == userEditRef.refs.confirmpwd.value && userEditRef.refs.pwd.value.length > 6){
+      console.log(userEditRef.refs.pwd.value + " " + userEditRef.refs.confirmpwd.value)
+    if (userEditRef.refs.pwd.value == userEditRef.refs.confirmpwd.value && userEditRef.refs.pwd.value.length > 5){
       let passwordValue = passwordHash.generate(userEditRef.refs.pwd.value)
       editArray.password = passwordValue
     }else {
-      if(userEditRef.refs.pwd.value.length > 6) {
+      if(userEditRef.refs.pwd.value.length >= 6) {
         userEditRef.refs.response.innerHTML += "Passord må være like."
         userEditRef.refs.response.style.color += "red"
+        console.log("notequalpass")
       }else{
         if(userEditRef.refs.pwd.value.length > 0){
       userEditRef.refs.response.innerHTML = "Passord må være lengre en 6 bokstaver."
       userEditRef.refs.response.style.color = "red"
+      console.log("passlengtherr")
     }
     }
     }
@@ -124,6 +127,8 @@ export class EditUser extends React.Component<{}> {
     } else if(userEditRef.refs.email.value.length > 0) {
       userEditRef.refs.response.innerHTML += "Vennligst fyll inn lik email i feltene."
       userEditRef.refs.response.style.color = "red"
+      console.log("mailerror")
+      Alert("Mailadressene du har skrevet inn er ikke like! \n Andre endringer har gått igjennom med mindre du får feilmelding på det. ")
     }
   }
 
@@ -135,7 +140,7 @@ export class EditUser extends React.Component<{}> {
       editArray.first_name = userEditRef.refs.firstname.value
     }
 
-    if(userEditRef.refs.surname.value.length != undefined) {
+    if(userEditRef.refs.surname.value.length > 2) {
       editArray.surname = userEditRef.refs.surname.value
     }
 
@@ -144,21 +149,29 @@ export class EditUser extends React.Component<{}> {
   } else if(userEditRef.refs.tlf.value.length > 0){
     userEditRef.refs.response.innerHTML = "telefonnummer må være 8 tall"
     userEditRef.refs.response.style.color = "red"
+    Alert("Passord må være 6 tegn eller lengre! \n Andre endringer har gått igjennom med mindre du får feilmelding på det. ")
   }
 
+if(userEditRef.refs.zipcode.value.length == 4) {
+  if(userEditRef.refs.zipcode.value.isNaN() == false) {
+    editArray.zipcode = userEditRef.refs.zipcode.textContent
+  }
+}
 
 if(userEditRef.refs.poststed.value.length > 2){
   editArray.place = userEditRef.refs.poststed.value
 }
 
-  if(userEditRef.refs.adress.value > 2) {
+  if(userEditRef.refs.adress.value.length > 2) {
     editArray.adress = userEditRef.refs.adress.value
   }
+
   employee.editUser(editArray, userEditRef.props.user_id).then(()=>{
     userEditRef.refs.response.innerHTML = "Endringer utført!"
     userEditRef.refs.response.style.color = "green"
   }).catch((error: Error) => {
     alert("SUMTHANG WONG")
+    console.log(error)
   })
 }
   componentDidMount(){

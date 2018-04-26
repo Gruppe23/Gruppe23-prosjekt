@@ -8,7 +8,7 @@ import {SelectRoleTemplate} from './RoleTemplatePopup';
 import onClickOutside from "react-onclickoutside";
 import SelectSearch from 'react-select-search'
 let selectedRole = {value: null, name: null}
-let selectedEvent = {value: null, name: null}
+let selectedEvent = ""
 let roleObject = {roles: []}
 let SCPRef;
 
@@ -17,6 +17,7 @@ export class ShiftCreatePopup extends React.Component<{}> {
     super(props)
     SCPRef = this
     let info = this.props.info
+    let selectedEvent = {value: null, name: null}
     this.state ={
       addroles: [],
       renderedRoles: "",
@@ -29,6 +30,7 @@ export class ShiftCreatePopup extends React.Component<{}> {
   render(){
     let startRender = this.props.info.start.toTimeString().split(":")
     let endRender = this.props.info.end.toTimeString().split(":")
+    console.log(startRender)
     if(startRender[0].length == 1){
       startRender[0]= 0+startRender[0]
     }
@@ -112,12 +114,12 @@ export class ShiftCreatePopup extends React.Component<{}> {
           let y = 0;
           while (y < SCPRef.state.roleObject.roles[x].amount){
             y++
-
-              employee.createShift(selectedEvent.value, SCPRef.state.roleObject.roles[x].role_id, startDate, endDate, SCPRef.state.roleObject.roles[x].role_name)
+              employee.createShift(selectedEvent.value, SCPRef.state.roleObject.roles[x].role_id, startDate, endDate, SCPRef.state.roleObject.roles[x].role_name).then(()=>{
+                this.props.closePopup()
+                this.props.updateCalendar()
+              })
       }
     }
-    this.props.updateCalendar()
-    this.props.closePopup()
 }}}
 
 
